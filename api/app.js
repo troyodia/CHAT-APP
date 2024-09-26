@@ -3,13 +3,14 @@ const express = require("express");
 const connectDB = require("./db/connect");
 const app = express();
 const authRouter = require("./routes/auth");
+const notFoundError = require("./middleware/not-found");
 app.use(express.json());
 
 app.use("/api/v1/auth", authRouter);
 app.get("/home", (req, res) => {
   res.send("home");
 });
-
+app.use("*", notFoundError);
 const port = process.env.PORT || 5000;
 
 const start = async () => {
