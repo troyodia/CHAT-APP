@@ -1,12 +1,8 @@
 import "./App.css";
-import RegisterScreen from "./Register";
+import LoginScreen from "./Login";
 
 function App() {
-  return (
-    <>
-      <RegisterScreen></RegisterScreen>
-    </>
-  );
+  return <LoginScreen></LoginScreen>;
 }
 
 export default App;

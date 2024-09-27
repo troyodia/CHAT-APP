@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useState } from "react";
-export default function RegisterScreen() {
+export default function LoginScreen() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   useEffect(() => {
