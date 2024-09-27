@@ -14,8 +14,8 @@ const authorize = async (req, res, next) => {
   const token = authHeader.split(" ")[1];
   try {
     const decoded = user.verifyToken(token);
-    const { userId, name, email } = decoded;
-    req.user = { userId, name, email };
+    const { userId, firstname, lastname, email } = decoded;
+    req.user = { userId, firstname, lastname, email };
     next();
   } catch (error) {
     throw new UnauthenticatedError("invalid unthorization");

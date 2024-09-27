@@ -20,9 +20,14 @@ const login = async (req, res) => {
   }
   const token = user.generateToken();
 
-  res
-    .status(StatusCodes.OK)
-    .json({ user: { name: user.name, email: user.email }, token });
+  res.status(StatusCodes.OK).json({
+    user: {
+      firstname: user.firstname,
+      lastname: user.lastname,
+      email: user.email,
+    },
+    token,
+  });
 };
 
 module.exports = {
