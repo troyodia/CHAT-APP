@@ -11,6 +11,11 @@ const login = async (req, res) => {
     throw new BadRequestError("please provide email and password");
   }
   const user = await User.findOne({ email });
+
+  if (!user || !(await user.comparePassword(password))) {
+    throw new BadRequestError("email or password does not exist");
+  }
+
   res.status(StatusCodes.OK).json({ user });
 };
 module.exports = {
