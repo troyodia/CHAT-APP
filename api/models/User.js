@@ -42,4 +42,8 @@ UserSchema.methods.generateToken = function () {
   );
   return token;
 };
+UserSchema.methods.verifyToken = function (token) {
+  const decoded = jwt.verify(token, process.env.JWT_SECRET);
+  return decoded;
+};
 module.exports = mongoose.model("User", UserSchema);
