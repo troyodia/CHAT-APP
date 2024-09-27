@@ -12,11 +12,17 @@ const login = async (req, res) => {
   }
   const user = await User.findOne({ email });
 
-  if (!user || !(await user.comparePassword(password))) {
-    throw new BadRequestError("email or password does not exist");
+  if (!user) {
+    throw new BadRequestError("user email does not exist");
   }
+  if (!(await user.comparePassword(password))) {
+    throw new BadRequestError("user password does not exist");
+  }
+  const token = user.generateToken();
 
-  res.status(StatusCodes.OK).json({ user });
+  res
+    .status(StatusCodes.OK)
+    .json({ user: { name: user.name, email: user.email }, token });
 };
 module.exports = {
   register,
