@@ -1,5 +1,5 @@
 import "./App.css";
-import LoginScreen from "./Login";
+import LoginScreen from "./components/Login";
 
 function App() {
   return <LoginScreen></LoginScreen>;
