@@ -1,17 +1,30 @@
+import axios from "axios";
 import { useEffect } from "react";
 import { useState } from "react";
 export default function LoginScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  useEffect(() => {
-    console.log(email, password);
-  });
+  const url = "http://localhost:5000/api/v1/auth/login";
 
+  const loginUser = async () => {
+    try {
+      const {
+        data: { user, token },
+      } = await axios.post(url, { email, password });
+      console.log(user, token);
+    } catch (error) {
+      console.log(error.response.data.msg);
+    }
+  };
   return (
     <div className="bg-amber-100 h-screen flex justify-center items-center">
       <form
         className="m-3 mb-12 flex w-[500px] min-w-[200px] flex-col 
       space-y-3 text-black text-2xl font-medium"
+        onSubmit={(e) => {
+          e.preventDefault();
+          loginUser();
+        }}
       >
         <input
           type="text"

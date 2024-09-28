@@ -3,8 +3,8 @@ import LoginScreen from "./components/Login";
 import RegisterScreen from "./components/Register";
 
 function App() {
-  return <RegisterScreen></RegisterScreen>;
-  // <LoginScreen></LoginScreen>;
+  return <LoginScreen></LoginScreen>;
+  // <RegisterScreen></RegisterScreen>;
 }
 
 export default App;
