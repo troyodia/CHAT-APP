@@ -5,18 +5,20 @@ export default function RegisterScreen() {
   const [lastname, setLastname] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const url = "http://localhost:5000/api/v1/api/v1/auth/register";
+  const url = "http://localhost:5000/api/v1/auth/register";
   const regsiterUser = async () => {
     try {
-      const res = await axios.post(url, {
+      const {
+        data: { user },
+      } = await axios.post(url, {
         firstname,
         lastname,
         email,
         password,
       });
-      console.log(res.data);
+      console.log(user);
     } catch (error) {
-      console.log(error);
+      console.log(error.response.data.msg);
     }
   };
   return (
@@ -25,7 +27,6 @@ export default function RegisterScreen() {
         className="mx-4 flex flex-col w-[500px] text-2xl"
         onSubmit={(e) => {
           e.preventDefault();
-          console.log("submit");
           regsiterUser();
         }}
       >
