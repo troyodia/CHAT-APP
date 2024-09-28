@@ -15,9 +15,12 @@ const login = async (req, res) => {
   if (!user) {
     throw new UnauthenticatedError("user email does not exist");
   }
-  if (!(await user.comparePassword(password))) {
+  const isMatch = await user.comparePassword(password);
+
+  if (!isMatch) {
     throw new UnauthenticatedError("user password does not exist");
   }
+
   const token = user.generateToken();
 
   res.status(StatusCodes.OK).json({

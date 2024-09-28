@@ -4,6 +4,8 @@ import { useState } from "react";
 export default function LoginScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+
   const url = "http://localhost:5000/api/v1/auth/login";
 
   const loginUser = async () => {
@@ -12,7 +14,10 @@ export default function LoginScreen() {
         data: { user, token },
       } = await axios.post(url, { email, password });
       console.log(user, token);
+      setError("");
     } catch (error) {
+      setError(error.response.data.msg);
+
       console.log(error.response.data.msg);
     }
   };
@@ -26,6 +31,13 @@ export default function LoginScreen() {
           loginUser();
         }}
       >
+        {error ? (
+          <div>
+            <p className="text-red-400 mt-4 text-left text-xl"> {error} </p>
+          </div>
+        ) : (
+          ""
+        )}
         <input
           type="text"
           className="rounded px-4 py-4 w-full"

@@ -7,6 +7,8 @@ export default function RegisterScreen() {
   const [lastname, setLastname] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+
   const navigate = useNavigate();
   const url = "http://localhost:5000/api/v1/auth/register";
   const regsiterUser = async () => {
@@ -21,11 +23,12 @@ export default function RegisterScreen() {
         navigate("/login");
       }
     } catch (error) {
+      setError(error.response.data.msg);
       console.log(error.response.data.msg);
     }
   };
   return (
-    <div className="flex items-center justify-center h-screen bg-slate-600 text-white">
+    <div className=" flex items-center justify-center h-screen bg-slate-600 text-white">
       <form
         className="mx-4 flex flex-col w-[500px] text-2xl"
         onSubmit={(e) => {
@@ -68,6 +71,13 @@ export default function RegisterScreen() {
           }}
         ></input>
         <button className="bg-red-900 py-6 rounded">Register</button>
+        {error ? (
+          <div>
+            <p className="text-red-400 mt-4 text-left text-xl"> {error} </p>
+          </div>
+        ) : (
+          ""
+        )}
       </form>
     </div>
   );
