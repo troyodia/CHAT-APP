@@ -1,22 +1,25 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
+
 export default function RegisterScreen() {
   const [firstname, setFirstname] = useState("");
   const [lastname, setLastname] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const navigate = useNavigate();
   const url = "http://localhost:5000/api/v1/auth/register";
   const regsiterUser = async () => {
     try {
-      const {
-        data: { user },
-      } = await axios.post(url, {
+      const res = await axios.post(url, {
         firstname,
         lastname,
         email,
         password,
       });
-      console.log(user);
+      if (res.data && res.status === 200) {
+        navigate("/login");
+      }
     } catch (error) {
       console.log(error.response.data.msg);
     }
