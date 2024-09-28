@@ -1,10 +1,10 @@
 import { useEffect } from "react";
 import { useState } from "react";
 export default function LoginScreen() {
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   useEffect(() => {
-    console.log(username, password);
+    console.log(email, password);
   });
 
   return (
@@ -16,10 +16,10 @@ export default function LoginScreen() {
         <input
           type="text"
           className="rounded px-4 py-4 w-full"
-          placeholder="username"
-          value={username}
+          placeholder="email"
+          value={email}
           onChange={(e) => {
-            setUsername(e.target.value);
+            setEmail(e.target.value);
           }}
         ></input>
         <input
