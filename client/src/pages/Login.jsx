@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useEffect } from "react";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 export default function LoginScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -60,7 +61,10 @@ export default function LoginScreen() {
           Login
         </button>
         <p className="mx-auto text-black pt-2">
-          Don't have an account? Register
+          Don't have an account?{" "}
+          <Link to="/register" className="text-amber-700">
+            Register
+          </Link>
         </p>
       </form>
     </div>
