@@ -2,11 +2,14 @@ import axios from "axios";
 import { useEffect } from "react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { UpdateUserState, UserState } from "../use-contexts/userContext";
+
 export default function LoginScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-
+  const user = UserState();
+  const updateUserState = UpdateUserState();
   const url = "http://localhost:5000/api/v1/auth/login";
 
   const loginUser = async () => {
@@ -16,6 +19,7 @@ export default function LoginScreen() {
       } = await axios.post(url, { email, password });
       console.log(user, token);
       setError("");
+      updateUserState(user);
     } catch (error) {
       setError(error.response.data.msg);
 

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { UserState } from "../use-contexts/userContext";
 
 export default function RegisterScreen() {
   const [firstname, setFirstname] = useState("");
@@ -8,8 +9,9 @@ export default function RegisterScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-
+  const user = UserState();
   const navigate = useNavigate();
+
   const url = "http://localhost:5000/api/v1/auth/register";
   const regsiterUser = async () => {
     try {
@@ -22,6 +24,7 @@ export default function RegisterScreen() {
       if (res.data && res.status === 200) {
         navigate("/login");
       }
+      console.log(user);
     } catch (error) {
       setError(error.response.data.msg);
       console.log(error.response.data.msg);
