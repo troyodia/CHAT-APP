@@ -5,14 +5,16 @@ const cors = require("cors");
 const connectDB = require("./db/connect");
 const app = express();
 const authRouter = require("./routes/auth");
-
+const userRouter = require("./routes/userInfo");
 const notFoundErrorMiddleware = require("./middleware/not-found");
 const errorHandlerMiddleware = require("./middleware/error-handler");
+const authorize = require("./middleware/authorize");
 
 app.use(express.json());
 app.use(cors());
 
 app.use("/api/v1/auth", authRouter);
+app.use("/api/v1/user", authorize, userRouter);
 app.get("/home", (req, res) => {
   res.send("home");
 });
