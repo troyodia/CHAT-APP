@@ -25,7 +25,7 @@ const refreshAccessToken = async (req, res) => {
       secure: true,
       sameSite: "none",
     });
-    res.status(StatusCodes.OK).json(accessToken);
+    res.status(StatusCodes.OK).json({ mg: "token refreshed" });
   }
 };
 module.exports = refreshAccessToken;

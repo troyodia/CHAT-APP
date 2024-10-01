@@ -24,7 +24,7 @@ export default function RegisterScreen() {
       if (res.data && res.status === 200) {
         navigate("/login");
       }
-      console.log(user);
+      // console.log(user);
     } catch (error) {
       setError(error.response.data.msg);
       console.log(error.response.data.msg);

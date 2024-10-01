@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useEffect } from "react";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { UpdateUserState, UserState } from "../use-contexts/userContext";
 import GetUser from "../components/GetUser";
 
@@ -10,21 +10,23 @@ export default function LoginScreen() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const user = UserState();
+  const naviagate = useNavigate();
   const updateUserState = UpdateUserState();
   const url = "http://localhost:5000/api/v1/auth/login";
-  const saveToLocalStorage = (token) => {
-    localStorage.clear();
-    localStorage.setItem("token", token);
-  };
+  // const saveToLocalStorage = (token) => {
+  //   localStorage.clear();
+  //   localStorage.setItem("token", token);
+  // };
   const loginUser = async () => {
     try {
       const {
-        data: { user, token },
+        data: { user },
       } = await axios.post(url, { email, password }, { withCredentials: true });
-      console.log(user, token);
+      // console.log(user);
       setError("");
       updateUserState(user);
-      saveToLocalStorage(token);
+      naviagate("/home");
+      // saveToLocalStorage(token);
     } catch (error) {
       setError(error.response.data.msg);
 
@@ -76,7 +78,6 @@ export default function LoginScreen() {
           </Link>
         </p>
       </form>
-      {/* <GetUser></GetUser> */}
     </div>
   );
 }
