@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { UpdateUserState, UserState } from "../use-contexts/userContext";
+import GetUser from "../components/GetUser";
 
 export default function LoginScreen() {
   const [email, setEmail] = useState("");
@@ -11,7 +12,10 @@ export default function LoginScreen() {
   const user = UserState();
   const updateUserState = UpdateUserState();
   const url = "http://localhost:5000/api/v1/auth/login";
-
+  const saveToLocalStorage = (token) => {
+    localStorage.clear();
+    localStorage.setItem("token", token);
+  };
   const loginUser = async () => {
     try {
       const {
@@ -20,6 +24,7 @@ export default function LoginScreen() {
       console.log(user, token);
       setError("");
       updateUserState(user);
+      saveToLocalStorage(token);
     } catch (error) {
       setError(error.response.data.msg);
 
@@ -71,6 +76,7 @@ export default function LoginScreen() {
           </Link>
         </p>
       </form>
+      <GetUser></GetUser>
     </div>
   );
 }

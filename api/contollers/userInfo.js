@@ -2,10 +2,11 @@ const { StatusCodes } = require("http-status-codes");
 const { BadRequestError } = require("../errors");
 
 const getSingleUser = async (req, res) => {
-  if (!req.user) {
+  const { user } = req;
+  if (!user) {
     throw BadRequestError("User does not exist");
   }
-  res.status(StatusCodes.OK).json(req.user);
+  res.status(StatusCodes.OK).json({ user });
 };
 module.exports = {
   getSingleUser,

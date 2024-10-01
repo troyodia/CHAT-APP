@@ -1,3 +1,4 @@
+require("dotenv").config();
 const { StatusCodes } = require("http-status-codes");
 const User = require("../models/User");
 const { BadRequestError, UnauthenticatedError } = require("../errors");
@@ -21,8 +22,22 @@ const login = async (req, res) => {
     throw new UnauthenticatedError("user password does not exist");
   }
 
-  const token = user.generateToken();
-
+  const accessToken = user.generateToken(
+    process.env.ACCESS_SECRET,
+    process.env.ACCESS_LIFETIME
+  );
+  const refreshToken = user.generateToken(
+    process.env.REFRESH_SECRET,
+    process.env.REFRESH_LIFETIME
+  );
+  res.cookie("ACCESS_TOKEN", accessToken, {
+    httpOnly: true,
+    maxAge: 24 * 60 * 60 * 1000,
+  });
+  res.cookie("REFRESH_TOKEN", refreshToken, {
+    httpOnly: true,
+    maxAge: 24 * 60 * 60 * 1000,
+  });
   res.status(StatusCodes.OK).json({
     user: {
       firstname: user.firstname,
@@ -30,7 +45,7 @@ const login = async (req, res) => {
       email: user.email,
       userId: user._id,
     },
-    token,
+    accessToken,
   });
 };
 

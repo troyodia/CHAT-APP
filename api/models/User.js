@@ -43,7 +43,7 @@ UserSchema.methods.comparePassword = async function (password) {
   const isMatch = await bcrypt.compare(password, this.password);
   return isMatch;
 };
-UserSchema.methods.generateToken = function () {
+UserSchema.methods.generateToken = function (secret, expiresIn) {
   const token = jwt.sign(
     {
       userId: this._id,
@@ -51,13 +51,13 @@ UserSchema.methods.generateToken = function () {
       lastname: this.lastname,
       email: this.email,
     },
-    process.env.JWT_SECRET,
-    { expiresIn: process.env.JWT_LIFETIME }
+    secret,
+    { expiresIn: expiresIn }
   );
   return token;
 };
 UserSchema.methods.verifyToken = function (token) {
-  const decoded = jwt.verify(token, process.env.JWT_SECRET);
+  const decoded = jwt.verify(token, process.env.ACCESS_SECRET);
   return decoded;
 };
 module.exports = mongoose.model("User", UserSchema);
