@@ -8,17 +8,9 @@ const authorize = async (req, res, next) => {
   if (!token) {
     throw new UnauthenticatedError("no token provided");
   }
-  // const authHeader = req.headers.authorization;
-
-  // if (!authHeader || !authHeader.startsWith("Bearer ")) {
-  //   throw new UnauthenticatedError("no token provided");
-  // }
-
-  // const token = authHeader.split(" ")[1];
   try {
     const decoded = user.verifyToken(token, process.env.ACCESS_SECRET);
     const { userId, firstname, lastname, email } = decoded;
-    // console.log(userId, firstname, lastname, email);
     req.user = { userId, firstname, lastname, email };
     next();
   } catch (error) {

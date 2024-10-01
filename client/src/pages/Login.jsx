@@ -20,7 +20,7 @@ export default function LoginScreen() {
     try {
       const {
         data: { user, token },
-      } = await axios.post(url, { email, password });
+      } = await axios.post(url, { email, password }, { withCredentials: true });
       console.log(user, token);
       setError("");
       updateUserState(user);
@@ -76,7 +76,7 @@ export default function LoginScreen() {
           </Link>
         </p>
       </form>
-      <GetUser></GetUser>
+      {/* <GetUser></GetUser> */}
     </div>
   );
 }

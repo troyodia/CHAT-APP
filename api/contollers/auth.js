@@ -34,11 +34,13 @@ const login = async (req, res) => {
     httpOnly: true,
     maxAge: 24 * 60 * 60 * 1000,
     secure: true,
+    sameSite: "none",
   });
   res.cookie("REFRESH_TOKEN", refreshToken, {
     httpOnly: true,
     maxAge: 24 * 60 * 60 * 1000,
     secure: true,
+    sameSite: "none",
   });
   res.status(StatusCodes.OK).json({
     user: {
@@ -47,7 +49,6 @@ const login = async (req, res) => {
       email: user.email,
       userId: user._id,
     },
-    accessToken,
   });
 };
 

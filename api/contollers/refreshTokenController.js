@@ -1,13 +1,7 @@
-//create refresh token controller with new refresh route, if the refresh is in req.cookies, verfiy the refresh token and create a new access token
-//test the refresh route to see if a new access token is constantly generated
-//front end create a func to get new access token from the refresh route (make it get route)
-
 const jwt = require("jsonwebtoken");
 const { UnauthenticatedError } = require("../errors");
-const User = require("../models/User");
 const { StatusCodes } = require("http-status-codes");
 
-//research axios interception handler for access token refrshes
 const refreshAccessToken = async (req, res) => {
   const refreshToken = req.cookies.REFRESH_TOKEN;
   if (!refreshToken) {
@@ -29,6 +23,7 @@ const refreshAccessToken = async (req, res) => {
       httpOnly: true,
       maxAge: 24 * 60 * 60 * 1000,
       secure: true,
+      sameSite: "none",
     });
     res.status(StatusCodes.OK).json(accessToken);
   }
