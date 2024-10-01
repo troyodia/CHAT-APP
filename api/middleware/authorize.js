@@ -16,8 +16,9 @@ const authorize = async (req, res, next) => {
 
   // const token = authHeader.split(" ")[1];
   try {
-    const decoded = user.verifyToken(token);
+    const decoded = user.verifyToken(token, process.env.ACCESS_SECRET);
     const { userId, firstname, lastname, email } = decoded;
+    // console.log(userId, firstname, lastname, email);
     req.user = { userId, firstname, lastname, email };
     next();
   } catch (error) {

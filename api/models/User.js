@@ -56,8 +56,8 @@ UserSchema.methods.generateToken = function (secret, expiresIn) {
   );
   return token;
 };
-UserSchema.methods.verifyToken = function (token) {
-  const decoded = jwt.verify(token, process.env.ACCESS_SECRET);
+UserSchema.methods.verifyToken = function (token, secret) {
+  const decoded = jwt.verify(token, secret);
   return decoded;
 };
 module.exports = mongoose.model("User", UserSchema);
