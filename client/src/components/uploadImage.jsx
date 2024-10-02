@@ -1,18 +1,34 @@
-import { useRef } from "react";
-
+import { useRef, useState } from "react";
+import axios from "axios";
 export default function UploadImage({ imgPath, updateImgPath }) {
   const fileUploadRef = useRef("");
+  const [image, setImage] = useState("");
+  const url = "http://localhost:5000/api/v1/auth/uploadsingle";
 
   const handleFileUpload = (e) => {
     e.preventDefault();
     fileUploadRef.current.click();
   };
-  const uploadImageDisplay = () => {
+  const uploadImageDisplay = async () => {
     const file = fileUploadRef.current.files[0];
-    const cachedURL = URL.createObjectURL(file);
-    updateImgPath(cachedURL);
-    console.log(file, cachedURL);
+    const formData = new FormData();
+    console.log(formData);
+    formData.append("image", file);
+    try {
+      const res = await axios.post(url, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      if (res.status === 200) {
+        console.log(res);
+
+        const cachedURL = URL.createObjectURL(file);
+        updateImgPath(cachedURL);
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
+
   return (
     <div className="mb-4 flex items-center">
       <div className="w-20 h-20 mr-8">
@@ -22,7 +38,12 @@ export default function UploadImage({ imgPath, updateImgPath }) {
           alt=""
         ></img>
       </div>
-      <form id="file" encType="multipart/form-data">
+      <form
+        id="form"
+        // action="/uploadsingle"
+        // method="POST"
+        // encType="multipart/form-data"
+      >
         <button
           type="submit"
           className="bg-black flex h-10 pt-1 px-2 rounded-md text-lg"
@@ -33,6 +54,7 @@ export default function UploadImage({ imgPath, updateImgPath }) {
         <input
           type="file"
           id="file"
+          name="images"
           ref={fileUploadRef}
           onChange={uploadImageDisplay}
           hidden

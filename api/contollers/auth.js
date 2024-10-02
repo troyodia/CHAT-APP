@@ -6,6 +6,11 @@ const register = async (req, res) => {
   const user = await User.create(req.body);
   res.status(StatusCodes.OK).json({ user });
 };
+const getImage = async (req, res) => {
+  if (!req.file) throw new BadRequestError("no file");
+  console.log(req.file);
+  res.status(StatusCodes.OK).json(req.file);
+};
 const login = async (req, res) => {
   const { email, password } = req.body;
   if (!email || !password) {
@@ -55,4 +60,5 @@ const login = async (req, res) => {
 module.exports = {
   register,
   login,
+  getImage,
 };
