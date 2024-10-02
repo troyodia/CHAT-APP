@@ -1,7 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import defaultImg from "../images/default.png";
 import { UserState } from "../use-contexts/userContext";
+import UploadImage from "../components/uploadImage";
 
 export default function RegisterScreen() {
   const [firstname, setFirstname] = useState("");
@@ -9,6 +11,8 @@ export default function RegisterScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [imgPath, setImgPath] = useState(defaultImg);
+  const fileUploadRef = useRef("");
   const navigate = useNavigate();
 
   const url = "http://localhost:5000/api/v1/auth/register";
@@ -23,15 +27,26 @@ export default function RegisterScreen() {
       if (res.data && res.status === 200) {
         navigate("/login");
       }
+      setError("");
       // console.log(user);
     } catch (error) {
       setError(error.response.data.msg);
       console.log(error.response.data.msg);
     }
   };
+  const updateImgPath = (value) => {
+    setImgPath(value);
+  };
   return (
-    <div className=" flex items-center justify-center h-screen text-white bg-cover bg-[url('./images/background.jpg')]">
-      <div className="mx-2 flex w-[1000px] h-[700px] justify-center items-center backdrop-blur-sm border-2 border-solid border-transparent rounded">
+    <div className=" flex  items-center justify-center h-screen text-white bg-cover bg-[url('./images/background.jpg')]">
+      <div className="mx-2 flex flex-col w-[1000px] h-[800px] justify-center items-center backdrop-blur-sm border-2 border-solid border-transparent rounded">
+        <p className="mb-6 text-center text-white text-3xl font-bold">
+          Create an Account
+        </p>
+        <UploadImage
+          imgPath={imgPath}
+          updateImgPath={updateImgPath}
+        ></UploadImage>
         <form
           className="mx-4 max-w-[600px] flex flex-col w-full text-2xl"
           onSubmit={(e) => {
@@ -39,9 +54,6 @@ export default function RegisterScreen() {
             regsiterUser();
           }}
         >
-          <p className="mb-3 text-center text-white font-bold">
-            Create an Account
-          </p>
           <input
             className="w-full bg-black py-6 px-4 border-2 border-solid border-black rounded mb-6"
             placeholder="First Name"
@@ -76,14 +88,17 @@ export default function RegisterScreen() {
             }}
           ></input>
           <button className="bg-red-900 py-6 rounded">Register</button>
-          {error ? (
-            <div>
-              <p className="text-red-400 mt-4 text-left text-xl"> {error} </p>
-            </div>
-          ) : (
-            ""
-          )}
         </form>
+        {error ? (
+          <div>
+            <p className="text-white text-center mt-4 mx-4 text-left md:text-xl">
+              {" "}
+              {error}{" "}
+            </p>
+          </div>
+        ) : (
+          ""
+        )}
       </div>
     </div>
   );
