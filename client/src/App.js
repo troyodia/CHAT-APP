@@ -4,7 +4,7 @@ import LoginScreen from "./pages/Login";
 import RegisterScreen from "./pages/Register";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { UserProvider } from "./use-contexts/userContext";
-import GetUser from "./components/GetUser";
+import Chat from "./pages/Chat";
 function App() {
   return (
     <UserProvider>
@@ -15,7 +15,7 @@ function App() {
             element={<RegisterScreen></RegisterScreen>}
           ></Route>
           <Route path="/login" element={<LoginScreen></LoginScreen>}></Route>
-          <Route path="/home" element={<GetUser></GetUser>}></Route>
+          <Route path="/chat" element={<Chat></Chat>}></Route>
         </Routes>
       </BrowserRouter>
     </UserProvider>

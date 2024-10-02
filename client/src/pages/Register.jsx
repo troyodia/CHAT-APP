@@ -9,7 +9,6 @@ export default function RegisterScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const user = UserState();
   const navigate = useNavigate();
 
   const url = "http://localhost:5000/api/v1/auth/register";
@@ -31,57 +30,61 @@ export default function RegisterScreen() {
     }
   };
   return (
-    <div className=" flex items-center justify-center h-screen bg-slate-600 text-white">
-      <form
-        className="mx-4 flex flex-col w-[500px] text-2xl"
-        onSubmit={(e) => {
-          e.preventDefault();
-          regsiterUser();
-        }}
-      >
-        <p className="mb-3 text-center">Please Register as a User</p>
-        <input
-          className="w-full bg-black py-6 px-4 border-2 border-solid border-black rounded mb-6"
-          placeholder="First Name"
-          value={firstname}
-          onChange={(e) => {
-            setFirstname(e.target.value);
+    <div className=" flex items-center justify-center h-screen text-white bg-cover bg-[url('./images/background.jpg')]">
+      <div className="mx-2 flex w-[1000px] h-[700px] justify-center items-center backdrop-blur-sm border-2 border-solid border-transparent rounded">
+        <form
+          className="mx-4 max-w-[600px] flex flex-col w-full text-2xl"
+          onSubmit={(e) => {
+            e.preventDefault();
+            regsiterUser();
           }}
-        ></input>
-        <input
-          className="w-full bg-black py-6 px-4 border-2 border-solid border-black  rounded mb-4"
-          placeholder="Last Name"
-          value={lastname}
-          onChange={(e) => {
-            setLastname(e.target.value);
-          }}
-        ></input>
-        <input
-          className="w-full bg-black py-6 px-4 border-2 border-solid border-black  rounded mb-6"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => {
-            setEmail(e.target.value);
-          }}
-        ></input>
-        <input
-          className="w-full bg-black py-6 px-4 border-2 border-solid border-black rounded mb-6"
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => {
-            setPassword(e.target.value);
-          }}
-        ></input>
-        <button className="bg-red-900 py-6 rounded">Register</button>
-        {error ? (
-          <div>
-            <p className="text-red-400 mt-4 text-left text-xl"> {error} </p>
-          </div>
-        ) : (
-          ""
-        )}
-      </form>
+        >
+          <p className="mb-3 text-center text-white font-bold">
+            Create an Account
+          </p>
+          <input
+            className="w-full bg-black py-6 px-4 border-2 border-solid border-black rounded mb-6"
+            placeholder="First Name"
+            value={firstname}
+            onChange={(e) => {
+              setFirstname(e.target.value);
+            }}
+          ></input>
+          <input
+            className="w-full bg-black py-6 px-4 border-2 border-solid border-black  rounded mb-4"
+            placeholder="Last Name"
+            value={lastname}
+            onChange={(e) => {
+              setLastname(e.target.value);
+            }}
+          ></input>
+          <input
+            className="w-full bg-black py-6 px-4 border-2 border-solid border-black  rounded mb-6"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => {
+              setEmail(e.target.value);
+            }}
+          ></input>
+          <input
+            className="w-full bg-black py-6 px-4 border-2 border-solid border-black rounded mb-6"
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => {
+              setPassword(e.target.value);
+            }}
+          ></input>
+          <button className="bg-red-900 py-6 rounded">Register</button>
+          {error ? (
+            <div>
+              <p className="text-red-400 mt-4 text-left text-xl"> {error} </p>
+            </div>
+          ) : (
+            ""
+          )}
+        </form>
+      </div>
     </div>
   );
 }

@@ -1,7 +1,7 @@
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { useState } from "react";
 import { createContext } from "react";
-
+import axiosInstance from "../utils/axiosInstance";
 const UserContext = createContext({});
 const UpdateUserContext = createContext({});
 
@@ -13,10 +13,34 @@ export function UpdateUserState() {
 }
 
 export function UserProvider({ children }) {
-  const [user, setUser] = useState({});
+  const [firstname, setFirstname] = useState("");
+  const [lastname, setLastname] = useState("");
+  const [userId, setUserId] = useState("");
+  useEffect(() => {
+    const getUser = async () => {
+      try {
+        const {
+          data: {
+            user: { userId, firstname, lastname },
+          },
+        } = await axiosInstance.get("user/profile", {
+          withCredentials: true,
+        });
+        // console.log(userId, firstname, lastname);
+        setFirstname(firstname);
+        setLastname(lastname);
+        setUserId(userId);
+      } catch (error) {
+        console.log(error?.response?.data?.msg);
+      }
+    };
+    getUser();
+  }, []);
   return (
-    <UserContext.Provider value={user}>
-      <UpdateUserContext.Provider value={setUser}>
+    <UserContext.Provider value={{ firstname, lastname, userId }}>
+      <UpdateUserContext.Provider
+        value={{ setFirstname, setLastname, setUserId }}
+      >
         {children}
       </UpdateUserContext.Provider>
     </UserContext.Provider>

@@ -3,30 +3,25 @@ import { useEffect } from "react";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { UpdateUserState, UserState } from "../use-contexts/userContext";
-import GetUser from "../components/GetUser";
 
 export default function LoginScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const user = UserState();
   const naviagate = useNavigate();
-  const updateUserState = UpdateUserState();
   const url = "http://localhost:5000/api/v1/auth/login";
-  // const saveToLocalStorage = (token) => {
-  //   localStorage.clear();
-  //   localStorage.setItem("token", token);
-  // };
+
   const loginUser = async () => {
     try {
-      const {
-        data: { user },
-      } = await axios.post(url, { email, password }, { withCredentials: true });
-      // console.log(user);
-      setError("");
-      updateUserState(user);
-      naviagate("/home");
-      // saveToLocalStorage(token);
+      const res = await axios.post(
+        url,
+        { email, password },
+        { withCredentials: true }
+      );
+      if (res.data && res.status === 200) {
+        naviagate("/chat");
+        setError("");
+      }
     } catch (error) {
       setError(error.response.data.msg);
 
@@ -43,9 +38,12 @@ export default function LoginScreen() {
           loginUser();
         }}
       >
+        <div>
+          <p className="text-black text-center text-2xl"> Welcome back, </p>
+        </div>
         {error ? (
           <div>
-            <p className="text-red-400 mt-4 text-left text-xl"> {error} </p>
+            <p className="text-red-400 text-left text-xl"> {error} </p>
           </div>
         ) : (
           ""
@@ -69,7 +67,7 @@ export default function LoginScreen() {
           }}
         ></input>
         <button className="rounded bg-amber-700 px-4 py-4 text-white">
-          Login
+          Log In
         </button>
         <p className="mx-auto text-black pt-2">
           Don't have an account?{" "}
