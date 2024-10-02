@@ -1,5 +1,4 @@
 import { useRef } from "react";
-import { UserState } from "../use-contexts/userContext";
 
 export default function UploadImage({ imgPath, updateImgPath }) {
   const fileUploadRef = useRef("");
@@ -12,6 +11,7 @@ export default function UploadImage({ imgPath, updateImgPath }) {
     const file = fileUploadRef.current.files[0];
     const cachedURL = URL.createObjectURL(file);
     updateImgPath(cachedURL);
+    console.log(file, cachedURL);
   };
   return (
     <div className="mb-4 flex items-center">
