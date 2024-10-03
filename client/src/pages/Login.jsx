@@ -29,53 +29,64 @@ export default function LoginScreen() {
     }
   };
   return (
-    <div className="bg-amber-100 h-screen flex justify-center items-center">
-      <form
-        className="m-3 mb-12 flex w-[500px] min-w-[200px] flex-col 
-      space-y-3 text-black text-2xl font-medium"
-        onSubmit={(e) => {
-          e.preventDefault();
-          loginUser();
-        }}
-      >
-        <div>
-          <p className="text-black text-center text-2xl"> Welcome back, </p>
-        </div>
-        {error ? (
+    <div className="h-screen flex justify-center items-center bg-cover bg-[url('./images/background.jpg')]">
+      <div className="text-white mx-2 flex w-[800px] h-[500px] justify-center items-center bg-black/30 backdrop-blur-md border-2 border-solid border-transparent rounded">
+        <form
+          className="m-3 mb-12 flex w-full max-w-[500px] text-white flex-col 
+      space-y-3 text-2xl font-medium"
+          onSubmit={(e) => {
+            e.preventDefault();
+            loginUser();
+          }}
+        >
           <div>
-            <p className="text-red-400 text-left text-xl"> {error} </p>
+            <p className="text-center text-3xl text-white font-bold">
+              {" "}
+              Welcome back,{" "}
+            </p>
           </div>
-        ) : (
-          ""
-        )}
-        <input
-          type="text"
-          className="rounded px-4 py-4 w-full"
-          placeholder="email"
-          value={email}
-          onChange={(e) => {
-            setEmail(e.target.value);
-          }}
-        ></input>
-        <input
-          type="password"
-          className="rounded px-4 py-4 w-full"
-          placeholder="password"
-          value={password}
-          onChange={(e) => {
-            setPassword(e.target.value);
-          }}
-        ></input>
-        <button className="rounded bg-amber-700 px-4 py-4 text-white">
-          Log In
-        </button>
-        <p className="mx-auto text-black pt-2">
-          Don't have an account?{" "}
-          <Link to="/register" className="text-amber-700">
-            Register
-          </Link>
-        </p>
-      </form>
+          {error ? (
+            <div>
+              <p className="text-amber-50 font-bold text-left text-xl">
+                {" "}
+                {error}{" "}
+              </p>
+            </div>
+          ) : (
+            ""
+          )}
+          <input
+            type="text"
+            className="rounded px-4 py-4 w-full bg-black/60 placeholder-white"
+            placeholder="email"
+            value={email}
+            onChange={(e) => {
+              setEmail(e.target.value);
+            }}
+          ></input>
+          <input
+            type="password"
+            className="rounded px-4 py-4 w-full bg-black/60 placeholder-white"
+            placeholder="password"
+            value={password}
+            onChange={(e) => {
+              setPassword(e.target.value);
+            }}
+          ></input>
+          <button className="rounded bg-black px-4 py-4 text-white">
+            Log In
+          </button>
+          <p className="mx-auto pt-2 text-white">
+            Don't have an account?{" "}
+            <Link
+              to="/register"
+              className="text-white font-bold underline underline-offset-6"
+            >
+              Register
+            </Link>
+          </p>
+        </form>
+      </div>
     </div>
   );
 }

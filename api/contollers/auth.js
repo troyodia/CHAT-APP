@@ -5,7 +5,7 @@ const { BadRequestError, UnauthenticatedError } = require("../errors");
 const fs = require("fs");
 
 const register = async (req, res) => {
-  console.log(JSON.parse(req.cookies.image));
+  console.log(req.cookies.image);
 
   if (!req.cookies.image) throw new BadRequestError("no image file");
   const image = JSON.parse(req.cookies.image);
@@ -20,13 +20,17 @@ const register = async (req, res) => {
     contentType,
     imageBase64,
   });
+  console.log(user);
   res.status(StatusCodes.OK).json({ user });
 };
 
 const getImage = async (req, res) => {
   if (!req.file) throw new BadRequestError("no file");
   console.log(req.file);
-  res.cookie("image", JSON.stringify(req.file));
+  res.cookie("image", JSON.stringify(req.file), {
+    secure: false,
+    sameSite: "none",
+  });
   res.status(StatusCodes.OK).json(req.file);
 };
 

@@ -17,6 +17,7 @@ export default function UploadImage({ imgPath, updateImgPath }) {
     try {
       const res = await axios.post(url, formData, {
         headers: { "Content-Type": "multipart/form-data" },
+        withCredentials: true,
       });
       if (res.status === 200) {
         console.log(res);
@@ -46,7 +47,7 @@ export default function UploadImage({ imgPath, updateImgPath }) {
       >
         <button
           type="submit"
-          className="bg-black flex h-10 pt-1 px-2 rounded-md text-lg"
+          className="bg-black flex h-10 pt-1 px-2 rounded-md text-lg font-semibold"
           onClick={handleFileUpload}
         >
           Upload an Image

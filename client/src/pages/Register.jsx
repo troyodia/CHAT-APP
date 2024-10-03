@@ -18,12 +18,17 @@ export default function RegisterScreen() {
   const url = "http://localhost:5000/api/v1/auth/register";
   const regsiterUser = async () => {
     try {
-      const res = await axios.post(url, {
-        firstname,
-        lastname,
-        email,
-        password,
-      });
+      const res = await axios.post(
+        url,
+        {
+          firstname,
+          lastname,
+          email,
+          password,
+        },
+        { withCredentials: true }
+      );
+      console.log(res);
       if (res.data && res.status === 200) {
         navigate("/login");
       }
@@ -39,7 +44,7 @@ export default function RegisterScreen() {
   };
   return (
     <div className=" flex  items-center justify-center h-screen text-white bg-cover bg-[url('./images/background.jpg')]">
-      <div className="mx-2 flex flex-col w-[1000px] h-[800px] justify-center items-center backdrop-blur-sm border-2 border-solid border-transparent rounded">
+      <div className="mx-2 flex flex-col w-[900px] h-[800px] justify-center items-center bg-black/30 backdrop-blur-md border-2 border-solid border-transparent rounded">
         <p className="mb-6 text-center text-white text-3xl font-bold">
           Create an Account
         </p>
@@ -48,14 +53,14 @@ export default function RegisterScreen() {
           updateImgPath={updateImgPath}
         ></UploadImage>
         <form
-          className="mx-4 max-w-[600px] flex flex-col w-full text-2xl"
+          className="mx-4 max-w-[600px] flex flex-col md:w-full text-2xl font-bold"
           onSubmit={(e) => {
             e.preventDefault();
             regsiterUser();
           }}
         >
           <input
-            className="w-full bg-black py-6 px-4 border-2 border-solid border-black rounded mb-6"
+            className="w-full bg-black/60 placeholder-white py-6 px-4 border-2 border-solid border-black rounded mb-6"
             placeholder="First Name"
             value={firstname}
             onChange={(e) => {
@@ -63,7 +68,7 @@ export default function RegisterScreen() {
             }}
           ></input>
           <input
-            className="w-full bg-black py-6 px-4 border-2 border-solid border-black  rounded mb-4"
+            className="w-full bg-black/60 placeholder-white py-6 px-4 border-2 border-solid border-black  rounded mb-4"
             placeholder="Last Name"
             value={lastname}
             onChange={(e) => {
@@ -71,7 +76,7 @@ export default function RegisterScreen() {
             }}
           ></input>
           <input
-            className="w-full bg-black py-6 px-4 border-2 border-solid border-black  rounded mb-6"
+            className="w-full bg-black/60 placeholder-white py-6 px-4 border-2 border-solid border-black  rounded mb-6"
             placeholder="Email"
             value={email}
             onChange={(e) => {
@@ -79,7 +84,7 @@ export default function RegisterScreen() {
             }}
           ></input>
           <input
-            className="w-full bg-black py-6 px-4 border-2 border-solid border-black rounded mb-6"
+            className="w-full bg-black/60 placeholder-white py-6 px-4 border-2 border-solid border-black rounded mb-6"
             type="password"
             placeholder="Password"
             value={password}
@@ -87,7 +92,9 @@ export default function RegisterScreen() {
               setPassword(e.target.value);
             }}
           ></input>
-          <button className="bg-red-900 py-6 rounded">Register</button>
+          <button className="bg-black py-6 border-white rounded">
+            Register
+          </button>
         </form>
         {error ? (
           <div>
