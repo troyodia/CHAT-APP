@@ -30,6 +30,19 @@ const UserSchema = mongoose.Schema(
       required: [true, "please provide user password"],
       minLength: 6,
     },
+    filename: {
+      type: String,
+      required: [true, "please provide user profile photo"],
+      unique: true,
+    },
+    contentType: {
+      type: String,
+      required: [true, "please provide user profile photo"],
+    },
+    imageBase64: {
+      type: String,
+      required: [true, "please provide user profile picture"],
+    },
   },
   { timestamps: true }
 );

@@ -12,7 +12,7 @@ export default function RegisterScreen() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [imgPath, setImgPath] = useState(defaultImg);
-  const fileUploadRef = useRef("");
+
   const navigate = useNavigate();
 
   const url = "http://localhost:5000/api/v1/auth/register";
@@ -34,8 +34,8 @@ export default function RegisterScreen() {
       console.log(error.response.data.msg);
     }
   };
-  const updateImgPath = (value) => {
-    setImgPath(value);
+  const updateImgPath = (catchedURL) => {
+    setImgPath(catchedURL);
   };
   return (
     <div className=" flex  items-center justify-center h-screen text-white bg-cover bg-[url('./images/background.jpg')]">
