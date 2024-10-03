@@ -3,7 +3,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import defaultImg from "../images/default.png";
 import { UserState } from "../use-contexts/userContext";
-import UploadImage from "../components/uploadImage";
+import UploadImage from "../components/UploadImage";
 
 export default function RegisterScreen() {
   const [firstname, setFirstname] = useState("");

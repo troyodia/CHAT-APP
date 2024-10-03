@@ -19,7 +19,7 @@ export default function LoginScreen() {
         { withCredentials: true }
       );
       if (res.data && res.status === 200) {
-        naviagate("/chat");
+        naviagate("/chat-page");
         setError("");
       }
     } catch (error) {

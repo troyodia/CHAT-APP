@@ -4,7 +4,7 @@ import LoginScreen from "./pages/Login";
 import RegisterScreen from "./pages/Register";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { UserProvider } from "./use-contexts/userContext";
-import Chat from "./pages/Chat";
+import ChatPage from "./pages/ChatPage";
 function App() {
   return (
     <UserProvider>
@@ -15,7 +15,7 @@ function App() {
             element={<RegisterScreen></RegisterScreen>}
           ></Route>
           <Route path="/login" element={<LoginScreen></LoginScreen>}></Route>
-          <Route path="/chat" element={<Chat></Chat>}></Route>
+          <Route path="/chat-page" element={<ChatPage></ChatPage>}></Route>
         </Routes>
       </BrowserRouter>
     </UserProvider>
