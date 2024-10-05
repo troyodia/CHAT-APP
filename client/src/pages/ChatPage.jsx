@@ -1,5 +1,5 @@
-import Chat from "../components/Chat";
-import Detail from "../components/Detail";
+import Chat from "../components/Chat/Chat";
+import Detail from "../components/Detail/Detail";
 import MessageList from "../components/MessageList/MessageList";
 
 export default function ChatPage() {

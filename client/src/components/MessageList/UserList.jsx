@@ -14,8 +14,8 @@ export default function UserList() {
         ></img>
       </div>
       <div>
-        <p>Jane Doe</p>
-        <p>Hello</p>
+        <p className="font-semibold">Jane Doe</p>
+        <p className="text-sm">Hello</p>
       </div>
     </div>
   );

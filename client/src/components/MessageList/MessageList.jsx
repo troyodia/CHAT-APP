@@ -12,7 +12,7 @@ export default function MessageList() {
   const [buttonIcon, setButtonIcon] = useState(plusIcon);
 
   return (
-    <div className=" flex flex-col items-center w-[350px] border border-y-transparent border-l-transparent border-r-white/30">
+    <div className=" flex flex-col items-center w-[370px] border border-y-transparent border-l-transparent border-r-white/30">
       <div className="w-full mt-4 mb-12 flex items-center px-4 ">
         <div className="w-16 h-16 mr-4">
           <img
@@ -26,10 +26,10 @@ export default function MessageList() {
           <div className="w-8">
             <img src={threedots} alt=""></img>
           </div>
-          <div className="w-8">
+          <div className="w-6 pt-1">
             <img src={cameraIcon} alt=""></img>
           </div>
-          <div className="w-6 pt-1">
+          <div className="w-5 pt-2">
             <img src={noteIcon} alt=""></img>
           </div>
         </div>
@@ -39,13 +39,13 @@ export default function MessageList() {
           <img className="w-6" src={searchIcon} alt=""></img>
         </button>
         <input
-          className="mr-5 rounded-r-md flex py-2 pl-4 bg-white/10 outline-none"
+          className="mr-6 rounded-r-md flex-1 py-2 pl-5 bg-white/10 outline-none"
           placeholder="Search"
         ></input>
         <button
-          className="w-8 h-8 flex justify-center items-center rounded-md py-1 bg-white/10"
+          className="w-8 h-8 flex justify-center items-center rounded-md py-1 bg-white/10 ml-auto"
           onClick={() => {
-            setAddFlag(!addFlag);
+            setAddFlag((prev) => !prev);
           }}
         >
           <img

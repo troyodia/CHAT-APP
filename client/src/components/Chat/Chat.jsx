@@ -1,0 +1,92 @@
+import defaultImg from "../../images/default.png";
+import cameraIcon from "../../images/icons/camera.png";
+import phoneIcon from "../../images/icons/phone.png";
+import infoIcon from "../../images/icons/i-icon.png";
+import picIcon from "../../images/icons/picture.png";
+import cameraFooterIcon from "../../images/icons/camerafooter.png";
+import microphoneIcon from "../../images/icons/microphone.png";
+import emojiIcon from "../../images/icons/emoji.png";
+import Picker from "emoji-picker-react";
+import { useEffect, useState } from "react";
+export default function Chat() {
+  const [display, setDisplay] = useState(false);
+  const [message, setMessage] = useState("");
+
+  return (
+    <div className="flex-1 flex flex-col relative">
+      <div className="flex h-24  border border-t-transparent border-x-transparent border-b-white/30 w-full items-center">
+        <div className="w-16 h-16 mx-4">
+          <img
+            className="w-16 h-16 rounded-full object-cover"
+            src={defaultImg}
+            alt=""
+          ></img>
+        </div>
+        <div>
+          <p className="font-semibold">Jane Doe</p>
+          <p className="text-sm">Gratefull</p>
+        </div>
+        <div className="flex ml-auto space-x-3 mr-4">
+          <div className="w-5 pt-1">
+            <img src={phoneIcon} alt=""></img>
+          </div>
+          <div className="w-6 ">
+            <img src={cameraIcon} alt=""></img>
+          </div>
+          <div className="w-6 ">
+            <img src={infoIcon} alt=""></img>
+          </div>
+        </div>
+      </div>
+      <div
+        className="flex mt-auto h-24 border border-b-transparent border-x-transparent
+       border-t-white/30 w-full items-center"
+      >
+        <div className="flex mr-auto space-x-3 ml-4">
+          <button className="w-8 pt-1">
+            <img src={picIcon} alt=""></img>
+          </button>
+          <button className="w-6 pt-1">
+            <img src={cameraFooterIcon} alt=""></img>
+          </button>
+          <button className="w-7 pt-1">
+            <img src={microphoneIcon} alt=""></img>
+          </button>
+        </div>
+        <input
+          type="text"
+          value={message}
+          className="ml-8 flex-1 py-4 pl-4 bg-white/10 rounded-md outline-none text-lg"
+          placeholder="Type a message"
+          id="input"
+          onChange={(e) => {
+            setMessage(e.target.value);
+          }}
+        ></input>
+        <button
+          className="mx-7 w-8 pt-1"
+          onClick={() => {
+            setDisplay((prev) => !prev);
+          }}
+        >
+          <img src={emojiIcon} alt=""></img>
+        </button>
+        <button className=" flex ml-auto mr-4 bg-red-800 justify-center rounded py-3 px-5 font-bold ">
+          Send
+        </button>
+      </div>
+      <div className="absolute bottom-24 right-32">
+        <Picker
+          open={display}
+          onEmojiClick={(emojiData, event) => {
+            let pos = document.getElementById("input").selectionStart;
+            setMessage(
+              (prev) => prev.slice(0, pos) + emojiData.emoji + prev.slice(pos)
+            );
+            setDisplay(!display);
+          }}
+        ></Picker>
+      </div>
+    </div>
+  );
+}
