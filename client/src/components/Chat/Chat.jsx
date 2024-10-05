@@ -14,7 +14,7 @@ export default function Chat() {
 
   return (
     <div className="flex-1 flex flex-col relative">
-      <div className="flex h-24  border border-t-transparent border-x-transparent border-b-white/30 w-full items-center">
+      <div className="flex h-28  border border-t-transparent border-x-transparent border-b-white/30 w-full items-center">
         <div className="w-16 h-16 mx-4">
           <img
             className="w-16 h-16 rounded-full object-cover"
@@ -38,8 +38,122 @@ export default function Chat() {
           </div>
         </div>
       </div>
+      <div className="flex flex-col h-full overflow-auto">
+        <div className="mr-auto flex ml-4 mt-4 justify-items">
+          <div className="w-12 h-12 mr-5">
+            <img
+              className="w-12 h-12 rounded-full object-cover"
+              src={defaultImg}
+              alt=""
+            ></img>
+          </div>
+          <div className="text-left  ">
+            <p className="p-4 border border-solid border-white/30 bg-white/10 flex max-w-[700px] rounded-xl">
+              It was popularised in the 1960s with the release of Letraset
+              sheets containing Lorem Ipsum passages, and more recently with
+              desktop publishing software like Aldus PageMaker including
+              versions of Lorem Ipsum.
+            </p>
+            <div className="mt-1">55 min ago</div>
+          </div>
+        </div>
+        <div className="ml-auto flex mr-4 mt-4 justify-items">
+          <div className="text-right">
+            <p className="p-4 border border-solid border-red-600 bg-red-800 flex max-w-[700px] rounded-xl">
+              It was popularised in the 1960s
+            </p>
+            <div className="mt-1 flex">55 min ago</div>
+          </div>
+        </div>
+        <div className="mr-auto flex ml-4 mt-4 justify-items">
+          <div className="w-12 h-12 mr-5">
+            <img
+              className="w-12 h-12 rounded-full object-cover"
+              src={defaultImg}
+              alt=""
+            ></img>
+          </div>
+          <div className="text-left  ">
+            <p className="p-4 border border-solid border-white/30 bg-white/10 flex max-w-[700px] rounded-xl">
+              It was popularised in the 1960s with the release of Letraset
+              sheets containing Lorem Ipsum passages, and more recently with
+              desktop publishing software like Aldus PageMaker including
+              versions of Lorem Ipsum.
+            </p>
+            <div className="mt-1">55 min ago</div>
+          </div>
+        </div>
+        <div className="ml-auto flex mr-4 mt-4 justify-items">
+          <div className="text-right">
+            <p className="p-4 border border-solid border-red-600 bg-red-800 flex max-w-[700px] rounded-xl">
+              It was popularised in the 1960s
+            </p>
+            <div className="mt-1 flex">55 min ago</div>
+          </div>
+        </div>
+        <div className="mr-auto flex ml-4 mt-4 justify-items">
+          <div className="w-12 h-12 mr-5">
+            <img
+              className="w-12 h-12 rounded-full object-cover"
+              src={defaultImg}
+              alt=""
+            ></img>
+          </div>
+          <div className="text-left  ">
+            <p className="p-4 border border-solid border-white/30 bg-white/10 flex max-w-[700px] rounded-xl">
+              It was popularised in the 1960s with the release of Letraset
+              sheets containing Lorem Ipsum passages, and more recently with
+              desktop publishing software like Aldus PageMaker including
+              versions of Lorem Ipsum.
+            </p>
+            <div className="mt-1">55 min ago</div>
+          </div>
+        </div>
+        <div className="ml-auto flex mr-4 mt-4 justify-items">
+          <div className="text-right">
+            <p className="p-4 border border-solid border-red-600 bg-red-800 flex max-w-[700px] rounded-xl">
+              It was popularised in the 1960s
+            </p>
+            <div className="mt-1 flex">55 min ago</div>
+          </div>
+        </div>
+        <div className="mr-auto flex ml-4 mt-4 justify-items">
+          <div className="w-12 h-12 mr-5">
+            <img
+              className="w-12 h-12 rounded-full object-cover"
+              src={defaultImg}
+              alt=""
+            ></img>
+          </div>
+          <div className="text-left  ">
+            <p className="p-4 border border-solid border-white/30 bg-white/10 flex max-w-[700px] rounded-xl">
+              It was popularised in the 1960s with the release of Letraset
+              sheets containing Lorem Ipsum passages, and more recently with
+              desktop publishing software like Aldus PageMaker including
+              versions of Lorem Ipsum.
+            </p>
+            <div className="mt-1">55 min ago</div>
+          </div>
+        </div>
+        <div className="ml-auto mt-4 mr-4  max-h-[400px] flex flex-1">
+          <img
+            className="rounded-xl w-[700px] h-[395px] object-cover"
+            src={defaultImg}
+            alt=""
+          ></img>
+        </div>
+        <div className="ml-auto flex mr-4 mt-4 justify-items">
+          <div className="text-right">
+            <p className="p-4 border border-solid border-red-600 bg-red-800 flex max-w-[700px] rounded-xl">
+              It was popularised in the 1960s
+            </p>
+            <div className="mt-1 flex">55 min ago</div>
+          </div>
+        </div>
+      </div>
+
       <div
-        className="flex mt-auto h-24 border border-b-transparent border-x-transparent
+        className="flex mt-auto h-32 border border-b-transparent border-x-transparent
        border-t-white/30 w-full items-center"
       >
         <div className="flex mr-auto space-x-3 ml-4">
@@ -56,7 +170,8 @@ export default function Chat() {
         <input
           type="text"
           value={message}
-          className="ml-8 flex-1 py-4 pl-4 bg-white/10 rounded-md outline-none text-lg"
+          className="ml-8 flex-1 py-4 pl-4 bg-white/10 rounded-md outline-none text-lg 
+          focus:border focus:border-solid  focus:border-white/30"
           placeholder="Type a message"
           id="input"
           onChange={(e) => {

@@ -35,11 +35,15 @@ export default function MessageList() {
         </div>
       </div>
       <div className="w-full flex items-center mb-8 px-5">
-        <button className="w-8 flex justify-center items-center rounded-l-md py-2 pl-1 bg-white/10">
+        <button
+          className="w-8 flex justify-center items-center rounded-l-md py-2 pl-1 bg-white/10
+        border border-transparent focus:border focus:border-solid  focus:border-white/30"
+        >
           <img className="w-6" src={searchIcon} alt=""></img>
         </button>
         <input
-          className="mr-6 rounded-r-md flex-1 py-2 pl-5 bg-white/10 outline-none"
+          className="mr-6 rounded-r-md flex-1 py-2 pl-5 bg-white/10 outline-none 
+          border border-transparent focus:border focus:border-solid  focus:border-white/30"
           placeholder="Search"
         ></input>
         <button
