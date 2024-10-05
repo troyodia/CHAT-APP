@@ -1,9 +1,128 @@
 import defaultImg from "../../images/default.png";
+import arrowUp from "../../images/icons/uparrow.png";
+import arrowDown from "../../images/icons/downarrow.png";
+import plusIcon from "../../images/icons/plus.png";
+import minusIcon from "../../images/icons/minus.png";
 
 export default function Detail() {
   return (
-    <div className="flex border border-y-0 border-r-0 border-l-white/30 ml-auto w-[370px]">
-      detail
+    <div className="flex flex-col items-center border border-y-0 border-r-0 border-l-white/30 ml-auto w-[370px]">
+      <div className="w-24 h-24 my-4">
+        <img
+          className="w-24 h-24 rounded-full object-cover"
+          src={defaultImg}
+          alt=""
+        ></img>
+      </div>
+      <div className="text-center">
+        <p className="mb-5 text-xl font-bold">Jane Doe</p>
+        <p className="font-semibold mb-6">Gratefull for every</p>
+      </div>
+      <div className="flex w-full border border-x-0 border-b-0 border-t-white/30 px-6">
+        <ul className="w-full list-none mt-5">
+          <li className="flex w-full mb-8 font-semibold">
+            <div>Chat Settings</div>
+            <div className="w-6 h-6 rounded-full ml-auto bg-white/10 flex items-center justify-center">
+              <img className="w-3" src={arrowUp} alt=""></img>
+            </div>
+          </li>
+          <li className="flex w-full mb-8 font-semibold">
+            <div>Privacy & Help</div>
+            <div className="w-6 h-6 rounded-full ml-auto bg-white/10 flex items-center justify-center">
+              <img className="w-3" src={arrowUp} alt=""></img>
+            </div>
+          </li>
+          <li className="flex w-full font-semibold mb-4">
+            <div>Shared Photos</div>
+            <div className="w-6 h-6 rounded-full ml-auto bg-white/10 flex items-center justify-center">
+              <img className="w-3" src={arrowUp} alt=""></img>
+            </div>
+          </li>
+          <li className="flex w-full mb-8 h-52 overflow-auto">
+            <ul className="w-full list-none">
+              <li className="flex w-full items-center font-semibold mb-4">
+                <div className="w-10 h-10 mr-5">
+                  <img
+                    className="w-10 h-10 rounded-md object-cover"
+                    src={defaultImg}
+                    alt=""
+                  ></img>
+                </div>
+                <div className="text-xs ">Image name from computer input</div>
+                <div className="w-6 h-6 rounded-full ml-auto bg-white/10 flex items-center justify-center">
+                  <img className="w-3" src={plusIcon} alt=""></img>
+                </div>
+              </li>
+              <li className="flex w-full items-center font-semibold mb-4">
+                <div className="w-10 h-10 mr-5">
+                  <img
+                    className="w-10 h-10 rounded-md object-cover"
+                    src={defaultImg}
+                    alt=""
+                  ></img>
+                </div>
+                <div className="text-xs ">Image name from computer input</div>
+                <div className="w-6 h-6 rounded-full ml-auto bg-white/10 flex items-center justify-center">
+                  <img className="w-3" src={plusIcon} alt=""></img>
+                </div>
+              </li>
+              <li className="flex w-full items-center font-semibold mb-4">
+                <div className="w-10 h-10 mr-5">
+                  <img
+                    className="w-10 h-10 rounded-md object-cover"
+                    src={defaultImg}
+                    alt=""
+                  ></img>
+                </div>
+                <div className="text-xs ">Image name from computer input</div>
+                <div className="w-6 h-6 rounded-full ml-auto bg-white/10 flex items-center justify-center">
+                  <img className="w-3" src={plusIcon} alt=""></img>
+                </div>
+              </li>
+              <li className="flex w-full items-center font-semibold mb-4">
+                <div className="w-10 h-10 mr-5">
+                  <img
+                    className="w-10 h-10 rounded-md object-cover"
+                    src={defaultImg}
+                    alt=""
+                  ></img>
+                </div>
+                <div className="text-xs ">Image name from computer input</div>
+                <div className="w-6 h-6 rounded-full ml-auto bg-white/10 flex items-center justify-center">
+                  <img className="w-3" src={plusIcon} alt=""></img>
+                </div>
+              </li>
+              <li className="flex w-full items-center font-semibold mb-4">
+                <div className="w-10 h-10 mr-5">
+                  <img
+                    className="w-10 h-10 rounded-md object-cover"
+                    src={defaultImg}
+                    alt=""
+                  ></img>
+                </div>
+                <div className="text-xs ">Image name from computer input</div>
+                <div className="w-6 h-6 rounded-full ml-auto bg-white/10 flex items-center justify-center">
+                  <img className="w-3" src={plusIcon} alt=""></img>
+                </div>
+              </li>
+            </ul>
+          </li>
+          <li className="flex w-full mb-8 font-semibold">
+            <div>Shared Files</div>
+            <div className="w-6 h-6 rounded-full ml-auto bg-white/10 flex items-center justify-center">
+              <img className="w-3" src={arrowUp} alt=""></img>
+            </div>
+          </li>
+        </ul>
+      </div>
+      <div className="flex flex-col w-full mt-auto px-6 font-bold text-lg mb-10">
+        <button className="text-center py-4 bg-red-800 rounded-md mb-6">
+          Block User
+        </button>
+        <button className="text-center py-2 bg-sky-800 rounded-md">
+          Logout
+        </button>
+      </div>
     </div>
   );
 }
