@@ -2,7 +2,9 @@ import axios from "axios";
 import { useEffect } from "react";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
 import { UpdateUserState, UserState } from "../use-contexts/userContext";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function LoginScreen() {
   const [email, setEmail] = useState("");
@@ -23,8 +25,19 @@ export default function LoginScreen() {
         setError("");
       }
     } catch (error) {
+      if (error.response.data.msg) {
+        toast(error.response.data.msg, {
+          position: "top-center",
+          autoClose: false,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+        });
+      }
       setError(error.response.data.msg);
-
       console.log(error.response.data.msg);
     }
   };
@@ -45,19 +58,9 @@ export default function LoginScreen() {
               Welcome back,{" "}
             </p>
           </div>
-          {error ? (
-            <div>
-              <p className="text-amber-50 font-bold text-left text-xl">
-                {" "}
-                {error}{" "}
-              </p>
-            </div>
-          ) : (
-            ""
-          )}
           <input
             type="text"
-            className="rounded px-4 py-4 w-full bg-black/60 placeholder-white"
+            className="rounded px-4 py-4 w-full bg-black/60 placeholder-white outline-none"
             placeholder="email"
             value={email}
             onChange={(e) => {
@@ -66,7 +69,7 @@ export default function LoginScreen() {
           ></input>
           <input
             type="password"
-            className="rounded px-4 py-4 w-full bg-black/60 placeholder-white"
+            className="rounded px-4 py-4 w-full bg-black/60 placeholder-white outline-none"
             placeholder="password"
             value={password}
             onChange={(e) => {

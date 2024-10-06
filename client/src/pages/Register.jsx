@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import defaultImg from "../images/default.png";
 import { UserState } from "../use-contexts/userContext";
 import UploadImage from "../components/UploadImage";
-
+import { toast } from "react-toastify";
 export default function RegisterScreen() {
   const [firstname, setFirstname] = useState("");
   const [lastname, setLastname] = useState("");
@@ -35,6 +35,19 @@ export default function RegisterScreen() {
       setError("");
       // console.log(user);
     } catch (error) {
+      if (error.response.data.msg) {
+        //customize error messages here or server
+        toast(error.response.data.msg, {
+          position: "top-center",
+          autoClose: false,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+        });
+      }
       setError(error.response.data.msg);
       console.log(error.response.data.msg);
     }
@@ -57,10 +70,22 @@ export default function RegisterScreen() {
           onSubmit={(e) => {
             e.preventDefault();
             regsiterUser();
+            // if (error) {
+            //   toast(error, {
+            //     position: "top-center",
+            //     autoClose: false,
+            //     hideProgressBar: false,
+            //     closeOnClick: true,
+            //     pauseOnHover: true,
+            //     draggable: true,
+            //     progress: undefined,
+            //     theme: "dark",
+            //   });
+            // }
           }}
         >
           <input
-            className="w-full bg-black/60 placeholder-white py-6 px-4 border-2 border-solid border-black rounded mb-6"
+            className="outline-none w-full bg-black/60 placeholder-white py-6 px-4 border-2 border-solid border-black rounded mb-6"
             placeholder="First Name"
             value={firstname}
             onChange={(e) => {
@@ -68,7 +93,7 @@ export default function RegisterScreen() {
             }}
           ></input>
           <input
-            className="w-full bg-black/60 placeholder-white py-6 px-4 border-2 border-solid border-black  rounded mb-4"
+            className="outline-none w-full bg-black/60 placeholder-white py-6 px-4 border-2 border-solid border-black  rounded mb-4"
             placeholder="Last Name"
             value={lastname}
             onChange={(e) => {
@@ -76,7 +101,7 @@ export default function RegisterScreen() {
             }}
           ></input>
           <input
-            className="w-full bg-black/60 placeholder-white py-6 px-4 border-2 border-solid border-black  rounded mb-6"
+            className="outline-none w-full bg-black/60 placeholder-white py-6 px-4 border-2 border-solid border-black  rounded mb-6"
             placeholder="Email"
             value={email}
             onChange={(e) => {
@@ -84,7 +109,7 @@ export default function RegisterScreen() {
             }}
           ></input>
           <input
-            className="w-full bg-black/60 placeholder-white py-6 px-4 border-2 border-solid border-black rounded mb-6"
+            className="outline-none w-full bg-black/60 placeholder-white py-6 px-4 border-2 border-solid border-black rounded mb-6"
             type="password"
             placeholder="Password"
             value={password}
@@ -96,7 +121,7 @@ export default function RegisterScreen() {
             Register
           </button>
         </form>
-        {error ? (
+        {/* {error ? (
           <div>
             <p className="text-white text-center mt-4 mx-4 text-left md:text-xl">
               {" "}
@@ -105,7 +130,7 @@ export default function RegisterScreen() {
           </div>
         ) : (
           ""
-        )}
+        )} */}
       </div>
     </div>
   );

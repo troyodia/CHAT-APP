@@ -7,10 +7,16 @@ import cameraFooterIcon from "../../images/icons/camerafooter.png";
 import microphoneIcon from "../../images/icons/microphone.png";
 import emojiIcon from "../../images/icons/emoji.png";
 import Picker from "emoji-picker-react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useBlocker } from "react-router-dom";
 export default function Chat() {
   const [display, setDisplay] = useState(false);
   const [message, setMessage] = useState("");
+  const endRef = useRef("");
+
+  useEffect(() => {
+    endRef.current.scrollIntoView({ behaviour: "smooth" });
+  }, []);
 
   return (
     <div className="flex-1 flex flex-col relative">
@@ -38,7 +44,7 @@ export default function Chat() {
           </div>
         </div>
       </div>
-      <div className="flex flex-col h-full overflow-auto">
+      <div className="flex flex-col h-full overflow-auto " id="chat-box">
         <div className="mr-auto flex ml-4 mt-4 justify-items">
           <div className="w-12 h-12 mr-5">
             <img
@@ -150,11 +156,12 @@ export default function Chat() {
             <div className="mt-1 flex">55 min ago</div>
           </div>
         </div>
+        <div className="mb-10" ref={endRef}></div>
       </div>
 
       <div
         className="flex mt-auto h-32 border border-b-transparent border-x-transparent
-       border-t-white/30 w-full items-center"
+       border-t-white/30 w-full items-center "
       >
         <div className="flex mr-auto space-x-3 ml-4">
           <button className="w-8 pt-1">
@@ -186,7 +193,7 @@ export default function Chat() {
         >
           <img src={emojiIcon} alt=""></img>
         </button>
-        <button className=" flex ml-auto mr-4 bg-red-800 justify-center rounded py-3 px-5 font-bold ">
+        <button className=" flex ml-auto mr-4 bg-red-800 justify-center rounded py-3 px-5 font-bold hover:opacity-80">
           Send
         </button>
       </div>
