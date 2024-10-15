@@ -6,10 +6,10 @@ const errorHandler = (err, req, res, next) => {
     msg: err.message || "something went wrong",
     statusCode: err.statusCode || 500,
   };
-  if (err.code && err.code === 11000) {
-    customErr.msg = "Duplication error for " + Object.keys(err.keyValue);
-    customErr.statusCode = 400;
-  }
+  // if (err.code && err.code === 11000) {
+  //   customErr.msg = "Duplication error for " + Object.keys(err.keyValue);
+  //   customErr.statusCode = 400;
+  // }
   if (err.name === "ValidationError") {
     customErr.msg =
       "Validation Error, " +

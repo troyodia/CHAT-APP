@@ -1,6 +1,7 @@
 import { useRef, useState } from "react";
 import axios from "axios";
-export default function UploadImage({ imgPath, updateImgPath }) {
+import { toast } from "react-toastify";
+export default function UploadImage({ imgPath, updateImgPath, updateImgData }) {
   const fileUploadRef = useRef("");
   const [image, setImage] = useState("");
   const url = "http://localhost:5000/api/v1/auth/uploadsingle";
@@ -12,22 +13,35 @@ export default function UploadImage({ imgPath, updateImgPath }) {
   const uploadImageDisplay = async () => {
     const file = fileUploadRef.current.files[0];
     const formData = new FormData();
-    console.log(formData);
-    formData.append("image", file);
-    try {
-      const res = await axios.post(url, formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-        withCredentials: true,
+    if (file) {
+      formData.append("image", file);
+      updateImgData(file);
+      toast.success("Registered Successfully", {
+        position: "bottom-right",
+        autoClose: 5000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
       });
-      if (res.status === 200) {
-        console.log(res);
-
-        const cachedURL = URL.createObjectURL(file);
-        updateImgPath(cachedURL);
-      }
-    } catch (error) {
-      console.log(error);
     }
+
+    // try {
+    //   const res = await axios.post(url, formData, {
+    //     headers: { "Content-Type": "multipart/form-data" },
+    //     withCredentials: true,
+    //   });
+    //   if (res.status === 200) {
+    //     console.log(res);
+
+    const cachedURL = URL.createObjectURL(file);
+    updateImgPath(cachedURL);
+    //   }
+    // } catch (error) {
+    //   console.log(error);
+    // }
   };
 
   return (

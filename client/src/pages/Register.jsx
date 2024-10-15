@@ -12,22 +12,22 @@ export default function RegisterScreen() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [imgPath, setImgPath] = useState(defaultImg);
-
+  const [imageData, setImageData] = useState("");
   const navigate = useNavigate();
+  const formData = new FormData();
+  formData.append("firstname", firstname);
+  formData.append("lastname", lastname);
+  formData.append("email", email);
+  formData.append("password", password);
+  formData.append("image", imageData);
 
   const url = "http://localhost:5000/api/v1/auth/register";
   const regsiterUser = async () => {
     try {
-      const res = await axios.post(
-        url,
-        {
-          firstname,
-          lastname,
-          email,
-          password,
-        },
-        { withCredentials: true }
-      );
+      const res = await axios.post(url, formData, {
+        withCredentials: true,
+        headers: { "Content-Type": "multipart/form-data" },
+      });
       console.log(res);
       if (res.data && res.status === 200) {
         navigate("/login");
@@ -49,11 +49,14 @@ export default function RegisterScreen() {
         });
       }
       setError(error.response.data.msg);
-      console.log(error.response.data.msg);
+      console.log(error.response);
     }
   };
   const updateImgPath = (catchedURL) => {
     setImgPath(catchedURL);
+  };
+  const updateImgData = (imgData) => {
+    setImageData(imgData);
   };
   return (
     <div className=" flex  items-center justify-center h-screen text-white bg-cover bg-[url('./images/background.jpg')]">
@@ -64,11 +67,13 @@ export default function RegisterScreen() {
         <UploadImage
           imgPath={imgPath}
           updateImgPath={updateImgPath}
+          updateImgData={updateImgData}
         ></UploadImage>
         <form
           className="mx-4 max-w-[600px] flex flex-col md:w-full text-2xl font-bold"
           onSubmit={(e) => {
             e.preventDefault();
+            console.log(formData);
             regsiterUser();
             // if (error) {
             //   toast(error, {

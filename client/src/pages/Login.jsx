@@ -5,7 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import { UpdateUserState, UserState } from "../use-contexts/userContext";
 import "react-toastify/dist/ReactToastify.css";
-
+import regsiterImage from "../images/signupimage.png";
 export default function LoginScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -42,8 +42,8 @@ export default function LoginScreen() {
     }
   };
   return (
-    <div className="h-screen flex justify-center items-center bg-cover bg-[url('./images/background.jpg')]">
-      <div className="text-white mx-2 flex w-[800px] h-[500px] justify-center items-center bg-black/30 backdrop-blur-md border-2 border-solid border-transparent rounded">
+    <div className="h-screen flex justify-center items-center bg-black">
+      <div className="p-12 text-black flex justify-center items-center bg-black rounded-xl border-2 border-solid border-white shadow-[0_0px_60px_rgba(0,238,255)] rounded">
         <form
           className="m-3 mb-12 flex w-full max-w-[500px] text-white flex-col 
       space-y-3 text-2xl font-medium"
@@ -79,16 +79,19 @@ export default function LoginScreen() {
           <button className="rounded bg-black px-4 py-4 text-white">
             Log In
           </button>
-          <p className="mx-auto pt-2 text-white">
+          <p className="mx-auto pt-2 text-white ">
             Don't have an account?{" "}
             <Link
               to="/register"
-              className="text-white font-bold underline underline-offset-6"
+              className="text-white  font-bold underline underline-offset-6"
             >
               Register
             </Link>
           </p>
         </form>
+        <div className="flex w-[700px] ">
+          <img className="w-full" src={regsiterImage} alt=""></img>
+        </div>
       </div>
     </div>
   );
