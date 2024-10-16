@@ -5,7 +5,8 @@ import defaultImg from "../images/default.png";
 import { UserState } from "../use-contexts/userContext";
 import UploadImage from "../components/UploadImage";
 import { toast } from "react-toastify";
-export default function RegisterScreen() {
+
+export default function ProfileScreen() {
   const [firstname, setFirstname] = useState("");
   const [lastname, setLastname] = useState("");
   const [email, setEmail] = useState("");
@@ -59,7 +60,7 @@ export default function RegisterScreen() {
     setImageData(imgData);
   };
   return (
-    <div className=" flex  items-center justify-center h-screen text-white bg-cover bg-[url('./images/background.jpg')]">
+    <div className=" flex  items-center justify-center h-screen text-white bg-cover">
       <div className="mx-2 flex flex-col w-[900px] h-[800px] justify-center items-center bg-black/30 backdrop-blur-md border-2 border-solid border-transparent rounded">
         <p className="mb-6 text-center text-white text-3xl font-bold">
           Create an Account

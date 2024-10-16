@@ -9,7 +9,9 @@ import regsiterImage from "../images/signupimage.png";
 export default function LoginScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
+  const [toggle, setToggle] = useState(false);
   const naviagate = useNavigate();
   const url = "http://localhost:5000/api/v1/auth/login";
 
@@ -43,54 +45,149 @@ export default function LoginScreen() {
   };
   return (
     <div className="h-screen flex justify-center items-center bg-black">
-      <div className="p-12 text-black flex justify-center items-center bg-black rounded-xl border-2 border-solid border-white shadow-[0_0px_60px_rgba(0,238,255)] rounded">
-        <form
-          className="m-3 mb-12 flex w-full max-w-[500px] text-white flex-col 
-      space-y-3 text-2xl font-medium"
-          onSubmit={(e) => {
-            e.preventDefault();
-            loginUser();
-          }}
-        >
-          <div>
-            <p className="text-center text-3xl text-white font-bold">
-              {" "}
-              Welcome back,{" "}
-            </p>
+      <div className="p-12 text-black flex justify-center items-center bg-black rounded-xl border-2 border-solid border-white shadow-[0_0px_60px_rgba(0,238,255)] rounded h-[650px]">
+        <div className="flex-1 flex-col w-[500px]">
+          <div className="">
+            <div>
+              <p className="text-center text-5xl text-white font-bold mb-4">
+                {" "}
+                Welcome!{" "}
+              </p>
+              <p className="text-center text-base text-white font-bold mb-6">
+                {" "}
+                please fill the form to get started
+              </p>
+            </div>
+            <div className="flex justify-evenly text-base text-white mb-2 font-semibold">
+              <button
+                className="w-full bg-transparent"
+                onClick={() => {
+                  setToggle(false);
+                }}
+              >
+                Login
+              </button>
+              <button
+                className="w-full bg-transparent"
+                onClick={() => {
+                  setToggle(true);
+                }}
+              >
+                Signup
+              </button>
+            </div>
+            <div className="flex mb-8">
+              <div
+                className={`h-0.5 w-1/2 ${
+                  !toggle ? "bg-[#00eeff]" : "bg-white"
+                }`}
+              ></div>
+              <div
+                className={`h-0.5 w-1/2 ${
+                  toggle ? "bg-[#00eeff]" : "bg-white"
+                }`}
+              ></div>
+            </div>
           </div>
-          <input
-            type="text"
-            className="rounded px-4 py-4 w-full bg-black/60 placeholder-white outline-none"
-            placeholder="email"
-            value={email}
-            onChange={(e) => {
-              setEmail(e.target.value);
-            }}
-          ></input>
-          <input
-            type="password"
-            className="rounded px-4 py-4 w-full bg-black/60 placeholder-white outline-none"
-            placeholder="password"
-            value={password}
-            onChange={(e) => {
-              setPassword(e.target.value);
-            }}
-          ></input>
-          <button className="rounded bg-black px-4 py-4 text-white">
-            Log In
-          </button>
-          <p className="mx-auto pt-2 text-white ">
-            Don't have an account?{" "}
-            <Link
-              to="/register"
-              className="text-white  font-bold underline underline-offset-6"
+          {!toggle ? (
+            <form
+              className=" mb-12 flex w-full text-white flex-col 
+      space-y-3 text-2xl font-medium"
+              onSubmit={(e) => {
+                e.preventDefault();
+                loginUser();
+              }}
             >
-              Register
-            </Link>
-          </p>
-        </form>
-        <div className="flex w-[700px] ">
-          <img className="w-full" src={regsiterImage} alt=""></img>
+              <input
+                type="text"
+                className="rounded px-4 w-full border border-0 bg-black placeholder-white outline-none text-lg"
+                placeholder="Email"
+                value={email}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                }}
+              ></input>
+              <div className="h-0.5 bg-white"></div>
+              <div className="h-4"></div>
+              <input
+                type="password"
+                className="rounded px-4 w-full border border-0 bg-black placeholder-white outline-none text-lg"
+                placeholder="Password"
+                value={password}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                }}
+              ></input>
+              <div className="h-0.5 bg-white"></div>
+              <div className="h-1.5"></div>
+
+              <button className="rounded bg-[#00eeff] px-4 py-4 text-black font-semibold mt-2">
+                Log In
+              </button>
+            </form>
+          ) : (
+            <form
+              className=" mb-12 flex w-full text-white flex-col 
+      space-y-3 text-2xl font-medium"
+              onSubmit={(e) => {
+                e.preventDefault();
+                // loginUser();
+                toast.success("Registered Successfully!", {
+                  position: "bottom-right",
+                  autoClose: 5000,
+                  hideProgressBar: false,
+                  closeOnClick: true,
+                  pauseOnHover: true,
+                  draggable: true,
+                  progress: undefined,
+                  theme: "dark",
+                });
+                naviagate("/profile");
+              }}
+            >
+              <input
+                type="text"
+                className="rounded px-4 w-full border border-0 bg-black placeholder-white outline-none text-lg"
+                placeholder="Email"
+                value={email}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                }}
+              ></input>
+              <div className="h-0.5 bg-white"></div>
+              <div className="h-4"></div>
+              <input
+                type="password"
+                className="rounded px-4 w-full border border-0 bg-black placeholder-white outline-none text-lg"
+                placeholder="Password"
+                value={password}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                }}
+              ></input>
+              <div className="h-0.5 bg-white"></div>
+              <div className="h-4"></div>
+              <input
+                type="password"
+                className="rounded px-4 w-full border border-0 bg-black placeholder-white outline-none text-lg"
+                placeholder="Confirm Password"
+                value={password}
+                onChange={(e) => {
+                  setConfirmPassword(e.target.value);
+                }}
+              ></input>
+              <div className="h-0.5 bg-white"></div>
+              <div className="h-1.5"></div>
+
+              <button className="rounded bg-[#00eeff] px-4 py-4 text-black font-semibold mt-2">
+                Log In
+              </button>
+            </form>
+          )}
+        </div>
+
+        <div className="flex ml-20">
+          <img className="object-cover" src={regsiterImage} alt=""></img>
         </div>
       </div>
     </div>
