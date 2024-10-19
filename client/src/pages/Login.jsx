@@ -44,9 +44,12 @@ export default function LoginScreen() {
     }
   };
   return (
-    <div className="h-screen flex justify-center items-center bg-black">
-      <div className="p-12 text-black flex justify-center items-center bg-black rounded-xl border-2 border-solid border-white shadow-[0_0px_60px_rgba(0,238,255)] rounded h-[650px]">
-        <div className="flex-1 flex-col w-[500px]">
+    <div className="h-screen flex justify-center items-center bg-black mx-10">
+      <div
+        className="p-12 text-black flex justify-center items-center bg-black rounded-xl border-2 border-solid border-white transition 
+      ease-in-out delay-200 hover:shadow-[0_0px_60px_rgba(0,238,255)] rounded h-[650px] w-[550px] md:w-[920px]"
+      >
+        <div className="flex flex-col w-full md:w-[500px]">
           <div className="">
             <div>
               <p className="text-center text-5xl text-white font-bold mb-4">
@@ -186,8 +189,8 @@ export default function LoginScreen() {
           )}
         </div>
 
-        <div className="flex ml-20">
-          <img className="object-cover" src={regsiterImage} alt=""></img>
+        <div className="hidden md:flex shrink-0 md:ml-20">
+          <img className=" " src={regsiterImage} alt=""></img>
         </div>
       </div>
     </div>
