@@ -139,19 +139,28 @@ export default function ProfileScreen() {
     //     )} */}
     //   </div>
     // </div>
-    <div className=" flex h-screen justify-center items-center text-white">
-      <div className="flex flex-col w-[520px]">
-        <div className="w-10">
+    <div className=" flex h-screen justify-center items-center text-white mx-10">
+      <div className="flex flex-col w-[300px] md:w-[520px]">
+        <button
+          className="w-10"
+          onClick={() => {
+            navigate("/login");
+          }}
+        >
           <img className="object-cover" src={leftArrow} alt=""></img>
-        </div>
-        <div className="flex mt-10 mb-10">
-          <div className="flex justify-center items-center text-5xl text-sky-400 bg-[#00eeff]/30 w-48 h-48 rounded-full border border-4 border-solid border-sky-400 text-white">
-            T
+        </button>
+        <div className="flex flex-col items-center md:flex-row mt-10 mb-14">
+          <div
+            className="group/item relative flex justify-center items-center font-semibold
+           text-5xl text-sky-400 hover:text-sky-700 bg-[#00eeff]/55 hover:bg-[#00eeff]/30 w-48 h-48 rounded-full
+            border border-4 border-solid border-sky-400 hover:border-sky-800 text-white mb-10 md:mb-0"
+          >
+            T<UploadImage></UploadImage>
           </div>
-          <div className="ml-auto">
+          <div className="md:ml-auto">
             <form
               id="profile"
-              className=" mb-12 flex w-full text-white flex-col 
+              className="flex w-full text-white flex-col 
       space-y-3 text-2xl font-medium"
               onSubmit={(e) => {
                 e.preventDefault();
@@ -208,7 +217,7 @@ export default function ProfileScreen() {
         <button
           type="submit"
           form="profile"
-          className="rounded bg-[#00eeff] px-4 py-4 text-black font-semibold mt-2"
+          className="rounded bg-[#00eeff] px-4 py-4 text-black font-semibold mt-2 hover:bg-[#00eeff]/80"
         >
           Save Changes
         </button>

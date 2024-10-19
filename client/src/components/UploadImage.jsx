@@ -1,4 +1,5 @@
 import { useRef, useState } from "react";
+import plusIcon from "../images/icons/uploadwhite.png";
 import axios from "axios";
 import { toast } from "react-toastify";
 export default function UploadImage({ imgPath, updateImgPath, updateImgData }) {
@@ -15,7 +16,7 @@ export default function UploadImage({ imgPath, updateImgPath, updateImgData }) {
     const formData = new FormData();
     if (file) {
       formData.append("image", file);
-      updateImgData(file);
+      // updateImgData(file);
       toast.success("Registered Successfully", {
         position: "bottom-right",
         autoClose: 5000,
@@ -37,7 +38,7 @@ export default function UploadImage({ imgPath, updateImgPath, updateImgData }) {
     //     console.log(res);
 
     const cachedURL = URL.createObjectURL(file);
-    updateImgPath(cachedURL);
+    // updateImgPath(cachedURL);
     //   }
     // } catch (error) {
     //   console.log(error);
@@ -45,36 +46,29 @@ export default function UploadImage({ imgPath, updateImgPath, updateImgData }) {
   };
 
   return (
-    <div className="mb-4 flex items-center">
-      <div className="w-20 h-20 mr-8">
-        <img
-          className="w-20 h-20 object-cover rounded-lg"
-          src={imgPath}
-          alt=""
-        ></img>
-      </div>
-      <form
-        id="form"
-        // action="/uploadsingle"
-        // method="POST"
-        // encType="multipart/form-data"
+    // <div className="mb-4 flex items-center">
+    <form
+      id="form"
+      // action="/uploadsingle"
+      // method="POST"
+      // encType="multipart/form-data"
+    >
+      <button
+        type="submit"
+        className="invisible group-hover/item:visible absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+        onClick={handleFileUpload}
       >
-        <button
-          type="submit"
-          className="bg-black flex h-10 pt-1 px-2 rounded-md text-lg font-semibold"
-          onClick={handleFileUpload}
-        >
-          Upload an Image
-        </button>
-        <input
-          type="file"
-          id="file"
-          name="images"
-          ref={fileUploadRef}
-          onChange={uploadImageDisplay}
-          hidden
-        ></input>
-      </form>
-    </div>
+        <img className="w-10" src={plusIcon} alt=""></img>
+      </button>
+      <input
+        type="file"
+        id="file"
+        name="images"
+        ref={fileUploadRef}
+        onChange={uploadImageDisplay}
+        hidden
+      ></input>
+    </form>
+    // </div>
   );
 }
