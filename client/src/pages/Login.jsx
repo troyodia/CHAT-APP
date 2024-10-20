@@ -21,7 +21,6 @@ export default function LoginScreen() {
   const naviagate = useNavigate();
   const urlRegsiter = "http://localhost:5000/api/v1/auth/register";
   const urlLogin = "http://localhost:5000/api/v1/auth/login";
-
   const signUpOrLoginUser = async (url) => {
     try {
       const res = await axios.post(
@@ -30,16 +29,20 @@ export default function LoginScreen() {
         { withCredentials: true }
       );
       if (res.data && res.status === 200) {
-        toast.success("Registered Successfully!", {
-          position: "bottom-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "dark",
-        });
+        toast.success(
+          (url.includes("login") ? "Logged In" : "Registered") +
+            " Successfully!",
+          {
+            position: "bottom-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "dark",
+          }
+        );
         naviagate("/profile");
       }
     } catch (error) {
@@ -116,9 +119,7 @@ export default function LoginScreen() {
 
   const validateEntryLogin = () => {
     if (email && password) {
-      if (confirmPassword === password) {
-        signUpOrLoginUser(urlLogin);
-      }
+      signUpOrLoginUser(urlLogin);
     } else {
       if (!email) {
         toast.error("Please provide email", {

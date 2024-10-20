@@ -30,12 +30,12 @@ const login = async (req, res) => {
   const user = await User.findOne({ email });
 
   if (!user) {
-    throw new UnauthenticatedError("user email does not exist");
+    throw new UnauthenticatedError("email does not exist");
   }
   const isMatch = await user.comparePassword(password);
 
   if (!isMatch) {
-    throw new UnauthenticatedError("user password does not exist");
+    throw new UnauthenticatedError("password does not exist");
   }
 
   const accessToken = user.generateToken(
