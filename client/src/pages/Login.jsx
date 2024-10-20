@@ -6,16 +6,23 @@ import { ToastContainer, toast } from "react-toastify";
 import { UpdateUserState, UserState } from "../use-contexts/userContext";
 import "react-toastify/dist/ReactToastify.css";
 import regsiterImage from "../images/signupimage.png";
+import eyeOPen from "../images/icons/eyeopen.png";
+import eyeClose from "../images/icons/eyeclosed.png";
+
 export default function LoginScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [error, setError] = useState("");
+  const [error, setError] = useState(false);
   const [toggle, setToggle] = useState(false);
-  const naviagate = useNavigate();
-  const url = "http://localhost:5000/api/v1/auth/login";
+  const [see, setSee] = useState(false);
+  const [seeConfirm, setSeeConfirm] = useState(false);
 
-  const loginUser = async () => {
+  const naviagate = useNavigate();
+  const urlRegsiter = "http://localhost:5000/api/v1/auth/register";
+  const urlLogin = "http://localhost:5000/api/v1/auth/login";
+
+  const signUpOrLoginUser = async (url) => {
     try {
       const res = await axios.post(
         url,
@@ -23,13 +30,22 @@ export default function LoginScreen() {
         { withCredentials: true }
       );
       if (res.data && res.status === 200) {
-        naviagate("/chat-page");
-        setError("");
+        toast.success("Registered Successfully!", {
+          position: "bottom-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+        });
+        naviagate("/profile");
       }
     } catch (error) {
       if (error.response.data.msg) {
-        toast(error.response.data.msg, {
-          position: "top-center",
+        toast.error(error.response.data.msg, {
+          position: "top-right",
           autoClose: false,
           hideProgressBar: false,
           closeOnClick: true,
@@ -39,8 +55,95 @@ export default function LoginScreen() {
           theme: "dark",
         });
       }
-      setError(error.response.data.msg);
       console.log(error.response.data.msg);
+    }
+  };
+  const validateEntrySignUp = () => {
+    if (email && password && confirmPassword) {
+      if (confirmPassword === password) {
+        signUpOrLoginUser(urlRegsiter);
+      } else {
+        toast.error("Passwords do not match", {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: true,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+        });
+      }
+    } else {
+      if (!email) {
+        toast.error("Please provide email", {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: true,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+        });
+      }
+      if (!password) {
+        toast.error("Please provide password", {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: true,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+        });
+      }
+      if (!confirmPassword) {
+        toast.error("Please confirm password", {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: true,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+        });
+      }
+    }
+  };
+
+  const validateEntryLogin = () => {
+    if (email && password) {
+      if (confirmPassword === password) {
+        signUpOrLoginUser(urlLogin);
+      }
+    } else {
+      if (!email) {
+        toast.error("Please provide email", {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: true,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+        });
+      }
+      if (!password) {
+        toast.error("Please provide password", {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: true,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+        });
+      }
     }
   };
   return (
@@ -66,6 +169,11 @@ export default function LoginScreen() {
                 className="w-full bg-transparent"
                 onClick={() => {
                   setToggle(false);
+                  if (toggle) {
+                    setEmail("");
+                    setPassword("");
+                    setSee(false);
+                  }
                 }}
               >
                 Login
@@ -74,6 +182,11 @@ export default function LoginScreen() {
                 className="w-full bg-transparent"
                 onClick={() => {
                   setToggle(true);
+                  if (!toggle) {
+                    setEmail("");
+                    setPassword("");
+                    setSee(false);
+                  }
                 }}
               >
                 Signup
@@ -98,7 +211,7 @@ export default function LoginScreen() {
       space-y-3 text-2xl font-medium"
               onSubmit={(e) => {
                 e.preventDefault();
-                loginUser();
+                validateEntryLogin();
               }}
             >
               <input
@@ -112,15 +225,30 @@ export default function LoginScreen() {
               ></input>
               <div className="h-0.5 bg-white"></div>
               <div className="h-4"></div>
-              <input
-                type="password"
-                className="rounded px-4 w-full border border-0 bg-black placeholder-white outline-none text-lg"
-                placeholder="Password"
-                value={password}
-                onChange={(e) => {
-                  setPassword(e.target.value);
-                }}
-              ></input>
+              <div className="flex">
+                <input
+                  type={see ? "text" : "password"}
+                  className="rounded px-4 w-full border-0  bg-black placeholder-white outline-none text-lg"
+                  placeholder="Password"
+                  value={password}
+                  onChange={(e) => {
+                    setPassword(e.target.value);
+                  }}
+                ></input>
+                <button
+                  type="button"
+                  className="w-8 h-8"
+                  onClick={() => {
+                    setSee((prev) => !prev);
+                  }}
+                >
+                  <img
+                    src={see ? eyeOPen : eyeClose}
+                    className="object-cover"
+                    alt=""
+                  ></img>
+                </button>
+              </div>
               <div className="h-0.5 bg-white"></div>
               <div className="h-1.5"></div>
 
@@ -134,18 +262,7 @@ export default function LoginScreen() {
       space-y-3 text-2xl font-medium"
               onSubmit={(e) => {
                 e.preventDefault();
-                // loginUser();
-                toast.success("Registered Successfully!", {
-                  position: "bottom-right",
-                  autoClose: 5000,
-                  hideProgressBar: false,
-                  closeOnClick: true,
-                  pauseOnHover: true,
-                  draggable: true,
-                  progress: undefined,
-                  theme: "dark",
-                });
-                naviagate("/profile");
+                validateEntrySignUp();
               }}
             >
               <input
@@ -159,31 +276,64 @@ export default function LoginScreen() {
               ></input>
               <div className="h-0.5 bg-white"></div>
               <div className="h-4"></div>
-              <input
-                type="password"
-                className="rounded px-4 w-full border border-0 bg-black placeholder-white outline-none text-lg"
-                placeholder="Password"
-                value={password}
-                onChange={(e) => {
-                  setPassword(e.target.value);
-                }}
-              ></input>
+              <div className="flex">
+                <input
+                  type={see ? "text" : "password"}
+                  className="rounded px-4 w-full border-0  bg-black placeholder-white outline-none text-lg"
+                  placeholder="Password"
+                  value={password}
+                  onChange={(e) => {
+                    setPassword(e.target.value);
+                  }}
+                ></input>
+                <button
+                  type="button"
+                  className="w-8 h-8"
+                  onClick={() => {
+                    setSee((prev) => !prev);
+                  }}
+                >
+                  <img
+                    src={see ? eyeOPen : eyeClose}
+                    className="object-cover"
+                    alt=""
+                  ></img>
+                </button>
+              </div>
               <div className="h-0.5 bg-white"></div>
               <div className="h-4"></div>
-              <input
-                type="password"
-                className="rounded px-4 w-full border border-0 bg-black placeholder-white outline-none text-lg"
-                placeholder="Confirm Password"
-                value={password}
-                onChange={(e) => {
-                  setConfirmPassword(e.target.value);
-                }}
-              ></input>
+              <div className="flex">
+                <input
+                  type={seeConfirm ? "text" : "password"}
+                  className="rounded px-4 w-full border-0  bg-black placeholder-white outline-none text-lg"
+                  placeholder="Confirm Password"
+                  value={confirmPassword}
+                  onChange={(e) => {
+                    setConfirmPassword(e.target.value);
+                  }}
+                ></input>
+                <button
+                  type="button"
+                  className="w-8 h-8"
+                  onClick={() => {
+                    setSeeConfirm((prev) => !prev);
+                  }}
+                >
+                  <img
+                    src={seeConfirm ? eyeOPen : eyeClose}
+                    className="object-cover"
+                    alt=""
+                  ></img>
+                </button>
+              </div>
               <div className="h-0.5 bg-white"></div>
               <div className="h-1.5"></div>
 
-              <button className="rounded bg-[#00eeff] px-4 py-4 text-black font-semibold mt-2">
-                Log In
+              <button
+                type="submit"
+                className="rounded bg-[#00eeff] px-4 py-4 text-black font-semibold mt-2"
+              >
+                Sign Up
               </button>
             </form>
           )}

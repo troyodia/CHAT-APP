@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { register, login, getImage } = require("../contollers/auth");
+const { register, login, getImage, profile } = require("../contollers/auth");
 const refreshAccessToken = require("../contollers/refreshTokenController");
 const upload = require("../middleware/multer");
 
@@ -8,5 +8,6 @@ const upload = require("../middleware/multer");
 router.route("/register").post(register);
 
 router.route("/login").post(login);
+router.route("/profile").post(profile);
 router.route("/refresh").get(refreshAccessToken);
 module.exports = router;

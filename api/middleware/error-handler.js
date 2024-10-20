@@ -6,13 +6,14 @@ const errorHandler = (err, req, res, next) => {
     msg: err.message || "something went wrong",
     statusCode: err.statusCode || 500,
   };
-  // if (err.code && err.code === 11000) {
-  //   customErr.msg = "Duplication error for " + Object.keys(err.keyValue);
-  //   customErr.statusCode = 400;
-  // }
+  if (err.code && err.code === 11000) {
+    // customErr.msg = "Duplication error for " + Object.keys(err.keyValue);
+    customErr.msg = "Email already exists";
+    customErr.statusCode = 400;
+  }
   if (err.name === "ValidationError") {
     customErr.msg =
-      "Validation Error, " +
+      "Please " +
       Object.keys(err.errors)
         .map((error) => {
           return err.errors[error].message;
@@ -21,7 +22,7 @@ const errorHandler = (err, req, res, next) => {
     customErr.statusCode = 400;
   }
   //ADD CAST ERROR
-  //   res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ err });
+  // res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ err });
 
   res.status(customErr.statusCode).json({ msg: customErr.msg });
 };

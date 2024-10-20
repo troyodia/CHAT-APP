@@ -5,14 +5,8 @@ const { BadRequestError, UnauthenticatedError } = require("../errors");
 const fs = require("fs");
 
 const register = async (req, res) => {
-  if (!req.file) throw new BadRequestError("no image file uploaded");
-  const { filename } = req.file;
-
   const user = await User.create({
     ...req.body,
-    image: {
-      filename,
-    },
   });
   console.log(user);
   res.status(StatusCodes.OK).json({ user });
@@ -66,16 +60,18 @@ const login = async (req, res) => {
   });
   res.status(StatusCodes.OK).json({
     user: {
-      firstname: user.firstname,
-      lastname: user.lastname,
       email: user.email,
       userId: user._id,
     },
   });
 };
-
+const profile = async () => {
+  // if (!req.file) throw new BadRequestError("no image file uploaded");
+  // const { filename } = req.file;
+};
 module.exports = {
   register,
   login,
+  profile,
   // getImage,
 };
