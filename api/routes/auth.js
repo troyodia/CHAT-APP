@@ -1,13 +1,22 @@
 const express = require("express");
 const router = express.Router();
-const { register, login, getImage, profile } = require("../contollers/auth");
+const {
+  register,
+  login,
+  createProfile,
+  addProfileImage,
+  deleteProfileImage,
+} = require("../contollers/auth");
 const refreshAccessToken = require("../contollers/refreshTokenController");
-const upload = require("../middleware/multer");
+const authorize = require("../middleware/authorize");
 
 // router.post("/uploadsingle", upload.single("image"), getImage);
 router.route("/register").post(register);
-
 router.route("/login").post(login);
-router.route("/profile").post(profile);
+
+router.route("/profile").post(authorize, createProfile);
+router.route("/add-profile-image").post(authorize, addProfileImage);
+router.route("/delete-profile-image").delete(authorize, deleteProfileImage);
+
 router.route("/refresh").get(refreshAccessToken);
 module.exports = router;

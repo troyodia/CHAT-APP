@@ -55,8 +55,6 @@ UserSchema.methods.generateToken = function (secret, expiresIn) {
   const token = jwt.sign(
     {
       userId: this._id,
-      firstname: this.firstname,
-      lastname: this.lastname,
       email: this.email,
     },
     secret,

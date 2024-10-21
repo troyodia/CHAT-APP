@@ -139,7 +139,7 @@ export default function ProfileScreen() {
     //     )} */}
     //   </div>
     // </div>
-    <div className=" flex h-screen justify-center items-center text-white mx-10">
+    <div className=" flex h-screen justify-center items-center text-white px-10">
       <div className="flex flex-col w-[300px] md:w-[520px]">
         <button
           className="w-10"

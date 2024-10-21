@@ -10,8 +10,8 @@ const authorize = async (req, res, next) => {
   }
   try {
     const decoded = user.verifyToken(token, process.env.ACCESS_SECRET);
-    const { userId, firstname, lastname, email } = decoded;
-    req.user = { userId, firstname, lastname, email };
+    const { userId, email } = decoded;
+    req.user = { userId, email };
     next();
   } catch (error) {
     throw new UnauthenticatedError("invalid unthorization");
