@@ -127,10 +127,7 @@ const addProfileImage = async (req, res) => {
   });
 };
 const deleteProfileImage = async (req, res) => {
-  const user = await User.updateOne(
-    { _id: req.user.userId },
-    { $unset: { image: 1 } }
-  );
+  await User.updateOne({ _id: req.user.userId }, { $unset: { image: 1 } });
   const updatedUser = await User.findOne({ _id: req.user.userId });
   res.status(StatusCodes.OK).json(updatedUser);
 };

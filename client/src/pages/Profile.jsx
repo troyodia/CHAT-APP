@@ -5,7 +5,9 @@ import defaultImg from "../images/default.png";
 import { UserState } from "../use-contexts/userContext";
 import UploadImage from "../components/UploadImage";
 import leftArrow from "../images/icons/arrow-left.png";
+import trash from "../images/icons/trash.png";
 import { toast } from "react-toastify";
+import axiosInstance from "../utils/axiosInstance";
 
 export default function ProfileScreen() {
   const [firstname, setFirstname] = useState("");
@@ -16,30 +18,33 @@ export default function ProfileScreen() {
   const [imageData, setImageData] = useState("");
   const navigate = useNavigate();
   const formData = new FormData();
-  formData.append("firstname", firstname);
-  formData.append("lastname", lastname);
-  formData.append("email", email);
-  // formData.append("password", password);
-  formData.append("image", imageData);
 
-  const url = "http://localhost:5000/api/v1/auth/register";
-  const regsiterUser = async () => {
+  const urlProfile = "http://localhost:5000/api/v1/auth/profile";
+  const urlDelete = "http://localhost:5000/api/v1/auth/delete-profile-image";
+  const createProfile = async () => {
     try {
-      const res = await axios.post(url, formData, {
-        withCredentials: true,
-        headers: { "Content-Type": "multipart/form-data" },
-      });
-      console.log(res);
+      const res = await axiosInstance.post(
+        urlProfile,
+        { email, firstname, lastname },
+        { withCredentials: true }
+      );
       if (res.data && res.status === 200) {
-        navigate("/login");
+        console.log(res.data);
+        toast.success("Profile Completed!", {
+          position: "bottom-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+        });
       }
-      setError("");
-      // console.log(user);
     } catch (error) {
       if (error.response.data.msg) {
-        //customize error messages here or server
-        toast(error.response.data.msg, {
-          position: "top-center",
+        toast.error(error.response.data.msg, {
+          position: "top-right",
           autoClose: false,
           hideProgressBar: false,
           closeOnClick: true,
@@ -49,96 +54,66 @@ export default function ProfileScreen() {
           theme: "dark",
         });
       }
-      setError(error.response.data.msg);
-      console.log(error.response);
     }
   };
-  const updateImgPath = (catchedURL) => {
-    setImgPath(catchedURL);
+  const validateProfile = () => {
+    if (email && firstname && lastname) {
+      createProfile();
+    } else {
+      if (!email) {
+        toast.error("Please provide email", {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: true,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+        });
+      }
+      if (!firstname) {
+        toast.error("Please provide first name", {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: true,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+        });
+      }
+      if (!lastname) {
+        toast.error("please provide last name", {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: true,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+        });
+      }
+    }
   };
   const updateImgData = (imgData) => {
     setImageData(imgData);
   };
+  const deleteProfileImage = async () => {
+    try {
+      const res = await axiosInstance.delete(urlDelete, {
+        withCredentials: true,
+      });
+      if (res.data && res.status === 200) {
+        setImageData("");
+      }
+    } catch (error) {
+      console.log(error.response.data.msg);
+    }
+  };
   return (
-    // <div className=" flex  items-center justify-center h-screen text-white bg-cover">
-    //   <div className="mx-2 flex flex-col w-[900px] h-[800px] justify-center items-center bg-black/30 backdrop-blur-md border-2 border-solid border-transparent rounded">
-    //     <p className="mb-6 text-center text-white text-3xl font-bold">
-    //       Create an Account
-    //     </p>
-    //     <UploadImage
-    //       imgPath={imgPath}
-    //       updateImgPath={updateImgPath}
-    //       updateImgData={updateImgData}
-    //     ></UploadImage>
-    //     <form
-    //       className="mx-4 max-w-[600px] flex flex-col md:w-full text-2xl font-bold"
-    //       onSubmit={(e) => {
-    //         e.preventDefault();
-    //         console.log(formData);
-    //         regsiterUser();
-    //         // if (error) {
-    //         //   toast(error, {
-    //         //     position: "top-center",
-    //         //     autoClose: false,
-    //         //     hideProgressBar: false,
-    //         //     closeOnClick: true,
-    //         //     pauseOnHover: true,
-    //         //     draggable: true,
-    //         //     progress: undefined,
-    //         //     theme: "dark",
-    //         //   });
-    //         // }
-    //       }}
-    //     >
-    //       <input
-    //         className="outline-none w-full bg-black/60 placeholder-white py-6 px-4 border-2 border-solid border-black rounded mb-6"
-    //         placeholder="First Name"
-    //         value={firstname}
-    //         onChange={(e) => {
-    //           setFirstname(e.target.value);
-    //         }}
-    //       ></input>
-    //       <input
-    //         className="outline-none w-full bg-black/60 placeholder-white py-6 px-4 border-2 border-solid border-black  rounded mb-4"
-    //         placeholder="Last Name"
-    //         value={lastname}
-    //         onChange={(e) => {
-    //           setLastname(e.target.value);
-    //         }}
-    //       ></input>
-    //       <input
-    //         className="outline-none w-full bg-black/60 placeholder-white py-6 px-4 border-2 border-solid border-black  rounded mb-6"
-    //         placeholder="Email"
-    //         value={email}
-    //         onChange={(e) => {
-    //           setEmail(e.target.value);
-    //         }}
-    //       ></input>
-    //       <input
-    //         className="outline-none w-full bg-black/60 placeholder-white py-6 px-4 border-2 border-solid border-black rounded mb-6"
-    //         type="password"
-    //         placeholder="Password"
-    //         value={password}
-    //         onChange={(e) => {
-    //           setPassword(e.target.value);
-    //         }}
-    //       ></input>
-    //       <button className="bg-black py-6 border-white rounded">
-    //         Register
-    //       </button>
-    //     </form>
-    //     {/* {error ? (
-    //       <div>
-    //         <p className="text-white text-center mt-4 mx-4 text-left md:text-xl">
-    //           {" "}
-    //           {error}{" "}
-    //         </p>
-    //       </div>
-    //     ) : (
-    //       ""
-    //     )} */}
-    //   </div>
-    // </div>
     <div className=" flex h-screen justify-center items-center text-white px-10">
       <div className="flex flex-col w-[300px] md:w-[520px]">
         <button
@@ -151,11 +126,34 @@ export default function ProfileScreen() {
         </button>
         <div className="flex flex-col items-center md:flex-row mt-10 mb-14">
           <div
-            className="group/item relative flex justify-center items-center font-semibold
-           text-5xl text-sky-400 hover:text-sky-700 bg-[#00eeff]/55 hover:bg-[#00eeff]/30 w-48 h-48 rounded-full
-            border border-4 border-solid border-sky-400 hover:border-sky-800 text-white mb-10 md:mb-0"
+            className={
+              !imageData
+                ? `group/item relative flex justify-center items-center font-semibold
+              text-5xl text-sky-400 hover:text-sky-700 bg-[#00eeff]/55 hover:bg-[#00eeff]/30 w-48 h-48 rounded-full
+              border border-4 border-solid border-sky-400 hover:border-sky-800 text-white mb-10 md:mb-0`
+                : "border-0 bg-transparent hover:opacity-70"
+            }
           >
-            T<UploadImage></UploadImage>
+            <div className={imageData ? "hidden" : "flex"}>
+              T <UploadImage updateImgData={updateImgData}></UploadImage>
+            </div>
+            <div
+              className={
+                imageData ? "group/subitem relative flex w-48 h-48 " : "hidden"
+              }
+            >
+              <img
+                src={imageData}
+                className="rounded-full w-48 h-48 object-cover"
+                alt=""
+              ></img>
+              <button
+                className="invisible group-hover/subitem:visible absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+                onClick={deleteProfileImage}
+              >
+                <img src={trash} alt="" className="w-12"></img>
+              </button>
+            </div>
           </div>
           <div className="md:ml-auto">
             <form
@@ -164,17 +162,7 @@ export default function ProfileScreen() {
       space-y-3 text-2xl font-medium"
               onSubmit={(e) => {
                 e.preventDefault();
-                // loginUser();
-                toast.success("Profile Completed!", {
-                  position: "bottom-right",
-                  autoClose: 5000,
-                  hideProgressBar: false,
-                  closeOnClick: true,
-                  pauseOnHover: true,
-                  draggable: true,
-                  progress: undefined,
-                  theme: "dark",
-                });
+                validateProfile();
                 // naviagate("/profile");
               }}
             >
@@ -190,7 +178,6 @@ export default function ProfileScreen() {
               <div className="h-0.5 bg-white"></div>
               <div className="h-4"></div>
               <input
-                type="password"
                 className="rounded px-4 w-full border border-0 bg-black placeholder-white outline-none text-lg"
                 placeholder="First Name"
                 value={firstname}
@@ -201,7 +188,6 @@ export default function ProfileScreen() {
               <div className="h-0.5 bg-white"></div>
               <div className="h-4"></div>
               <input
-                type="password"
                 className="rounded px-4 w-full border border-0 bg-black placeholder-white outline-none text-lg"
                 placeholder="Last Name"
                 value={lastname}

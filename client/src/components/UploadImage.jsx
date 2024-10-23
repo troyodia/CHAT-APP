@@ -2,10 +2,11 @@ import { useRef, useState } from "react";
 import plusIcon from "../images/icons/uploadwhite.png";
 import axios from "axios";
 import { toast } from "react-toastify";
-export default function UploadImage({ imgPath, updateImgPath, updateImgData }) {
+import axiosInstance from "../utils/axiosInstance";
+export default function UploadImage({ updateImgData }) {
   const fileUploadRef = useRef("");
   const [image, setImage] = useState("");
-  const url = "http://localhost:5000/api/v1/auth/uploadsingle";
+  const url = "http://localhost:5000/api/v1/auth/add-profile-image";
 
   const handleFileUpload = (e) => {
     e.preventDefault();
@@ -16,33 +17,27 @@ export default function UploadImage({ imgPath, updateImgPath, updateImgData }) {
     const formData = new FormData();
     if (file) {
       formData.append("image", file);
-      // updateImgData(file);
-      toast.success("Registered Successfully", {
-        position: "bottom-right",
-        autoClose: 5000,
-        hideProgressBar: true,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "dark",
-      });
+      const reader = new FileReader();
+      reader.onload = () => {
+        updateImgData(reader.result);
+      };
+      reader.readAsDataURL(file);
+    } else {
+      console.log("no file");
+      return;
     }
 
-    // try {
-    //   const res = await axios.post(url, formData, {
-    //     headers: { "Content-Type": "multipart/form-data" },
-    //     withCredentials: true,
-    //   });
-    //   if (res.status === 200) {
-    //     console.log(res);
-
-    const cachedURL = URL.createObjectURL(file);
-    // updateImgPath(cachedURL);
-    //   }
-    // } catch (error) {
-    //   console.log(error);
-    // }
+    try {
+      const res = await axiosInstance.post(url, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+        withCredentials: true,
+      });
+      if (res.status === 200) {
+        const { image } = res.data;
+      }
+    } catch (error) {
+      console.log(error.response.data.msg);
+    }
   };
 
   return (
