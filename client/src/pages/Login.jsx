@@ -43,7 +43,7 @@ export default function LoginScreen() {
             theme: "dark",
           }
         );
-        naviagate("/profile");
+        naviagate("/chat-page");
       }
     } catch (error) {
       if (error.response.data.msg) {

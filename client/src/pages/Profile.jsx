@@ -30,6 +30,7 @@ export default function ProfileScreen() {
       );
       if (res.data && res.status === 200) {
         console.log(res.data);
+        navigate("/chat-page");
         toast.success("Profile Completed!", {
           position: "bottom-right",
           autoClose: 5000,
@@ -57,7 +58,7 @@ export default function ProfileScreen() {
     }
   };
   const validateProfile = () => {
-    if (email && firstname && lastname) {
+    if (email && firstname && lastname && imageData) {
       createProfile();
     } else {
       if (!email) {
@@ -96,6 +97,18 @@ export default function ProfileScreen() {
           theme: "dark",
         });
       }
+      if (!imageData) {
+        toast.error("please provide profile image", {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: true,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+        });
+      }
     }
   };
   const updateImgData = (imgData) => {
@@ -113,6 +126,7 @@ export default function ProfileScreen() {
       console.log(error.response.data.msg);
     }
   };
+
   return (
     <div className=" flex h-screen justify-center items-center text-white px-10">
       <div className="flex flex-col w-[300px] md:w-[520px]">
