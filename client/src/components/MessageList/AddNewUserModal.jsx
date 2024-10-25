@@ -1,5 +1,5 @@
 import { useState } from "react";
-import defaultImg from "../../images/default.png";
+import defaultImg from "../../images/default.jpeg";
 
 export default function AddNewUserModal() {
   const [search, setSearch] = useState("");

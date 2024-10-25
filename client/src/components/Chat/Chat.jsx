@@ -1,4 +1,4 @@
-import defaultImg from "../../images/default.png";
+import defaultImg from "../../images/default.jpeg";
 import cameraIcon from "../../images/icons/camera.png";
 import phoneIcon from "../../images/icons/phone.png";
 import infoIcon from "../../images/icons/i-icon.png";
@@ -6,10 +6,13 @@ import picIcon from "../../images/icons/picture.png";
 import cameraFooterIcon from "../../images/icons/camerafooter.png";
 import microphoneIcon from "../../images/icons/microphone.png";
 import emojiIcon from "../../images/icons/emoji.png";
+import block from "../../images/icons/block.png";
+import settings from "../../images/icons/settingsoption.png";
 import Picker from "emoji-picker-react";
 import { useEffect, useRef, useState } from "react";
 import { useBlocker } from "react-router-dom";
-export default function Chat() {
+
+export default function Chat({ updateSettings }) {
   const [display, setDisplay] = useState(false);
   const [message, setMessage] = useState("");
   const endRef = useRef("");
@@ -21,27 +24,28 @@ export default function Chat() {
   return (
     <div className="flex-1 flex flex-col relative">
       <div className="flex h-28  border border-t-transparent border-x-transparent border-b-white/30 w-full items-center">
-        <div className="w-16 h-16 mx-4">
-          <img
-            className="w-16 h-16 rounded-full object-cover"
-            src={defaultImg}
-            alt=""
-          ></img>
+        <div className="flex items-center">
+          <div className="w-16 h-16 ml-8 mr-4">
+            <img
+              className="w-16 h-16 rounded-full object-cover"
+              src={defaultImg}
+              alt=""
+            ></img>
+          </div>
+          <div>
+            <p className="font-semibold text-xl mx-auto">Jane Doe</p>
+          </div>
         </div>
-        <div>
-          <p className="font-semibold">Jane Doe</p>
-          <p className="text-sm">Gratefull</p>
+
+        <div className="flex mr-8 ml-auto">
+          <button className="w-7">
+            <img src={block} alt=""></img>
+          </button>
         </div>
-        <div className="flex ml-auto space-x-3 mr-4">
-          <div className="w-5 pt-1">
-            <img src={phoneIcon} alt=""></img>
-          </div>
-          <div className="w-6 ">
-            <img src={cameraIcon} alt=""></img>
-          </div>
-          <div className="w-6 ">
-            <img src={infoIcon} alt=""></img>
-          </div>
+        <div className="flex mr-8 ">
+          <button className="w-7" onClick={updateSettings}>
+            <img src={settings} alt=""></img>
+          </button>
         </div>
       </div>
       <div className="flex flex-col h-full overflow-auto " id="chat-box">
@@ -178,7 +182,7 @@ export default function Chat() {
           type="text"
           value={message}
           className="ml-8 flex-1 py-4 pl-4 bg-white/10 rounded-md outline-none text-lg 
-          focus:border focus:border-solid  focus:border-white/30"
+          focus:border focus:border-solid  focus:border-white/30 "
           placeholder="Type a message"
           id="input"
           onChange={(e) => {

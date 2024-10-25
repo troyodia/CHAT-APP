@@ -1,14 +1,20 @@
+import { useState } from "react";
 import Chat from "../components/Chat/Chat";
 import Detail from "../components/Detail/Detail";
 import MessageList from "../components/MessageList/MessageList";
 
 export default function ChatPage() {
+  const [settings, setSettings] = useState(false);
+  const updateSettings = () => {
+    setSettings((prev) => !prev);
+  };
   return (
-    <div className="flex h-screen items-center justify-center bg-cover bg-[url('./images/background.jpg')]">
-      <div className="mx-2 flex w-[1800px] h-[850px] bg-black/30 backdrop-blur-md rounded text-white">
+    <div className="flex h-screen items-center justify-center bg-black">
+      <div className=" w-full h-screen flex bg-black/30 backdrop-blur-md rounded text-white">
         <MessageList></MessageList>
-        <Chat></Chat>
-        <Detail></Detail>
+        <Chat updateSettings={updateSettings}></Chat>
+
+        {settings ? <Detail></Detail> : ""}
       </div>
     </div>
   );

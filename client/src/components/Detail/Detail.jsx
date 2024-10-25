@@ -18,7 +18,6 @@ export default function Detail() {
       </div>
       <div className="text-center">
         <p className="mb-5 text-xl font-bold">Jane Doe</p>
-        <p className="font-semibold mb-6">Gratefull for every</p>
       </div>
       <div className="flex w-full border border-x-0 border-b-0 border-t-white/30 px-6">
         <ul className="w-full list-none mt-5">
@@ -131,14 +130,14 @@ export default function Detail() {
           </li>
         </ul>
       </div>
-      <div className="flex flex-col w-full mt-auto px-6 font-bold text-lg mb-7">
+      {/* <div className="flex flex-col w-full mt-auto px-6 font-bold text-lg mb-7">
         <button className="text-center py-4 bg-red-800 rounded-md mb-6 hover:opacity-80">
           Block User
         </button>
         <button className="text-center py-2 bg-sky-800 rounded-md hover:opacity-80">
           Logout
         </button>
-      </div>
+      </div> */}
     </div>
   );
 }
