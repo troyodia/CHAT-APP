@@ -19,6 +19,31 @@ export default function MessageList() {
 
   const [showSearch, setShowSearch] = useState(false);
   const [showSearchChannel, setShowSearchChannel] = useState(false);
+
+  const [activeItem, setActiveItem] = useState("");
+  const handleDirectMessageClick = (id) => {
+    activeItem === id ? setActiveItem(id) : setActiveItem(id);
+  };
+  const defualtDirectMessages = [
+    {
+      image: defaultImg,
+      firstname: "jane",
+      lastname: "Doe",
+      id: "1",
+    },
+    {
+      image: defaultImg,
+      firstname: "jane",
+      lastname: "Doe",
+      id: "2",
+    },
+    {
+      image: defaultImg,
+      firstname: "jane",
+      lastname: "Doe",
+      id: "3",
+    },
+  ];
   return (
     <>
       <div
@@ -71,11 +96,20 @@ export default function MessageList() {
           ) : (
             ""
           )}
-          <div className="w-full max-h-48 overflow-auto">
-            <UserList></UserList>
-            <UserList></UserList>
-            <UserList></UserList>
-            <UserList></UserList>
+          <div className="w-full space-y-2 max-h-48 overflow-auto scrollbar-hidden scrollbar-hidden::-webkit-scrollbar">
+            {defualtDirectMessages.map((item) => {
+              return (
+                <UserList
+                  image={item.image}
+                  firstname={item.firstname}
+                  lastname={item.lastname}
+                  id={item.id}
+                  handleDirectMessageClick={handleDirectMessageClick}
+                  isActive={activeItem === item.id}
+                  key={item.id}
+                ></UserList>
+              );
+            })}
           </div>
         </div>
         <div className="flex flex-col w-full  items-center px-10 mb-10">

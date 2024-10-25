@@ -49,7 +49,7 @@ export default function Detail() {
             </button>
           </li>
           {toggle ? (
-            <li className="flex w-full mb-8 h-52 overflow-auto">
+            <li className="flex w-full mb-8 h-52 overflow-auto scrollbar-hidden scrollbar-hidden::-webkit-scrollbar">
               <ul className="w-full list-none ">
                 <li className="flex w-full items-center font-semibold mb-4">
                   <div className="w-10 h-10 mr-5">

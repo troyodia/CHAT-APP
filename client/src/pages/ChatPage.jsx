@@ -12,7 +12,7 @@ export default function ChatPage() {
     <div className="flex h-screen items-center justify-center bg-black">
       <div className=" w-full h-screen flex bg-black/30 backdrop-blur-md rounded text-white">
         <MessageList></MessageList>
-        <Chat updateSettings={updateSettings}></Chat>
+        {<Chat updateSettings={updateSettings}></Chat>}
 
         {settings ? <Detail></Detail> : ""}
       </div>
