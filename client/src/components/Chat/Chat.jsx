@@ -48,7 +48,10 @@ export default function Chat({ updateSettings }) {
           </button>
         </div>
       </div>
-      <div className="flex flex-col h-full overflow-auto " id="chat-box">
+      <div
+        className="flex flex-col h-full overflow-auto scrollbar-hidden scrollbar-hidden::-webkit-scrollbar"
+        id="chat-box"
+      >
         <div className="mr-auto flex ml-4 mt-4 justify-items">
           <div className="w-12 h-12 mr-5">
             <img

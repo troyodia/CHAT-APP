@@ -46,10 +46,7 @@ export default function MessageList() {
   ];
   return (
     <>
-      <div
-        className="relative flex flex-col items-center w-[370px] border 
-      border-y-transparent border-l-transparent border-r-white/30"
-      >
+      <div className="relative flex flex-col items-center w-full  md:w-[300px] lg:w-[450px] border-0 ">
         <div className="flex items-center w-full mt-2 mb-4">
           <div className="w-24 ml-4">
             <img src={rasengan} alt=""></img>
@@ -58,7 +55,7 @@ export default function MessageList() {
         </div>
         <div className="flex flex-col w-full  items-center px-10 mb-10">
           <div className="flex w-full mb-4">
-            <div className="text-zinc-600 font-semibold text-base ">
+            <div className="text-zinc-600 font-semibold text-base">
               DIRECT MESSAGES
             </div>
             <div className="flex ml-auto space-x-3">
@@ -114,7 +111,7 @@ export default function MessageList() {
         </div>
         <div className="flex flex-col w-full  items-center px-10 mb-10">
           <div className="flex w-full mb-4">
-            <div className="text-zinc-600 font-semibold text-base ">
+            <div className="text-zinc-600 font-semibold text-base  ">
               CHANNELS
             </div>
             <div className="flex ml-auto space-x-3">

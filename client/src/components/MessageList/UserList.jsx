@@ -29,10 +29,10 @@ export default function UserList({
         ></img>
       </div>
       <div className="ml-4">
-        <p className="font-semibold text-sm">
+        <p className="font-semibold text-sm ">
           {firstname} {lastname}
         </p>
-        <p className="text-xs">Hello</p>
+        <p className="text-xs ">Hello</p>
       </div>
     </div>
   );
