@@ -1,5 +1,6 @@
 import { useState } from "react";
 import defaultImg from "../../images/default.jpeg";
+import { useMediaQuery } from "react-responsive";
 
 export default function UserList({
   image,
@@ -12,6 +13,7 @@ export default function UserList({
   // const [border, setBorder] = useState(false);
   // const handleColor = () => {
   //   setBorder((prev) => !prev);
+  const isMobile = useMediaQuery({ maxWidth: 1200 });
   // };
   return (
     <div
@@ -23,16 +25,16 @@ export default function UserList({
     >
       <div className="w-10 h-10 ">
         <img
-          className="w-10 h-10 object-cover rounded-full"
+          className="w-10 h-10 object-cover rounded-lg"
           src={image}
           alt=""
         ></img>
       </div>
       <div className="ml-4">
-        <p className="font-semibold text-sm ">
+        <p className={`font-semibold ${isMobile ? "text-sm" : "text-lg"}`}>
           {firstname} {lastname}
         </p>
-        <p className="text-xs ">Hello</p>
+        <p className={`${isMobile ? "text-xs" : "text-sm"}`}>Hello</p>
       </div>
     </div>
   );

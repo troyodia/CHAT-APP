@@ -9,6 +9,8 @@ import logout from "../../images/icons/logout.png";
 import pen from "../../images/icons/pen.png";
 import rasengan from "../../images/icons/rasengan.png";
 import { useEffect, useState } from "react";
+import { useMediaQuery } from "react-responsive";
+
 import UserList from "./UserList";
 import AddNewUserModal from "./AddNewUserModal";
 export default function MessageList() {
@@ -44,21 +46,27 @@ export default function MessageList() {
       id: "3",
     },
   ];
+  const isMobile = useMediaQuery({ maxWidth: 1200 });
+
   return (
     <>
-      <div className="relative flex flex-col items-center w-full  md:w-[300px] lg:w-[450px] border-0 ">
+      <div className="relative flex flex-col items-center w-full  md:w-[320px] lg:w-[450px] border-0 bg-[#010103]">
         <div className="flex items-center w-full mt-2 mb-4">
           <div className="w-24 ml-4">
             <img src={rasengan} alt=""></img>
           </div>
           <div className="font-bold text-2xl">Rasengan</div>
         </div>
-        <div className="flex flex-col w-full  items-center px-10 mb-10">
+        <div className="flex flex-col w-full  items-center px-10 mb-10 ">
           <div className="flex w-full mb-4">
-            <div className="text-zinc-600 font-semibold text-base">
+            <div
+              className={`text-zinc-600 font-semibold ${
+                isMobile ? "text-lg" : "text-2xl"
+              }`}
+            >
               DIRECT MESSAGES
             </div>
-            <div className="flex ml-auto space-x-3">
+            <div className="flex ml-auto space-x-3 my-auto">
               <button
                 className="w-6 h-6  flex justify-center items-center rounded-md bg-white/10"
                 onClick={() => {
@@ -93,7 +101,7 @@ export default function MessageList() {
           ) : (
             ""
           )}
-          <div className="w-full space-y-2 max-h-48 overflow-auto scrollbar-hidden scrollbar-hidden::-webkit-scrollbar">
+          <div className="w-full space-y-2 max-h-56 overflow-auto scrollbar-hidden scrollbar-hidden::-webkit-scrollbar">
             {defualtDirectMessages.map((item) => {
               return (
                 <UserList
@@ -109,12 +117,16 @@ export default function MessageList() {
             })}
           </div>
         </div>
-        <div className="flex flex-col w-full  items-center px-10 mb-10">
+        <div className="flex flex-col w-full items-center px-10 mb-10">
           <div className="flex w-full mb-4">
-            <div className="text-zinc-600 font-semibold text-base  ">
+            <div
+              className={`text-zinc-600 font-semibold ${
+                isMobile ? "text-lg" : "text-2xl"
+              }`}
+            >
               CHANNELS
             </div>
-            <div className="flex ml-auto space-x-3">
+            <div className="flex ml-auto space-x-3 my-auto">
               <button
                 className="w-6 h-6  flex justify-center items-center rounded-md bg-white/10"
                 onClick={() => {
@@ -224,7 +236,7 @@ export default function MessageList() {
         <div className="w-full flex items-center px-10 py-2 mt-auto bg-zinc-900">
           <div className="w-12 h-12 mr-4">
             <img
-              className="w-12 h-12 rounded-full object-cover"
+              className="w-12 h-12 rounded-lg object-cover"
               src={defaultImg}
               alt=""
             ></img>
