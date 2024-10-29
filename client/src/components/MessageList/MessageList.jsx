@@ -7,7 +7,7 @@ import minusIcon from "../../images/icons/minus.png";
 import searchIcon from "../../images/icons/search.png";
 import logout from "../../images/icons/logout.png";
 import pen from "../../images/icons/pen.png";
-import rasengan from "../../images/icons/rasengan.png";
+import rasengan from "../../images/icons/newrasengan.png";
 import { useEffect, useState } from "react";
 import { useMediaQuery } from "react-responsive";
 
@@ -47,21 +47,32 @@ export default function MessageList() {
     },
   ];
   const isMobile = useMediaQuery({ maxWidth: 1200 });
+  const transitionPage = useMediaQuery({ maxWidth: 940 });
+  const lg = useMediaQuery({ maxWidth: 1006 });
+  const md = useMediaQuery({ maxWidth: 768 });
 
   return (
     <>
-      <div className="relative flex flex-col items-center w-full  md:w-[320px] lg:w-[450px] border-0 bg-[#010103]">
-        <div className="flex items-center w-full mt-2 mb-4">
+      <div
+        className={`relative flex flex-col items-center ${
+          transitionPage ? "w-full" : lg ? "w-[350px]" : "w-[450px]"
+        }  border-0 bg-[#010103]`}
+      >
+        <div className="flex items-center w-full mt-2 mb-4 space-x-2">
           <div className="w-24 ml-4">
-            <img src={rasengan} alt=""></img>
+            <img
+              className="transition ease-in-out delay-150 duration-300 hover:scale-[1.1]"
+              src={rasengan}
+              alt=""
+            ></img>
           </div>
-          <div className="font-bold text-2xl">Rasengan</div>
+          <div className="font-bold text-3xl">Rasengan</div>
         </div>
         <div className="flex flex-col w-full  items-center px-10 mb-10 ">
           <div className="flex w-full mb-4">
             <div
               className={`text-zinc-600 font-semibold ${
-                isMobile ? "text-lg" : "text-2xl"
+                transitionPage ? "text-2xl" : isMobile ? "text-lg" : "text-2xl"
               }`}
             >
               DIRECT MESSAGES
@@ -78,8 +89,10 @@ export default function MessageList() {
               <button
                 className="w-6 h-6 flex justify-center  items-center rounded-md py-1 bg-white/10 "
                 onClick={() => {
-                  setAddFlag((prev) => !prev);
-                  setDisplay((prev) => !prev);
+                  if (!addFlagChannel) {
+                    setAddFlag((prev) => !prev);
+                    setDisplay((prev) => !prev);
+                  }
                 }}
               >
                 <img
@@ -93,7 +106,7 @@ export default function MessageList() {
           {showSearch ? (
             <div className="flex w-full  mb-2">
               <input
-                className="max-w-56 rounded-md flex-1 py-2 pl-5 bg-white/10 outline-none 
+                className=" rounded-md flex-1 py-2 pl-5 bg-white/10 outline-none 
           border border-transparent focus:border focus:border-solid  focus:border-white/30"
                 placeholder="Search"
               ></input>
@@ -101,7 +114,7 @@ export default function MessageList() {
           ) : (
             ""
           )}
-          <div className="w-full space-y-2 max-h-56 overflow-auto scrollbar-hidden scrollbar-hidden::-webkit-scrollbar">
+          <div className="w-full bg-[#0E0E10] rounded-lg space-y-2 max-h-56 overflow-auto scrollbar-hidden scrollbar-hidden::-webkit-scrollbar">
             {defualtDirectMessages.map((item) => {
               return (
                 <UserList
@@ -121,7 +134,7 @@ export default function MessageList() {
           <div className="flex w-full mb-4">
             <div
               className={`text-zinc-600 font-semibold ${
-                isMobile ? "text-lg" : "text-2xl"
+                transitionPage ? "text-2xl" : isMobile ? "text-lg" : "text-2xl"
               }`}
             >
               CHANNELS
@@ -138,8 +151,10 @@ export default function MessageList() {
               <button
                 className="w-6 h-6 flex justify-center  items-center rounded-md py-1 bg-white/10 "
                 onClick={() => {
-                  setAddFlagChannel((prev) => !prev);
-                  setDisplayChannel((prev) => !prev);
+                  if (!addFlag) {
+                    setAddFlagChannel((prev) => !prev);
+                    setDisplayChannel((prev) => !prev);
+                  }
                 }}
               >
                 <img
@@ -151,9 +166,9 @@ export default function MessageList() {
             </div>
           </div>
           {showSearchChannel ? (
-            <div className="flex w-full  mb-2">
+            <div className="flex w-full mb-2">
               <input
-                className="max-w-56 rounded-md flex-1 py-2 pl-5 bg-white/10 outline-none 
+                className=" rounded-md flex-1 py-2 pl-5 bg-white/10 outline-none 
           border border-transparent focus:border focus:border-solid  focus:border-white/30"
                 placeholder="Search"
               ></input>
@@ -162,91 +177,26 @@ export default function MessageList() {
             ""
           )}
         </div>
-        {/* <div className="flex w-full justify-center items-center px-10">
-          <div className="text-zinc-600 font-semibold text-base mr-28">
-            CHANNELS
-          </div>
-          <div className="flex ml-auto space-x-3">
-            <button
-              className="w-6 h-6  flex justify-center items-center rounded-md bg-white/10"
-              onClick={() => {
-                setShowSearchChannel((prev) => !prev);
-              }}
-            >
-              <img className="w-5" src={searchIcon} alt=""></img>
-            </button>
-            <button
-              className="w-6 h-6 flex justify-center  items-center rounded-md py-1 bg-white/10 "
-              onClick={() => {
-                setAddFlagChannel((prev) => !prev);
-                setDisplayChannel((prev) => !prev);
-              }}
-            >
-              <img
-                className="w-4"
-                src={addFlagChannel ? minusIcon : plusIcon}
-                alt=""
-              ></img>
-            </button>
-          </div>
-          {showSearchChannel ? (
-            <div className="flex  border border-solid w-full mb-2 mx-2">
-              <input
-                className="max-w-56 rounded-md flex-1 py-2 pl-5 bg-white/10 outline-none 
-          border border-transparent focus:border focus:border-solid  focus:border-white/30 "
-                placeholder="Search"
-              ></input>
-            </div>
-          ) : (
-            ""
-          )}
-        </div> */}
-
-        {/* <div className="w-full flex items-center mb-8 px-5"> */}
-        {/* <button
-            className="w-8 flex justify-center items-center rounded-l-md py-2 pl-1 bg-white/10
-        border border-transparent focus:border focus:border-solid  focus:border-white/30"
-          >
-            <img className="w-6" src={searchIcon} alt=""></img>
-          </button> */}
-        {/* <input
-            className="mr-6 rounded-r-md flex-1 py-2 pl-5 bg-white/10 outline-none 
-          border border-transparent focus:border focus:border-solid  focus:border-white/30"
-            placeholder="Search"
-          ></input> */}
-        {/* <button
-            className="w-8 h-8 flex justify-center items-center rounded-md py-1 bg-white/10 ml-auto"
-            onClick={() => {
-              setAddFlag((prev) => !prev);
-              setDisplay((prev) => !prev);
-            }}
-          >
-            <img
-              className="w-6"
-              src={addFlag ? minusIcon : plusIcon}
-              alt=""
-            ></img>
-          </button> */}
-        {/* </div> */}
-        {/* <UserList></UserList>
-        <UserList></UserList>
-        <UserList></UserList>
-        <UserList></UserList>
-        <UserList></UserList> */}
         <div className="w-full flex items-center px-10 py-2 mt-auto bg-zinc-900">
-          <div className="w-12 h-12 mr-4">
+          <div className={`${transitionPage ? "w-16 h-16" : "w-12 h-12"} mr-4`}>
             <img
-              className="w-12 h-12 rounded-lg object-cover"
+              className="w-full h-full rounded-lg object-cover"
               src={defaultImg}
               alt=""
             ></img>
           </div>
-          <div className="flex text-base font-semibold ">John Doe</div>
+          <div
+            className={`flex ${
+              transitionPage ? "text-xl" : "text-base"
+            } font-semibold`}
+          >
+            John Doe
+          </div>
           <div className="flex space-x-3 ml-auto">
-            <button className="w-5">
+            <button className={`${transitionPage ? "w-7" : "w-5"}`}>
               <img src={pen} alt=""></img>
             </button>
-            <button className="w-10 pt-1">
+            <button className={`${transitionPage ? "w-14 pt-1" : "w-10 pt-1"}`}>
               <img src={logout} alt=""></img>
             </button>
           </div>

@@ -1,5 +1,5 @@
 import { OrbitControls, useHelper } from "@react-three/drei";
-import { Canvas, useFrame } from "@react-three/fiber";
+import { Canvas, useFrame, useStore, useThree } from "@react-three/fiber";
 import { Suspense, useRef, useState } from "react";
 import { DirectionalLightHelper } from "three";
 import { Leva, useControls } from "leva";
@@ -45,8 +45,29 @@ export default function EmptyChat() {
   //   },
   // });
   const isMobile = useMediaQuery({ maxWidth: 1200 });
+  const transitionPage = useMediaQuery({ maxWidth: 940 });
+
+  // const OrbitControlsComponent = () => {
+  //   const {
+  //     camera,
+  //     gl: { domElement },
+  //   } = useThree();
+  //   const controls = useRef();
+  //   useFrame((state) => controls.current.update());
+  //   return (
+  //     <OrbitControls
+  //       enableZoom={false}
+  //       ref={controls}
+  //       args={[camera, domElement]}
+  //     ></OrbitControls>
+  //   );
+  // };
   return (
-    <div className="relative flex-1 flex-col min-h-screen hidden md:flex  bg-[#0E0E10] justify-center items-center px-2 ">
+    <div
+      className={`relative flex-1 flex-col min-h-screen ${
+        transitionPage ? "hidden" : "flex"
+      }  bg-[#0E0E10] justify-center items-center px-2`}
+    >
       <div className="absolute flex w-full h-full">
         {/* <Leva></Leva> */}
         <Canvas>
@@ -60,7 +81,7 @@ export default function EmptyChat() {
               // position={[0, 0, 0]}
               // rotation={[0, -Math.PI / 2, 0]}
               position={[0, 0.1, 1.7]}
-              scale={isMobile ? 0.65 : 0.9}
+              scale={isMobile ? 0.65 : 0.85}
               rotation={[0, -Math.PI, 0]}
             ></Rasengan>
 
@@ -69,7 +90,12 @@ export default function EmptyChat() {
               position={[10, 10, 10]}
               intensity={0.5}
             ></directionalLight>
-            <OrbitControls enableZoom={false}></OrbitControls>
+            <OrbitControls
+              enableZoom={false}
+              // domElement={document.body}
+              enablePan={false}
+            ></OrbitControls>
+            {/* <OrbitControlsComponent></OrbitControlsComponent> */}
           </Suspense>
         </Canvas>
       </div>

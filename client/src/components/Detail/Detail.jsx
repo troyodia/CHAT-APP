@@ -111,7 +111,7 @@ export default function Detail() {
                       alt=""
                     ></img>
                   </div>
-                  <div className="text-xs ">Image name from computer input</div>
+                  <div className="text-xs">Image name from computer input</div>
                   <button className="w-6 h-6 rounded-full ml-auto mr-2 bg-white/10 flex items-center justify-center">
                     <img className="w-3" src={plusIcon} alt=""></img>
                   </button>

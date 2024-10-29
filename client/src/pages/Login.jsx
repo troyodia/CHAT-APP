@@ -151,7 +151,7 @@ export default function LoginScreen() {
     <div className="h-screen flex justify-center items-center bg-black mx-10">
       <div
         className="p-12 text-black flex justify-center items-center bg-black rounded-xl border-2 border-solid border-white transition 
-      ease-in-out delay-200 hover:shadow-[0_0px_60px_rgba(0,238,255)] rounded h-[650px] w-[550px] md:w-[920px]"
+      ease-in-out delay-200 duration-200 hover:shadow-[0_0px_60px_rgba(0,238,255)] rounded h-[650px] w-[550px] md:w-[920px]"
       >
         <div className="flex flex-col w-full md:w-[500px]">
           <div className="">
@@ -253,7 +253,7 @@ export default function LoginScreen() {
               <div className="h-0.5 bg-white"></div>
               <div className="h-1.5"></div>
 
-              <button className="rounded bg-[#00eeff] px-4 py-4 text-black font-semibold mt-2">
+              <button className="rounded  px-4 py-4 text-black bg-[#00eeff] font-semibold mt-2">
                 Log In
               </button>
             </form>

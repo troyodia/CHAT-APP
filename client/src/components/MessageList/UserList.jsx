@@ -14,11 +14,13 @@ export default function UserList({
   // const handleColor = () => {
   //   setBorder((prev) => !prev);
   const isMobile = useMediaQuery({ maxWidth: 1200 });
+  const transitionPage = useMediaQuery({ maxWidth: 940 });
+
   // };
   return (
     <div
       className={`flex w-full items-center 
-     px-4 py-2 border border-solid border-transparent hover:border-white ${
+     px-4 py-2 border border-solid border-transparent rounded-lg hover:border-white ${
        isActive ? "bg-white text-black" : ""
      }`}
       onClick={() => handleDirectMessageClick(id)}
@@ -31,10 +33,20 @@ export default function UserList({
         ></img>
       </div>
       <div className="ml-4">
-        <p className={`font-semibold ${isMobile ? "text-sm" : "text-lg"}`}>
+        <p
+          className={`font-semibold ${
+            transitionPage ? "text-xl" : isMobile ? "text-sm" : "text-lg"
+          }`}
+        >
           {firstname} {lastname}
         </p>
-        <p className={`${isMobile ? "text-xs" : "text-sm"}`}>Hello</p>
+        <p
+          className={`${
+            transitionPage ? "text-base" : isMobile ? "text-xs" : "text-sm"
+          }`}
+        >
+          Hello
+        </p>
       </div>
     </div>
   );
