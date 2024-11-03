@@ -9,10 +9,16 @@ import logout from "../../images/icons/logout.png";
 import pen from "../../images/icons/pen.png";
 import rasengan from "../../images/icons/newrasengan.png";
 import { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
+
 import { useMediaQuery } from "react-responsive";
 
 import UserList from "./UserList";
 import AddNewUserModal from "./AddNewUserModal";
+import AddNewChannelModal from "./AddNewChannel";
+import axiosInstance from "../../utils/axiosInstance";
+import { UpdateUserState } from "../../use-contexts/userContext";
 export default function MessageList() {
   const [addFlag, setAddFlag] = useState(false);
   const [display, setDisplay] = useState(false);
@@ -23,6 +29,8 @@ export default function MessageList() {
   const [showSearchChannel, setShowSearchChannel] = useState(false);
 
   const [activeItem, setActiveItem] = useState("");
+  const navigate = useNavigate();
+  const location = useLocation();
   const handleDirectMessageClick = (id) => {
     activeItem === id ? setActiveItem(id) : setActiveItem(id);
   };
@@ -51,6 +59,28 @@ export default function MessageList() {
   const lg = useMediaQuery({ maxWidth: 1006 });
   const md = useMediaQuery({ maxWidth: 768 });
 
+  const url = "http://localhost:5000/api/v1/auth/logout";
+  const loggOutUser = async () => {
+    try {
+      const res = await axiosInstance(url, { withCredentials: true });
+      if (res.data && res.status === 200) {
+        toast.success("Logged Out Successfully!", {
+          position: "bottom-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+        });
+        navigate("/login");
+        localStorage.removeItem("isLoggedIn");
+      }
+    } catch (error) {
+      if (error) console.log(error.response.data.msg);
+    }
+  };
   return (
     <>
       <div
@@ -193,17 +223,43 @@ export default function MessageList() {
             John Doe
           </div>
           <div className="flex space-x-3 ml-auto">
-            <button className={`${transitionPage ? "w-7" : "w-5"}`}>
+            <button
+              className={`group relative ${transitionPage ? "w-7" : "w-5"}`}
+              onClick={() => {
+                navigate("/profile", {
+                  state: {
+                    previousUrl: location.pathname,
+                  },
+                });
+              }}
+            >
               <img src={pen} alt=""></img>
+              <span
+                className="w-24 p-2 bottom-4 left-1/2 -translate-x-1/2 -translate-y-1/2 
+              text-sm text-black bg-white hidden group-hover:flex group-hover:justify-center absolute rounded-lg"
+              >
+                Edit Profile
+              </span>
             </button>
-            <button className={`${transitionPage ? "w-14 pt-1" : "w-10 pt-1"}`}>
+            <button
+              className={`group relative ${
+                transitionPage ? "w-14 pt-1" : "w-10 pt-1"
+              }`}
+              onClick={loggOutUser}
+            >
               <img src={logout} alt=""></img>
+              <span
+                className=" w-16 p-2 bottom-4 left-1/2 -translate-x-1/2 -translate-y-1/2 
+              text-sm text-black bg-white hidden group-hover:flex group-hover:justify-center absolute rounded-lg"
+              >
+                Logout
+              </span>
             </button>
           </div>
         </div>
       </div>
       {display ? <AddNewUserModal></AddNewUserModal> : ""}
-      {displayChannel ? <AddNewUserModal></AddNewUserModal> : ""}
+      {displayChannel ? <AddNewChannelModal></AddNewChannelModal> : ""}
     </>
   );
 }

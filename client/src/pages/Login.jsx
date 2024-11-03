@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useEffect } from "react";
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { json, Link, useLocation, useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import { UpdateUserState, UserState } from "../use-contexts/userContext";
 import "react-toastify/dist/ReactToastify.css";
@@ -13,14 +13,17 @@ export default function LoginScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [error, setError] = useState(false);
   const [toggle, setToggle] = useState(false);
   const [see, setSee] = useState(false);
   const [seeConfirm, setSeeConfirm] = useState(false);
+  // const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const naviagate = useNavigate();
+  const location = useLocation();
   const urlRegsiter = "http://localhost:5000/api/v1/auth/register";
   const urlLogin = "http://localhost:5000/api/v1/auth/login";
+  const { userId } = UserState();
+  console.log(userId);
   const signUpOrLoginUser = async (url) => {
     try {
       const res = await axios.post(
@@ -43,7 +46,10 @@ export default function LoginScreen() {
             theme: "dark",
           }
         );
-        naviagate("/chat-page");
+        naviagate(url.includes("login") ? "/chat-page" : "/profile", {
+          state: { previousUrl: location.pathname },
+        });
+        localStorage.setItem("isLoggedIn", "loggedIn");
       }
     } catch (error) {
       if (error.response.data.msg) {

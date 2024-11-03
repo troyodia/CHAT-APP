@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import defaultImg from "../images/default.png";
 import { UserState } from "../use-contexts/userContext";
 import UploadImage from "../components/UploadImage";
@@ -17,10 +17,11 @@ export default function ProfileScreen() {
   const [imgPath, setImgPath] = useState(defaultImg);
   const [imageData, setImageData] = useState("");
   const navigate = useNavigate();
-  const formData = new FormData();
-
+  const location = useLocation();
   const urlProfile = "http://localhost:5000/api/v1/auth/profile";
   const urlDelete = "http://localhost:5000/api/v1/auth/delete-profile-image";
+  const { userId } = UserState();
+  // console.log(userId);
   const createProfile = async () => {
     try {
       const res = await axiosInstance.post(
@@ -126,14 +127,21 @@ export default function ProfileScreen() {
       console.log(error.response.data.msg);
     }
   };
-
+  // useEffect(() => {
+  //   if (!userId) {
+  //     navigate("/login");
+  //   }
+  // }, []);
   return (
     <div className=" flex h-screen justify-center items-center text-white px-10">
       <div className="flex flex-col w-[300px] md:w-[520px]">
         <button
           className="w-10"
           onClick={() => {
-            navigate("/login");
+            if (location.state) navigate(location.state.previousUrl);
+            else {
+              navigate("/login");
+            }
           }}
         >
           <img className="object-cover" src={leftArrow} alt=""></img>

@@ -3,6 +3,7 @@ const router = express.Router();
 const {
   register,
   login,
+  logout,
   createProfile,
   addProfileImage,
   deleteProfileImage,
@@ -13,6 +14,7 @@ const authorize = require("../middleware/authorize");
 // router.post("/uploadsingle", upload.single("image"), getImage);
 router.route("/register").post(register);
 router.route("/login").post(login);
+router.route("/logout").get(authorize, logout);
 
 router.route("/profile").post(authorize, createProfile);
 router.route("/add-profile-image").post(authorize, addProfileImage);

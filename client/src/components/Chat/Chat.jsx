@@ -12,8 +12,10 @@ import cancel from "../../images/icons/cancel.png";
 import settings from "../../images/icons/settingsblue.png";
 import Picker from "emoji-picker-react";
 import { useMediaQuery } from "react-responsive";
-
+import { UserState } from "../../use-contexts/userContext.jsx";
 import { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
+
 const SentMessage = ({ message, pageSize }) => {
   return (
     <div className="ml-auto flex flex-col mr-4 mt-4 justify-items text-left">
@@ -70,12 +72,12 @@ export default function Chat({ updateSettings }) {
   const endRef = useRef("");
 
   useEffect(() => {
-    // endRef.current.scrollIntoView({ behaviour: "smooth" });
+    endRef.current.scrollIntoView({ behaviour: "smooth" });
   }, []);
   const isTablet = useMediaQuery({ maxWidth: 1400 });
   const isSmall = useMediaQuery({ maxWidth: 1140 });
   const transitionPage = useMediaQuery({ maxWidth: 940 });
-
+  // console.log(userId);
   return (
     <div
       className={`flex-1 flex-col relative  ${

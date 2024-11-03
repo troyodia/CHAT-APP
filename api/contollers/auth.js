@@ -85,6 +85,11 @@ const login = async (req, res) => {
     },
   });
 };
+const logout = async (req, res) => {
+  res.clearCookie("REFRESH_TOKEN");
+  res.clearCookie("ACCESS_TOKEN");
+  res.status(StatusCodes.OK).json({ msg: "logged out" });
+};
 const createProfile = async (req, res) => {
   const { email, firstname, lastname } = req.body;
   const { userId, email: userEmail } = req.user;
@@ -134,6 +139,7 @@ const deleteProfileImage = async (req, res) => {
 module.exports = {
   register,
   login,
+  logout,
   createProfile,
   addProfileImage,
   deleteProfileImage,
