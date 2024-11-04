@@ -8,6 +8,8 @@ const connectDB = require("./db/connect");
 const app = express();
 const authRouter = require("./routes/auth");
 const userRouter = require("./routes/userInfo");
+const contactRouter = require("./routes/contacts");
+
 const notFoundErrorMiddleware = require("./middleware/not-found");
 const errorHandlerMiddleware = require("./middleware/error-handler");
 const authorize = require("./middleware/authorize");
@@ -16,12 +18,17 @@ const upload = require("./middleware/multer");
 app.use(express.json());
 app.use(cors({ credentials: true, origin: "http://localhost:3000" }));
 
-app.use("/uploads/profiles", express.static("uploads/profile"));
+app.use(
+  "/uploads/profiles",
+  express.static(path.join(__dirname, "uploads/profiles"))
+);
 app.use(cookieParser());
 
 app.use(upload.single("image"));
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/user", authorize, userRouter);
+app.use("/api/v1/contact", authorize, contactRouter);
+
 app.get("/home", (req, res) => {
   res.send("home");
 });
