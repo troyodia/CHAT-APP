@@ -2,11 +2,14 @@ import { useEffect, useState } from "react";
 import Lottie from "react-lottie";
 import defaultImg from "../../images/default.jpeg";
 import plusIcon from "../../images/icons/plus.png";
+import close from "../../images/icons/close.png";
 import * as animationData from "../../lottie/lottie.json";
 import axiosInstance from "../../utils/axiosInstance";
-export default function AddNewUserModal() {
+
+export default function AddNewUserModal({ closeModal }) {
   const [search, setSearch] = useState("");
   const [searchedContacts, setSearchContacts] = useState([]);
+  const [cancelModal, setCancelModal] = useState(false);
   useEffect(() => {
     console.log(searchedContacts.length);
     console.log(search);
@@ -46,10 +49,21 @@ export default function AddNewUserModal() {
   // }, [search]);
   return (
     <div
-      className="absolute flex w-[420px] h-96 bg-black p-14 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2
-     transition ease-in-out delay-200 duration-200 hover:shadow-[0_0px_60px_rgba(0,238,255)] z-[1000]"
+      className={`absolute ${
+        cancelModal ? "hidden" : "flex"
+      } w-[420px] h-[430px] bg-black px-14 py-10 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2
+     transition ease-in-out delay-200 duration-200 hover:shadow-[0_0px_60px_rgba(0,238,255)] z-[1000]`}
     >
       <div className="flex flex-col w-full items-center">
+        <button
+          className="w-4 h-4 ml-auto mb-6"
+          onClick={() => {
+            setCancelModal((prev) => !prev);
+            closeModal();
+          }}
+        >
+          <img className="w-full h-full" src={close} alt=""></img>
+        </button>
         <div className="w-full">
           <div className="flex">
             <input
@@ -89,8 +103,14 @@ export default function AddNewUserModal() {
                       {contact.email}
                     </span>
                   </div>
-                  <button className="w-5 h-5 flex justify-center ml-auto items-center rounded-md py-1 bg-white/10 ">
-                    <img className="w-3" src={plusIcon} alt=""></img>
+                  <button
+                    className="w-6 h-6 flex justify-center ml-auto items-center rounded-md py-1 
+                  bg-white/10 border-2 border-solid border-transparent hover:border-[#00eeff]"
+                    onClick={() => {
+                      console.log(contact);
+                    }}
+                  >
+                    <img className="w-4" src={plusIcon} alt=""></img>
                   </button>
                 </div>
               );

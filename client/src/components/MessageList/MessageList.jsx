@@ -81,6 +81,13 @@ export default function MessageList() {
       if (error) console.log(error.response.data.msg);
     }
   };
+  const closeModal = () => {
+    setAddFlag((prev) => !prev);
+    setDisplay((prev) => !prev);
+  };
+  useEffect(() => {
+    console.log(addFlag);
+  }, [addFlag]);
   return (
     <>
       <div
@@ -258,7 +265,11 @@ export default function MessageList() {
           </div>
         </div>
       </div>
-      {display ? <AddNewUserModal></AddNewUserModal> : ""}
+      {display ? (
+        <AddNewUserModal closeModal={closeModal}></AddNewUserModal>
+      ) : (
+        ""
+      )}
       {displayChannel ? <AddNewChannelModal></AddNewChannelModal> : ""}
     </>
   );
