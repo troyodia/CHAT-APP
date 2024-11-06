@@ -66,7 +66,7 @@ const RecievedMessage = ({ message, pageSize }) => {
   );
 };
 
-export default function Chat({ updateSettings }) {
+export default function Chat({ updateSettings, displayToggle }) {
   const [display, setDisplay] = useState(false);
   const [message, setMessage] = useState("");
   const endRef = useRef("");
@@ -77,7 +77,7 @@ export default function Chat({ updateSettings }) {
   const isTablet = useMediaQuery({ maxWidth: 1400 });
   const isSmall = useMediaQuery({ maxWidth: 1140 });
   const transitionPage = useMediaQuery({ maxWidth: 940 });
-  // console.log(userId);
+
   return (
     <div
       className={`flex-1 flex-col relative  ${
@@ -98,7 +98,7 @@ export default function Chat({ updateSettings }) {
           </div>
         </div>
         <div className="flex ml-10">
-          <button className="w-6 pt-1">
+          <button className="w-5 pt-1" onClick={displayToggle}>
             <img src={cancel} alt=""></img>
           </button>
         </div>

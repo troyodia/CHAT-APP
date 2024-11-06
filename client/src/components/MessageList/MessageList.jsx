@@ -19,7 +19,8 @@ import AddNewUserModal from "./AddNewUserModal";
 import AddNewChannelModal from "./AddNewChannel";
 import axiosInstance from "../../utils/axiosInstance";
 import { UpdateUserState } from "../../use-contexts/userContext";
-export default function MessageList() {
+
+export default function MessageList({ displayToggle }) {
   const [addFlag, setAddFlag] = useState(false);
   const [display, setDisplay] = useState(false);
   const [addFlagChannel, setAddFlagChannel] = useState(false);
@@ -29,6 +30,7 @@ export default function MessageList() {
   const [showSearchChannel, setShowSearchChannel] = useState(false);
 
   const [activeItem, setActiveItem] = useState("");
+  const [contacts, setContacts] = useState([]);
   const navigate = useNavigate();
   const location = useLocation();
   const handleDirectMessageClick = (id) => {
@@ -59,10 +61,12 @@ export default function MessageList() {
   const lg = useMediaQuery({ maxWidth: 1006 });
   const md = useMediaQuery({ maxWidth: 768 });
 
-  const url = "http://localhost:5000/api/v1/auth/logout";
+  const logOutUrl = "http://localhost:5000/api/v1/auth/logout";
+  const contactListUrl =
+    "http://localhost:5000/api/v1/contactList/getContactList";
   const loggOutUser = async () => {
     try {
-      const res = await axiosInstance(url, { withCredentials: true });
+      const res = await axiosInstance(logOutUrl, { withCredentials: true });
       if (res.data && res.status === 200) {
         toast.success("Logged Out Successfully!", {
           position: "bottom-right",
@@ -85,9 +89,28 @@ export default function MessageList() {
     setAddFlag((prev) => !prev);
     setDisplay((prev) => !prev);
   };
+  // const addContacttoList = (contact) => {
+  //   setContacts([...contacts, contact]);
+  // };
   useEffect(() => {
-    console.log(addFlag);
-  }, [addFlag]);
+    const getContactList = async () => {
+      try {
+        const res = await axiosInstance.get(contactListUrl, {
+          withCredentials: true,
+        });
+        if (res.data && res.status === 200) {
+          console.log(res.data.contactList);
+          setContacts(res.data.contactList);
+        }
+      } catch (error) {
+        console.log(error?.response?.data?.msg);
+      }
+    };
+    getContactList();
+  });
+  useEffect(() => {
+    console.log(contacts);
+  }, [contacts]);
   return (
     <>
       <div
@@ -105,7 +128,7 @@ export default function MessageList() {
           </div>
           <div className="font-bold text-3xl">Rasengan</div>
         </div>
-        <div className="flex flex-col w-full  items-center px-10 mb-10 ">
+        <div className="flex flex-col w-full items-center px-10 mb-10">
           <div className="flex w-full mb-4">
             <div
               className={`text-zinc-600 font-semibold ${
@@ -116,7 +139,7 @@ export default function MessageList() {
             </div>
             <div className="flex ml-auto space-x-3 my-auto">
               <button
-                className="w-6 h-6  flex justify-center items-center rounded-md bg-white/10"
+                className="w-6 h-6 flex justify-center items-center rounded-md bg-white/10"
                 onClick={() => {
                   setShowSearch((prev) => !prev);
                 }}
@@ -124,7 +147,7 @@ export default function MessageList() {
                 <img className="w-5" src={searchIcon} alt=""></img>
               </button>
               <button
-                className="w-6 h-6 flex justify-center  items-center rounded-md py-1 bg-white/10 "
+                className="w-6 h-6 flex justify-center items-center rounded-md py-1 bg-white/10 "
                 onClick={() => {
                   if (!addFlagChannel) {
                     setAddFlag((prev) => !prev);
@@ -152,19 +175,20 @@ export default function MessageList() {
             ""
           )}
           <div className="w-full bg-[#0E0E10] rounded-lg space-y-2 max-h-56 overflow-auto scrollbar-hidden scrollbar-hidden::-webkit-scrollbar">
-            {defualtDirectMessages.map((item) => {
-              return (
-                <UserList
-                  image={item.image}
-                  firstname={item.firstname}
-                  lastname={item.lastname}
-                  id={item.id}
-                  handleDirectMessageClick={handleDirectMessageClick}
-                  isActive={activeItem === item.id}
-                  key={item.id}
-                ></UserList>
-              );
-            })}
+            {contacts.length > 0 &&
+              contacts.map((item) => {
+                return (
+                  <UserList
+                    image={item.image}
+                    firstname={item.firstname}
+                    lastname={item.lastname}
+                    id={item._id}
+                    handleDirectMessageClick={handleDirectMessageClick}
+                    isActive={activeItem === item._id}
+                    key={item._id}
+                  ></UserList>
+                );
+              })}
           </div>
         </div>
         <div className="flex flex-col w-full items-center px-10 mb-10">
@@ -186,7 +210,7 @@ export default function MessageList() {
                 <img className="w-5" src={searchIcon} alt=""></img>
               </button>
               <button
-                className="w-6 h-6 flex justify-center  items-center rounded-md py-1 bg-white/10 "
+                className="w-6 h-6 flex justify-center items-center rounded-md py-1 bg-white/10 "
                 onClick={() => {
                   if (!addFlag) {
                     setAddFlagChannel((prev) => !prev);
@@ -266,7 +290,10 @@ export default function MessageList() {
         </div>
       </div>
       {display ? (
-        <AddNewUserModal closeModal={closeModal}></AddNewUserModal>
+        <AddNewUserModal
+          closeModal={closeModal}
+          displayToggle={displayToggle}
+        ></AddNewUserModal>
       ) : (
         ""
       )}

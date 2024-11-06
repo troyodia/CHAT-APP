@@ -38,6 +38,9 @@ export function UserProvider({ children }) {
         }
       } catch (error) {
         console.log(error.response?.data?.msg);
+        if (error) {
+          localStorage.removeItem("isLoggedIn");
+        }
         // if (!firstname && !lastname && !userId)
         // console.log(firstname, lastname, userId);
         // console.log(error?.response?.data?.msg);

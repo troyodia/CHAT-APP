@@ -6,15 +6,14 @@ import close from "../../images/icons/close.png";
 import * as animationData from "../../lottie/lottie.json";
 import axiosInstance from "../../utils/axiosInstance";
 
-export default function AddNewUserModal({ closeModal }) {
+export default function AddNewUserModal({ closeModal, displayToggle }) {
   const [search, setSearch] = useState("");
   const [searchedContacts, setSearchContacts] = useState([]);
   const [cancelModal, setCancelModal] = useState(false);
-  useEffect(() => {
-    console.log(searchedContacts.length);
-    console.log(search);
-  }, [searchedContacts, search]);
-  const url = "http://localhost:5000/api/v1/contact/searchContact";
+
+  const searchContactUrl = "http://localhost:5000/api/v1/contact/searchContact";
+  const contactListUrl =
+    "http://localhost:5000/api/v1/contactList/createContactList";
   const defaultOptions = {
     loop: true,
     autoplay: true,
@@ -27,7 +26,7 @@ export default function AddNewUserModal({ closeModal }) {
     const searchContacts = async () => {
       try {
         const res = await axiosInstance.post(
-          url,
+          searchContactUrl,
           { search },
           { withCredentials: true }
         );
@@ -42,11 +41,18 @@ export default function AddNewUserModal({ closeModal }) {
     if (search.length > 0) searchContacts();
     else setSearchContacts([]);
   }, [search]);
-  // useEffect(() => {
-  //   if (!search) {
-  //     setSearchContacts([]);
-  //   }
-  // }, [search]);
+  const addToContactList = async (contact) => {
+    try {
+      const res = await axiosInstance.post(contactListUrl, contact, {
+        withCredentials: true,
+      });
+      if (res.data && res.status === 200) {
+        console.log(res.data);
+      }
+    } catch (error) {
+      console.log(error?.response?.data?.msg);
+    }
+  };
   return (
     <div
       className={`absolute ${
@@ -108,6 +114,10 @@ export default function AddNewUserModal({ closeModal }) {
                   bg-white/10 border-2 border-solid border-transparent hover:border-[#00eeff]"
                     onClick={() => {
                       console.log(contact);
+                      displayToggle(false);
+                      setCancelModal((prev) => !prev);
+                      closeModal();
+                      addToContactList(contact);
                     }}
                   >
                     <img className="w-4" src={plusIcon} alt=""></img>
