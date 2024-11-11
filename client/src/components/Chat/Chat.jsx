@@ -143,7 +143,7 @@ export default function Chat({ updateSettings, displayToggle }) {
                     versions of Lorem Ipsum thththth.`}
           pageSize={{ isTablet, isSmall }}
         ></RecievedMessage>
-        <div className="mb-10" ref={endRef}></div>
+        <div className="min-h-10" ref={endRef}></div>
       </div>
 
       <div className="flex mt-auto h-32 border-0 w-full items-center bg-[#0E0E10]">
