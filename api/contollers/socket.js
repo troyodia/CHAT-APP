@@ -21,7 +21,7 @@ const socketSetUp = (server) => {
     const userId = socket.handshake.query.userId;
     if (userId) {
       socketMap.set(userId, socket.id);
-      console.log("User " + userId + "connected to " + socket.id);
+      console.log("User " + userId + " connected to " + socket.id);
     } else {
       console.log("No user id provided during connection");
     }

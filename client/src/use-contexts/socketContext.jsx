@@ -8,7 +8,7 @@ const SocketContext = createContext(null);
 export const useSocket = () => {
   return useContext(SocketContext);
 };
-export default function SocketProvider({ childern }) {
+export default function SocketProvider({ children }) {
   const socket = useRef();
   const user = UserState();
   useEffect(() => {
@@ -30,7 +30,7 @@ export default function SocketProvider({ childern }) {
   }, [user]);
   return (
     <SocketContext.Provider value={socket.current}>
-      {childern}
+      {children}
     </SocketContext.Provider>
   );
 }

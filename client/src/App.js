@@ -10,30 +10,30 @@ import PrivateRoutes from "./utils/PrivateRoutes";
 function App() {
   return (
     <UserProvider>
-      {/* <SocketProvider> */}
-      <BrowserRouter>
-        <Routes>
-          <Route path="/login" element={<LoginScreen></LoginScreen>}></Route>
-          <Route
-            path="/profile"
-            element={
-              <PrivateRoutes>
-                {" "}
-                <ProfileScreen></ProfileScreen>
-              </PrivateRoutes>
-            }
-          ></Route>
-          <Route
-            path="/chat-page"
-            element={
-              <PrivateRoutes>
-                <ChatPage></ChatPage>
-              </PrivateRoutes>
-            }
-          ></Route>
-        </Routes>
-      </BrowserRouter>
-      {/* </SocketProvider> */}
+      <SocketProvider>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/login" element={<LoginScreen></LoginScreen>}></Route>
+            <Route
+              path="/profile"
+              element={
+                <PrivateRoutes>
+                  {" "}
+                  <ProfileScreen></ProfileScreen>
+                </PrivateRoutes>
+              }
+            ></Route>
+            <Route
+              path="/chat-page"
+              element={
+                <PrivateRoutes>
+                  <ChatPage></ChatPage>
+                </PrivateRoutes>
+              }
+            ></Route>
+          </Routes>
+        </BrowserRouter>
+      </SocketProvider>
     </UserProvider>
   );
 }

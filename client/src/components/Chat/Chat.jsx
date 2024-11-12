@@ -79,23 +79,23 @@ export default function Chat({ updateSettings, displayToggle }) {
   const isSmall = useMediaQuery({ maxWidth: 1140 });
   const transitionPage = useMediaQuery({ maxWidth: 940 });
 
-  useEffect(() => {
-    if (user) {
-      const server = io("http://localhost:5000", {
-        withCredentials: true,
-        extraHeaders: {
-          "my-custom-header": "abcd",
-        },
-        query: {
-          userId: user.userId,
-        },
-      });
-      server.on("connection", console.log("connected to socket server"));
-      return () => {
-        server.disconnect();
-      };
-    }
-  }, [user]);
+  // useEffect(() => {
+  //   if (user) {
+  //     const server = io("http://localhost:5000", {
+  //       withCredentials: true,
+  //       extraHeaders: {
+  //         "my-custom-header": "abcd",
+  //       },
+  //       query: {
+  //         userId: user.userId,
+  //       },
+  //     });
+  //     server.on("connection", console.log("connected to socket server"));
+  //     return () => {
+  //       server.disconnect();
+  //     };
+  //   }
+  // }, [user]);
   return (
     <div
       className={`flex-1 flex-col relative  ${
