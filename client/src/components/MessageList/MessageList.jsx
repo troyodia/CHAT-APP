@@ -99,7 +99,7 @@ export default function MessageList({ displayToggle }) {
           withCredentials: true,
         });
         if (res.data && res.status === 200) {
-          console.log(res.data.contactList);
+          // console.log(res.data.contactList);
           setContacts(res.data.contactList);
         }
       } catch (error) {
@@ -108,9 +108,9 @@ export default function MessageList({ displayToggle }) {
     };
     getContactList();
   });
-  useEffect(() => {
-    console.log(contacts);
-  }, [contacts]);
+  // useEffect(() => {
+  //   console.log(contacts);
+  // }, [contacts]);
   return (
     <>
       <div

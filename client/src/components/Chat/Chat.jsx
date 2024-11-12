@@ -11,6 +11,7 @@ import block from "../../images/icons/block.png";
 import cancel from "../../images/icons/cancel.png";
 import settings from "../../images/icons/settingsblue.png";
 import Picker from "emoji-picker-react";
+import { io } from "socket.io-client";
 import { useMediaQuery } from "react-responsive";
 import { UserState } from "../../use-contexts/userContext.jsx";
 import { useEffect, useRef, useState } from "react";
@@ -70,7 +71,7 @@ export default function Chat({ updateSettings, displayToggle }) {
   const [display, setDisplay] = useState(false);
   const [message, setMessage] = useState("");
   const endRef = useRef("");
-
+  const user = UserState();
   useEffect(() => {
     endRef.current.scrollIntoView({ behaviour: "smooth" });
   }, []);
@@ -78,6 +79,23 @@ export default function Chat({ updateSettings, displayToggle }) {
   const isSmall = useMediaQuery({ maxWidth: 1140 });
   const transitionPage = useMediaQuery({ maxWidth: 940 });
 
+  useEffect(() => {
+    if (user) {
+      const server = io("http://localhost:5000", {
+        withCredentials: true,
+        extraHeaders: {
+          "my-custom-header": "abcd",
+        },
+        query: {
+          userId: user.userId,
+        },
+      });
+      server.on("connection", console.log("connected to socket server"));
+      return () => {
+        server.disconnect();
+      };
+    }
+  }, [user]);
   return (
     <div
       className={`flex-1 flex-col relative  ${

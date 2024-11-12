@@ -6,6 +6,8 @@ const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const connectDB = require("./db/connect");
 const app = express();
+const http = require("http");
+const httpServer = http.createServer(app);
 const authRouter = require("./routes/auth");
 const userRouter = require("./routes/userInfo");
 const contactRouter = require("./routes/contacts");
@@ -15,6 +17,7 @@ const notFoundErrorMiddleware = require("./middleware/not-found");
 const errorHandlerMiddleware = require("./middleware/error-handler");
 const authorize = require("./middleware/authorize");
 const upload = require("./middleware/multer");
+const socketSetUp = require("./contollers/socket");
 
 app.use(express.json());
 app.use(cors({ credentials: true, origin: "http://localhost:3000" }));
@@ -41,9 +44,10 @@ const port = process.env.PORT || 5000;
 const start = async () => {
   try {
     await connectDB(process.env.MONGO_URI);
-    app.listen(port, () => {
+    const server = app.listen(port, () => {
       console.log("listening on port " + port);
     });
+    socketSetUp(server);
   } catch (error) {
     console.log(error);
   }
