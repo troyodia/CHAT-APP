@@ -19,10 +19,12 @@ export default function SocketProvider({ children }) {
           userId: user.userId,
         },
       });
-      socket.current.on(
-        "connection",
+      socket.current.on("connection", () =>
         console.log("connected to socket server")
       );
+
+      const handleRecieveMessage = (message) => {};
+      socket.current.on("recieveMessage", handleRecieveMessage);
       return () => {
         socket.current.disconnect();
       };

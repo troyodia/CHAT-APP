@@ -34,6 +34,7 @@ export default function UploadImage({ updateImgData }) {
       });
       if (res.status === 200) {
         const { image } = res.data;
+        console.log(res.data);
       }
     } catch (error) {
       console.log(error.response.data.msg);

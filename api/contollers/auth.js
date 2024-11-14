@@ -32,16 +32,6 @@ const register = async (req, res) => {
   res.status(StatusCodes.OK).json({ user });
 };
 
-// const getImage = async (req, res) => {
-//   if (!req.file) throw new BadRequestError("no file");
-//   console.log(req.file);
-//   res.cookie("image", JSON.stringify(req.file), {
-//     secure: false,
-//     sameSite: "none",
-//   });
-//   res.status(StatusCodes.OK).json(req.file);
-// };
-
 const login = async (req, res) => {
   const { email, password } = req.body;
   if (!email || !password) {
@@ -111,6 +101,7 @@ const createProfile = async (req, res) => {
     email: updateUser.email,
     firstname: updateUser.firstname,
     lastname: updateUser.lastname,
+    image: updateUser.image,
     profileSetup: updateUser.profileSetup,
   });
 };

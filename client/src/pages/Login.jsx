@@ -8,7 +8,7 @@ import "react-toastify/dist/ReactToastify.css";
 import regsiterImage from "../images/signupimage.png";
 import eyeOPen from "../images/icons/eyeopen.png";
 import eyeClose from "../images/icons/eyeclosed.png";
-
+import { useAppStore } from "../store";
 export default function LoginScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -16,14 +16,13 @@ export default function LoginScreen() {
   const [toggle, setToggle] = useState(false);
   const [see, setSee] = useState(false);
   const [seeConfirm, setSeeConfirm] = useState(false);
-  // const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const naviagate = useNavigate();
   const location = useLocation();
   const urlRegsiter = "http://localhost:5000/api/v1/auth/register";
   const urlLogin = "http://localhost:5000/api/v1/auth/login";
   const { userId } = UserState();
-  console.log(userId);
+  // console.log(userId);
   const signUpOrLoginUser = async (url) => {
     try {
       const res = await axios.post(

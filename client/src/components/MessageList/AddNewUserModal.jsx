@@ -5,7 +5,7 @@ import plusIcon from "../../images/icons/plus.png";
 import close from "../../images/icons/close.png";
 import * as animationData from "../../lottie/lottie.json";
 import axiosInstance from "../../utils/axiosInstance";
-
+import { useAppStore } from "../../store";
 export default function AddNewUserModal({ closeModal, displayToggle }) {
   const [search, setSearch] = useState("");
   const [searchedContacts, setSearchContacts] = useState([]);
@@ -22,6 +22,7 @@ export default function AddNewUserModal({ closeModal, displayToggle }) {
       preserveAspectRatio: "xMidYMid slice",
     },
   };
+  const { setSelectedChatType, setSelectedChatData } = useAppStore();
   useEffect(() => {
     const searchContacts = async () => {
       try {
@@ -114,7 +115,8 @@ export default function AddNewUserModal({ closeModal, displayToggle }) {
                   bg-white/10 border-2 border-solid border-transparent hover:border-[#00eeff]"
                     onClick={() => {
                       console.log(contact);
-                      displayToggle(false);
+                      // setChatType("contact");
+                      setSelectedChatType("contact");
                       setCancelModal((prev) => !prev);
                       closeModal();
                       addToContactList(contact);

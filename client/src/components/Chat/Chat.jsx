@@ -16,7 +16,7 @@ import { useMediaQuery } from "react-responsive";
 import { UserState } from "../../use-contexts/userContext.jsx";
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-
+import { useAppStore } from "../../store/index.js";
 const SentMessage = ({ message, pageSize }) => {
   return (
     <div className="ml-auto flex flex-col mr-4 mt-4 justify-items text-left">
@@ -67,7 +67,7 @@ const RecievedMessage = ({ message, pageSize }) => {
   );
 };
 
-export default function Chat({ updateSettings, displayToggle }) {
+export default function Chat({ updateSettings }) {
   const [display, setDisplay] = useState(false);
   const [message, setMessage] = useState("");
   const endRef = useRef("");
@@ -79,23 +79,9 @@ export default function Chat({ updateSettings, displayToggle }) {
   const isSmall = useMediaQuery({ maxWidth: 1140 });
   const transitionPage = useMediaQuery({ maxWidth: 940 });
 
-  // useEffect(() => {
-  //   if (user) {
-  //     const server = io("http://localhost:5000", {
-  //       withCredentials: true,
-  //       extraHeaders: {
-  //         "my-custom-header": "abcd",
-  //       },
-  //       query: {
-  //         userId: user.userId,
-  //       },
-  //     });
-  //     server.on("connection", console.log("connected to socket server"));
-  //     return () => {
-  //       server.disconnect();
-  //     };
-  //   }
-  // }, [user]);
+  const { selectedChatMessages, closeChat, userInfo } = useAppStore();
+
+  console.log(userInfo);
   return (
     <div
       className={`flex-1 flex-col relative  ${
@@ -116,7 +102,12 @@ export default function Chat({ updateSettings, displayToggle }) {
           </div>
         </div>
         <div className="flex ml-10">
-          <button className="w-5 pt-1" onClick={displayToggle}>
+          <button
+            className="w-5 pt-1"
+            onClick={() => {
+              closeChat();
+            }}
+          >
             <img src={cancel} alt=""></img>
           </button>
         </div>

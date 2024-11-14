@@ -20,7 +20,7 @@ import AddNewChannelModal from "./AddNewChannel";
 import axiosInstance from "../../utils/axiosInstance";
 import { UpdateUserState } from "../../use-contexts/userContext";
 
-export default function MessageList({ displayToggle }) {
+export default function MessageList() {
   const [addFlag, setAddFlag] = useState(false);
   const [display, setDisplay] = useState(false);
   const [addFlagChannel, setAddFlagChannel] = useState(false);
@@ -89,9 +89,7 @@ export default function MessageList({ displayToggle }) {
     setAddFlag((prev) => !prev);
     setDisplay((prev) => !prev);
   };
-  // const addContacttoList = (contact) => {
-  //   setContacts([...contacts, contact]);
-  // };
+
   useEffect(() => {
     const getContactList = async () => {
       try {
@@ -108,9 +106,7 @@ export default function MessageList({ displayToggle }) {
     };
     getContactList();
   });
-  // useEffect(() => {
-  //   console.log(contacts);
-  // }, [contacts]);
+
   return (
     <>
       <div
@@ -290,10 +286,7 @@ export default function MessageList({ displayToggle }) {
         </div>
       </div>
       {display ? (
-        <AddNewUserModal
-          closeModal={closeModal}
-          displayToggle={displayToggle}
-        ></AddNewUserModal>
+        <AddNewUserModal closeModal={closeModal}></AddNewUserModal>
       ) : (
         ""
       )}

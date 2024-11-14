@@ -3,8 +3,8 @@ import { useState } from "react";
 import { createContext } from "react";
 import axiosInstance from "../utils/axiosInstance";
 import { useNavigate } from "react-router-dom";
-const UserContext = createContext({});
-const UpdateUserContext = createContext({});
+const UserContext = createContext(null);
+const UpdateUserContext = createContext(null);
 
 export function UserState() {
   return useContext(UserContext);
@@ -12,7 +12,7 @@ export function UserState() {
 export function UpdateUserState() {
   return useContext(UpdateUserContext);
 }
-
+//Use this as a call for the private routes gut everything except for local storage
 export function UserProvider({ children }) {
   const [firstname, setFirstname] = useState(null);
   const [lastname, setLastname] = useState(null);
@@ -41,9 +41,6 @@ export function UserProvider({ children }) {
         if (error) {
           localStorage.removeItem("isLoggedIn");
         }
-        // if (!firstname && !lastname && !userId)
-        // console.log(firstname, lastname, userId);
-        // console.log(error?.response?.data?.msg);
       }
     };
     getUser();

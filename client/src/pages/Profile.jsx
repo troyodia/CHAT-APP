@@ -8,7 +8,7 @@ import leftArrow from "../images/icons/arrow-left.png";
 import trash from "../images/icons/trash.png";
 import { toast } from "react-toastify";
 import axiosInstance from "../utils/axiosInstance";
-
+import { useAppStore } from "../store";
 export default function ProfileScreen() {
   const [firstname, setFirstname] = useState("");
   const [lastname, setLastname] = useState("");
@@ -21,7 +21,7 @@ export default function ProfileScreen() {
   const urlProfile = "http://localhost:5000/api/v1/auth/profile";
   const urlDelete = "http://localhost:5000/api/v1/auth/delete-profile-image";
   const { userId } = UserState();
-  // console.log(userId);
+
   const createProfile = async () => {
     try {
       const res = await axiosInstance.post(

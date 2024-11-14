@@ -23,6 +23,7 @@ function App() {
                 </PrivateRoutes>
               }
             ></Route>
+
             <Route
               path="/chat-page"
               element={
