@@ -1,26 +1,15 @@
 import defaultImg from "../../images/default.jpeg";
 import defaultImg2 from "../../images/windtunnel.jpg";
-import cameraIcon from "../../images/icons/camera.png";
-import phoneIcon from "../../images/icons/phone.png";
-import infoIcon from "../../images/icons/i-icon.png";
-import picIcon from "../../images/icons/picture.png";
-import cameraFooterIcon from "../../images/icons/camerafooter.png";
-import microphoneIcon from "../../images/icons/microphone.png";
-import emojiIcon from "../../images/icons/emoji.png";
 import block from "../../images/icons/block.png";
 import cancel from "../../images/icons/cancel.png";
 import settings from "../../images/icons/settingsblue.png";
-import Picker from "emoji-picker-react";
-import { io } from "socket.io-client";
 import { useMediaQuery } from "react-responsive";
-import { UserState } from "../../use-contexts/userContext.jsx";
 import { useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { useAppStore } from "../../store/index.js";
+import MessageBar from "./MessageBar.jsx";
 const SentMessage = ({ message, pageSize }) => {
   return (
     <div className="ml-auto flex flex-col mr-4 mt-4 justify-items text-left">
-      {/* <div className="text-left"> */}
       <p
         className={`p-4 border border-solid flex border-sky-600 ${
           pageSize.isSmall
@@ -34,7 +23,6 @@ const SentMessage = ({ message, pageSize }) => {
         {message}{" "}
       </p>
       <div className="mt-1 flex">55 min ago</div>
-      {/* </div> */}
     </div>
   );
 };
@@ -68,10 +56,7 @@ const RecievedMessage = ({ message, pageSize }) => {
 };
 
 export default function Chat({ updateSettings }) {
-  const [display, setDisplay] = useState(false);
-  const [message, setMessage] = useState("");
   const endRef = useRef("");
-  const user = UserState();
   useEffect(() => {
     endRef.current.scrollIntoView({ behaviour: "smooth" });
   }, []);
@@ -159,63 +144,7 @@ export default function Chat({ updateSettings }) {
         ></RecievedMessage>
         <div className="min-h-10" ref={endRef}></div>
       </div>
-
-      <div className="flex mt-auto h-32 border-0 w-full items-center bg-[#0E0E10]">
-        <div className="flex mr-auto space-x-3 ml-4">
-          <button className="w-8 pt-1">
-            <img src={picIcon} alt=""></img>
-          </button>
-          <button className="w-6 pt-1">
-            <img src={cameraFooterIcon} alt=""></img>
-          </button>
-          <button className="w-7 pt-1">
-            <img src={microphoneIcon} alt=""></img>
-          </button>
-        </div>
-        <input
-          type="text"
-          value={message}
-          className="ml-8 flex-1 py-4 pl-4 bg-white/10 rounded-md outline-none text-lg 
-          focus:border focus:border-solid focus:border-white/30 min-w-2"
-          placeholder="Type a message"
-          id="input"
-          onChange={(e) => {
-            setMessage(e.target.value);
-          }}
-        ></input>
-        <button
-          className="mx-7 w-8 pt-1"
-          onClick={() => {
-            setDisplay((prev) => !prev);
-          }}
-        >
-          <img src={emojiIcon} alt=""></img>
-        </button>
-        <button
-          className={`flex text-black ml-auto mr-4 bg-[#00eeff] justify-center rounded ${
-            isSmall
-              ? "text-lg px-5 py-2"
-              : isTablet
-              ? "text-lg px-6 py-3"
-              : "text-xl px-7 py-4"
-          } 
-          font-bold hover:opacity-80`}
-        >
-          Send
-        </button>
-      </div>
-      <div className="absolute bottom-24 right-32">
-        <Picker
-          open={display}
-          onEmojiClick={(emojiData, event) => {
-            let pos = document.getElementById("input").selectionStart;
-            setMessage(
-              (prev) => prev.slice(0, pos) + emojiData.emoji + prev.slice(pos)
-            );
-            setDisplay(!display);
-          }}
-        ></Picker>
-      </div>
+      <MessageBar isSmall={isSmall} isTablet={isTablet}></MessageBar>
     </div>
   );
 }
