@@ -18,7 +18,6 @@ import UserList from "./UserList";
 import AddNewUserModal from "./AddNewUserModal";
 import AddNewChannelModal from "./AddNewChannel";
 import axiosInstance from "../../utils/axiosInstance";
-import { UpdateUserState } from "../../use-contexts/userContext";
 import { useAppStore } from "../../store";
 
 export default function MessageList() {
@@ -30,14 +29,13 @@ export default function MessageList() {
   const [showSearch, setShowSearch] = useState(false);
   const [showSearchChannel, setShowSearchChannel] = useState(false);
 
-  const [activeItem, setActiveItem] = useState("");
+  // const [activeItem, setActiveItem] = useState("");
   const [contacts, setContacts] = useState([]);
   const navigate = useNavigate();
   const location = useLocation();
-  const handleDirectMessageClick = (id) => {
-    activeItem === id ? setActiveItem(id) : setActiveItem(id);
-  };
-
+  // const handleDirectMessageClick = (id) => {
+  //   activeItem === id ? setActiveItem(id) : setActiveItem(id);
+  // };
   const isMobile = useMediaQuery({ maxWidth: 1200 });
   const transitionPage = useMediaQuery({ maxWidth: 940 });
   const lg = useMediaQuery({ maxWidth: 1006 });
@@ -46,6 +44,10 @@ export default function MessageList() {
   const logOutUrl = "http://localhost:5000/api/v1/auth/logout";
   const contactListUrl =
     "http://localhost:5000/api/v1/contactList/getContactList";
+  const { userInfo, activeItem, setActiveItem } = useAppStore();
+  const handleDirectMessageClick = (id) => {
+    activeItem === id ? setActiveItem(id) : setActiveItem(id);
+  };
   const loggOutUser = async () => {
     try {
       const res = await axiosInstance(logOutUrl, { withCredentials: true });
@@ -89,7 +91,6 @@ export default function MessageList() {
     getContactList();
   }, [getContactList]);
 
-  const { userInfo } = useAppStore();
   const updateContactList = (contact) => {
     if (contact) setContacts([...contacts, ...contact]);
   };
@@ -160,7 +161,6 @@ export default function MessageList() {
           <div className="w-full bg-[#0E0E10] rounded-lg space-y-2 max-h-56 overflow-auto scrollbar-hidden scrollbar-hidden::-webkit-scrollbar">
             {contacts.length > 0
               ? contacts.map((item) => {
-                  console.log(item);
                   return (
                     <UserList
                       image={item?.image}

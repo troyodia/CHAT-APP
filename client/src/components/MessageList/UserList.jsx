@@ -1,6 +1,7 @@
 import { useState } from "react";
 import defaultImg from "../../images/default.jpeg";
 import { useMediaQuery } from "react-responsive";
+import { useAppStore } from "../../store";
 
 export default function UserList({
   image,
@@ -15,7 +16,7 @@ export default function UserList({
   //   setBorder((prev) => !prev);
   const isMobile = useMediaQuery({ maxWidth: 1200 });
   const transitionPage = useMediaQuery({ maxWidth: 940 });
-
+  const { setSelectedChatType, setSelectedChatData } = useAppStore();
   // };
   return (
     <div
@@ -23,7 +24,16 @@ export default function UserList({
      px-4 py-2 border border-solid border-transparent rounded-lg hover:border-white ${
        isActive ? "bg-white text-black" : ""
      }`}
-      onClick={() => handleDirectMessageClick(id)}
+      onClick={() => {
+        handleDirectMessageClick(id);
+        setSelectedChatType("chat");
+        setSelectedChatData({
+          image,
+          firstname,
+          lastname,
+          id,
+        });
+      }}
     >
       <div className="w-10 h-10 ">
         <img

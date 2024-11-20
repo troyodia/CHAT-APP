@@ -79,8 +79,9 @@ export default function Chat({ updateSettings }) {
   const isSmall = useMediaQuery({ maxWidth: 1140 });
   const transitionPage = useMediaQuery({ maxWidth: 940 });
 
-  const { selectedChatMessages, closeChat, userInfo } = useAppStore();
-
+  const { selectedChatData, closeChat, userInfo, setActiveItem } =
+    useAppStore();
+  console.log(selectedChatData);
   return (
     <div
       className={`flex-1 flex-col relative  ${
@@ -92,12 +93,16 @@ export default function Chat({ updateSettings }) {
           <div className="w-16 h-16 ml-8 mr-4">
             <img
               className="w-16 h-16 rounded-lg object-cover"
-              src={defaultImg}
+              src={`http://localhost:5000/uploads/profiles/${selectedChatData.image}`}
               alt=""
             ></img>
           </div>
           <div>
-            <p className="font-semibold text-xl mx-auto">Jane Doe</p>
+            <p className="font-semibold text-xl mx-auto">
+              {selectedChatData
+                ? selectedChatData.firstname + " " + selectedChatData.lastname
+                : ""}
+            </p>
           </div>
         </div>
         <div className="flex ml-10">
@@ -105,6 +110,7 @@ export default function Chat({ updateSettings }) {
             className="w-5 pt-1"
             onClick={() => {
               closeChat();
+              setActiveItem(undefined);
             }}
           >
             <img src={cancel} alt=""></img>
