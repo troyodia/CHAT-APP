@@ -8,7 +8,7 @@ import searchIcon from "../../images/icons/search.png";
 import logout from "../../images/icons/logout.png";
 import pen from "../../images/icons/pen.png";
 import rasengan from "../../images/icons/newrasengan.png";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 
@@ -19,6 +19,7 @@ import AddNewUserModal from "./AddNewUserModal";
 import AddNewChannelModal from "./AddNewChannel";
 import axiosInstance from "../../utils/axiosInstance";
 import { UpdateUserState } from "../../use-contexts/userContext";
+import { useAppStore } from "../../store";
 
 export default function MessageList() {
   const [addFlag, setAddFlag] = useState(false);
@@ -36,26 +37,7 @@ export default function MessageList() {
   const handleDirectMessageClick = (id) => {
     activeItem === id ? setActiveItem(id) : setActiveItem(id);
   };
-  const defualtDirectMessages = [
-    {
-      image: defaultImg,
-      firstname: "jane",
-      lastname: "Doe",
-      id: "1",
-    },
-    {
-      image: defaultImg,
-      firstname: "jane",
-      lastname: "Doe",
-      id: "2",
-    },
-    {
-      image: defaultImg,
-      firstname: "jane",
-      lastname: "Doe",
-      id: "3",
-    },
-  ];
+
   const isMobile = useMediaQuery({ maxWidth: 1200 });
   const transitionPage = useMediaQuery({ maxWidth: 940 });
   const lg = useMediaQuery({ maxWidth: 1006 });
@@ -89,23 +71,28 @@ export default function MessageList() {
     setAddFlag((prev) => !prev);
     setDisplay((prev) => !prev);
   };
+  const getContactList = useCallback(async () => {
+    try {
+      const res = await axiosInstance.get(contactListUrl, {
+        withCredentials: true,
+      });
+      if (res.data && res.status === 200) {
+        // console.log(res.data);
+        setContacts(res.data);
+      }
+    } catch (error) {
+      console.log(error?.response?.data?.msg);
+    }
+  }, []);
 
   useEffect(() => {
-    const getContactList = async () => {
-      try {
-        const res = await axiosInstance.get(contactListUrl, {
-          withCredentials: true,
-        });
-        if (res.data && res.status === 200) {
-          // console.log(res.data.contactList);
-          setContacts(res.data.contactList);
-        }
-      } catch (error) {
-        console.log(error?.response?.data?.msg);
-      }
-    };
     getContactList();
-  });
+  }, [getContactList]);
+
+  const { userInfo } = useAppStore();
+  const updateContactList = (contact) => {
+    if (contact) setContacts([...contacts, ...contact]);
+  };
 
   return (
     <>
@@ -171,20 +158,22 @@ export default function MessageList() {
             ""
           )}
           <div className="w-full bg-[#0E0E10] rounded-lg space-y-2 max-h-56 overflow-auto scrollbar-hidden scrollbar-hidden::-webkit-scrollbar">
-            {contacts.length > 0 &&
-              contacts.map((item) => {
-                return (
-                  <UserList
-                    image={item.image}
-                    firstname={item.firstname}
-                    lastname={item.lastname}
-                    id={item._id}
-                    handleDirectMessageClick={handleDirectMessageClick}
-                    isActive={activeItem === item._id}
-                    key={item._id}
-                  ></UserList>
-                );
-              })}
+            {contacts.length > 0
+              ? contacts.map((item) => {
+                  console.log(item);
+                  return (
+                    <UserList
+                      image={item?.image}
+                      firstname={item?.firstname}
+                      lastname={item?.lastname}
+                      id={item?._id}
+                      handleDirectMessageClick={handleDirectMessageClick}
+                      isActive={activeItem === item?._id}
+                      key={item?._id}
+                    ></UserList>
+                  );
+                })
+              : ""}
           </div>
         </div>
         <div className="flex flex-col w-full items-center px-10 mb-10">
@@ -236,18 +225,23 @@ export default function MessageList() {
         </div>
         <div className="w-full flex items-center px-10 py-2 mt-auto bg-zinc-900">
           <div className={`${transitionPage ? "w-16 h-16" : "w-12 h-12"} mr-4`}>
-            <img
-              className="w-full h-full rounded-lg object-cover"
-              src={defaultImg}
-              alt=""
-            ></img>
+            {userInfo ? (
+              <img
+                className="w-full h-full rounded-lg object-cover"
+                // src={defaultImg}
+                src={`http://localhost:5000/uploads/profiles/${userInfo.image}`}
+                alt=""
+              ></img>
+            ) : (
+              ""
+            )}
           </div>
           <div
             className={`flex ${
               transitionPage ? "text-xl" : "text-base"
-            } font-semibold`}
+            } font-semibold max-w-52`}
           >
-            John Doe
+            {userInfo ? userInfo.firstname + " " + userInfo.lastname : ""}
           </div>
           <div className="flex space-x-3 ml-auto">
             <button
@@ -286,7 +280,10 @@ export default function MessageList() {
         </div>
       </div>
       {display ? (
-        <AddNewUserModal closeModal={closeModal}></AddNewUserModal>
+        <AddNewUserModal
+          closeModal={closeModal}
+          updateContactList={updateContactList}
+        ></AddNewUserModal>
       ) : (
         ""
       )}

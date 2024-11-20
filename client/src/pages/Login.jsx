@@ -32,8 +32,9 @@ export default function LoginScreen() {
       );
       if (res.data && res.status === 200) {
         toast.success(
-          (url.includes("login") ? "Logged In" : "Registered") +
-            " Successfully!",
+          url.includes("login")
+            ? "Logged In Successfully!"
+            : "Registered Successfully!, Please set up Profile",
           {
             position: "bottom-right",
             autoClose: 5000,

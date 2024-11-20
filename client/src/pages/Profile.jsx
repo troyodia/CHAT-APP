@@ -20,7 +20,6 @@ export default function ProfileScreen() {
   const location = useLocation();
   const urlProfile = "http://localhost:5000/api/v1/auth/profile";
   const urlDelete = "http://localhost:5000/api/v1/auth/delete-profile-image";
-  const { userId } = UserState();
 
   const createProfile = async () => {
     try {
@@ -181,7 +180,7 @@ export default function ProfileScreen() {
             <form
               id="profile"
               className="flex w-full text-white flex-col 
-      space-y-3 text-2xl font-medium"
+      space-y-3 text-2xl font-meduim"
               onSubmit={(e) => {
                 e.preventDefault();
                 validateProfile();

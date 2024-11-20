@@ -38,6 +38,7 @@ const UserSchema = mongoose.Schema(
       type: Boolean,
       required: false,
     },
+    contactList: [mongoose.Types.ObjectId],
   },
   { timestamps: true }
 );

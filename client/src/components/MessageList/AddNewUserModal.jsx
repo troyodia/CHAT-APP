@@ -6,7 +6,7 @@ import close from "../../images/icons/close.png";
 import * as animationData from "../../lottie/lottie.json";
 import axiosInstance from "../../utils/axiosInstance";
 import { useAppStore } from "../../store";
-export default function AddNewUserModal({ closeModal, displayToggle }) {
+export default function AddNewUserModal({ closeModal, updateContactList }) {
   const [search, setSearch] = useState("");
   const [searchedContacts, setSearchContacts] = useState([]);
   const [cancelModal, setCancelModal] = useState(false);
@@ -22,7 +22,7 @@ export default function AddNewUserModal({ closeModal, displayToggle }) {
       preserveAspectRatio: "xMidYMid slice",
     },
   };
-  const { setSelectedChatType, setSelectedChatData } = useAppStore();
+  const { setSelectedChatType, setSelectedChatData, userInfo } = useAppStore();
   useEffect(() => {
     const searchContacts = async () => {
       try {
@@ -32,7 +32,7 @@ export default function AddNewUserModal({ closeModal, displayToggle }) {
           { withCredentials: true }
         );
         if (res.data && res.status === 200) {
-          console.log(res.data.users);
+          // console.log(res.data.users);
           setSearchContacts([...res.data.users]);
         }
       } catch (error) {
@@ -42,18 +42,33 @@ export default function AddNewUserModal({ closeModal, displayToggle }) {
     if (search.length > 0) searchContacts();
     else setSearchContacts([]);
   }, [search]);
-  const addToContactList = async (contact) => {
+  const addToContactList = async (contactId) => {
     try {
-      const res = await axiosInstance.post(contactListUrl, contact, {
-        withCredentials: true,
-      });
+      // console.log(contactId);
+      const res = await axiosInstance.post(
+        contactListUrl,
+        { contactId },
+        // firstname: contact.firstname,
+        // lastname: contact.lastname,
+        // email: contact.email,
+        // image: contact.image,
+        // owner: userInfo._id,
+        {
+          withCredentials: true,
+        }
+      );
       if (res.data && res.status === 200) {
-        console.log(res.data);
+        if (res.data.contact) {
+          updateContactList(res.data.contact);
+        } else {
+          console.log(res.data.msg);
+        }
       }
     } catch (error) {
       console.log(error?.response?.data?.msg);
     }
   };
+
   return (
     <div
       className={`absolute ${
@@ -114,12 +129,12 @@ export default function AddNewUserModal({ closeModal, displayToggle }) {
                     className="w-6 h-6 flex justify-center ml-auto items-center rounded-md py-1 
                   bg-white/10 border-2 border-solid border-transparent hover:border-[#00eeff]"
                     onClick={() => {
-                      console.log(contact);
+                      // console.log(contact);
                       // setChatType("contact");
                       setSelectedChatType("contact");
                       setCancelModal((prev) => !prev);
                       closeModal();
-                      addToContactList(contact);
+                      addToContactList(contact._id);
                     }}
                   >
                     <img className="w-4" src={plusIcon} alt=""></img>

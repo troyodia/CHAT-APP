@@ -81,7 +81,6 @@ export default function Chat({ updateSettings }) {
 
   const { selectedChatMessages, closeChat, userInfo } = useAppStore();
 
-  console.log(userInfo);
   return (
     <div
       className={`flex-1 flex-col relative  ${

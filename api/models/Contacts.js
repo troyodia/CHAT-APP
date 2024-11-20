@@ -5,6 +5,7 @@ const ContactSchema = new mongoose.Schema(
     _id: {
       type: mongoose.Types.ObjectId,
       required: true,
+      unique: false,
     },
     firstname: {
       type: String,
@@ -20,6 +21,11 @@ const ContactSchema = new mongoose.Schema(
     },
     image: {
       type: String,
+      required: true,
+    },
+    owner: {
+      type: mongoose.Types.ObjectId,
+      ref: "User",
       required: true,
     },
   },

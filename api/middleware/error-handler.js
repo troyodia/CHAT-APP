@@ -23,7 +23,7 @@ const errorHandler = (err, req, res, next) => {
   }
   //ADD CAST ERROR
   // res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ err });
-
+  console.log(err);
   res.status(customErr.statusCode).json({ msg: customErr.msg });
 };
 module.exports = errorHandler;
