@@ -11,14 +11,14 @@ export default function ChatPage() {
   const updateSettings = () => {
     setSettings((prev) => !prev);
   };
-  const { selectedChatType, fetchData, userInfo } = useAppStore();
-
+  const { selectedChatType, fetchData, userInfo, selectedChatData } =
+    useAppStore();
   useEffect(() => {
     fetchData();
   }, []);
-  useEffect(() => {
-    console.log(userInfo);
-  }, [userInfo]);
+  // useEffect(() => {
+  //   console.log(userInfo);
+  // }, [userInfo]);
   return (
     <div className="flex h-screen items-center justify-center bg-black">
       <div className=" w-full h-screen flex bg-black/30 text-white">

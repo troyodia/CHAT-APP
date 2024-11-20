@@ -29,7 +29,7 @@ export function UserProvider({ children }) {
         if (res.data && res.status === 200) {
           const { _id: userId, firstname, lastname } = res.data.singleUser;
 
-          console.log(userId, firstname, lastname);
+          // console.log(userId, firstname, lastname);
           setUserId(userId);
           if (firstname && lastname) {
             setFirstname(firstname);

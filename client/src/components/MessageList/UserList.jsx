@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import defaultImg from "../../images/default.jpeg";
 import { useMediaQuery } from "react-responsive";
 import { useAppStore } from "../../store";
@@ -16,8 +16,14 @@ export default function UserList({
   //   setBorder((prev) => !prev);
   const isMobile = useMediaQuery({ maxWidth: 1200 });
   const transitionPage = useMediaQuery({ maxWidth: 940 });
-  const { setSelectedChatType, setSelectedChatData } = useAppStore();
+  const {
+    setSelectedChatType,
+    setSelectedChatData,
+    selectedChatData,
+    selectedChatType,
+  } = useAppStore();
   // };
+
   return (
     <div
       className={`flex w-full items-center 
@@ -26,7 +32,7 @@ export default function UserList({
      }`}
       onClick={() => {
         handleDirectMessageClick(id);
-        setSelectedChatType("chat");
+        setSelectedChatType("contact");
         setSelectedChatData({
           image,
           firstname,

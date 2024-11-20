@@ -44,7 +44,9 @@ export default function MessageList() {
   const logOutUrl = "http://localhost:5000/api/v1/auth/logout";
   const contactListUrl =
     "http://localhost:5000/api/v1/contactList/getContactList";
+
   const { userInfo, activeItem, setActiveItem } = useAppStore();
+
   const handleDirectMessageClick = (id) => {
     activeItem === id ? setActiveItem(id) : setActiveItem(id);
   };

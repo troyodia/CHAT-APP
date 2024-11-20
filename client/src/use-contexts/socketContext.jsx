@@ -4,13 +4,14 @@ import { io } from "socket.io-client";
 import { useAppStore } from "../store";
 
 const SocketContext = createContext(null);
+
 export const useSocket = () => {
   return useContext(SocketContext);
 };
 export default function SocketProvider({ children }) {
   const socket = useRef();
-  const { userInfo, selectedChatType, selectedChatData, addMessage } =
-    useAppStore();
+  const { userInfo } = useAppStore();
+
   useEffect(() => {
     if (userInfo) {
       socket.current = io("http://localhost:5000", {
@@ -19,17 +20,20 @@ export default function SocketProvider({ children }) {
           userId: userInfo._id,
         },
       });
-      socket.current.on("connection", () =>
+      socket.current.on("connect", () =>
         console.log("connected to socket server")
       );
 
       const handleRecieveMessage = (message) => {
+        const { selectedChatType, selectedChatData, addMessage } =
+          useAppStore.getState();
         if (
           selectedChatType !== undefined &&
-          (message.sender._id === selectedChatData._id ||
-            message.recipient._id === selectedChatData._id)
+          (message.sender._id === selectedChatData.id ||
+            message.recipient._id === selectedChatData.id)
         ) {
           addMessage(message);
+          console.log("message received", message);
         }
       };
       socket.current.on("recieveMessage", handleRecieveMessage);

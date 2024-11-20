@@ -24,14 +24,17 @@ const socketSetUp = (server) => {
 
     const createMessage = await Message.create(message);
 
-    const messageData = await Message.findById(createMessage._id)
+    const messageData = await Message.findOne({ _id: createMessage._id })
       .populate("sender", "id email firstname lastname image")
       .populate("recipient", "id email firstname lastname image");
+    console.log(recipientSocketId, senderSocketId);
     if (recipientSocketId) {
       io.to(recipientSocketId).emit("recieveMessage", messageData);
+      console.log("sent");
     }
     if (senderSocketId) {
       io.to(senderSocketId).emit("recieveMessage", messageData);
+      console.log("sent");
     }
   };
   io.on("connection", (socket) => {

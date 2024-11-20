@@ -4,12 +4,25 @@ import cameraFooterIcon from "../../images/icons/camerafooter.png";
 import microphoneIcon from "../../images/icons/microphone.png";
 import emojiIcon from "../../images/icons/emoji.png";
 import Picker from "emoji-picker-react";
-import { io } from "socket.io-client";
+import { useAppStore } from "../../store";
+import { useSocket } from "../../use-contexts/socketContext";
 
 export default function MessageBar({ isSmall, isTablet }) {
   const [display, setDisplay] = useState(false);
   const [message, setMessage] = useState("");
-  const handleSendMessage = () => {};
+  const { selectedChatType, selectedChatData, userInfo } = useAppStore();
+  const socket = useSocket();
+  const handleSendMessage = () => {
+    if (selectedChatType === "contact") {
+      socket.emit("sendMessage", {
+        sender: userInfo._id,
+        recipient: selectedChatData.id,
+        content: message,
+        messageType: "text",
+        fileUrl: undefined,
+      });
+    }
+  };
   return (
     <>
       <div className="flex mt-auto h-32 border-0 w-full items-center bg-[#0E0E10]">
@@ -28,7 +41,7 @@ export default function MessageBar({ isSmall, isTablet }) {
           type="text"
           value={message}
           className="ml-8 flex-1 py-4 pl-4 bg-white/10 rounded-md outline-none text-lg 
-          focus:border focus:border-solid focus:border-white/30 min-w-2"
+          focus:outline focus:outline-dashed focus:outline-white/30 min-w-2"
           placeholder="Type a message"
           id="input"
           onChange={(e) => {
@@ -51,7 +64,7 @@ export default function MessageBar({ isSmall, isTablet }) {
               ? "text-lg px-6 py-3"
               : "text-xl px-7 py-4"
           } 
-          font-bold hover:opacity-80`}
+          font-bold hover:opacity-80  active:outline-dashed active:outline-2 active:outline-offset-2 active:outline-cyan-500`}
           onClick={handleSendMessage}
         >
           Send

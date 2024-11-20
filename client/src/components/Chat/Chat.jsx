@@ -64,9 +64,17 @@ export default function Chat({ updateSettings }) {
   const isSmall = useMediaQuery({ maxWidth: 1140 });
   const transitionPage = useMediaQuery({ maxWidth: 940 });
 
-  const { selectedChatData, closeChat, userInfo, setActiveItem } =
-    useAppStore();
-  console.log(selectedChatData);
+  const {
+    selectedChatData,
+    closeChat,
+    userInfo,
+    setActiveItem,
+    selectedChatMessages,
+  } = useAppStore();
+  useEffect(() => {
+    console.log(selectedChatMessages);
+  }, [selectedChatMessages]);
+
   return (
     <div
       className={`flex-1 flex-col relative  ${
@@ -76,11 +84,15 @@ export default function Chat({ updateSettings }) {
       <div className="flex h-28 w-full items-center">
         <div className="flex items-center">
           <div className="w-16 h-16 ml-8 mr-4">
-            <img
-              className="w-16 h-16 rounded-lg object-cover"
-              src={`http://localhost:5000/uploads/profiles/${selectedChatData.image}`}
-              alt=""
-            ></img>
+            {selectedChatData ? (
+              <img
+                className="w-16 h-16 rounded-lg object-cover"
+                src={`http://localhost:5000/uploads/profiles/${selectedChatData.image}`}
+                alt=""
+              ></img>
+            ) : (
+              ""
+            )}
           </div>
           <div>
             <p className="font-semibold text-xl mx-auto">
@@ -116,7 +128,8 @@ export default function Chat({ updateSettings }) {
         className="flex flex-col w-full h-full  bg-[#0E0E10] overflow-auto scrollbar-hidden scrollbar-hidden::-webkit-scrollbar"
         id="chat-box"
       >
-        <div
+        {/*Image configuration for sent images*/}
+        {/* <div
           className={`ml-auto mt-4 mr-4 ${
             isTablet ? "max-w-[700px] h-[450px]" : "max-w-[700px] h-[550px]"
           } flex`}
@@ -126,7 +139,7 @@ export default function Chat({ updateSettings }) {
             src={defaultImg2}
             alt=""
           ></img>
-        </div>
+        </div> */}
 
         <SentMessage
           message={`It was popularised in the 1960s with the release of Letraset
