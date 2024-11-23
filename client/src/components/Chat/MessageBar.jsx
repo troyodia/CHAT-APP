@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import picIcon from "../../images/icons/picture.png";
 import cameraFooterIcon from "../../images/icons/camerafooter.png";
 import microphoneIcon from "../../images/icons/microphone.png";
@@ -8,7 +8,8 @@ import { useAppStore } from "../../store";
 import { useSocket } from "../../use-contexts/socketContext";
 
 export default function MessageBar({ isSmall, isTablet }) {
-  const [display, setDisplay] = useState(false);
+  const emojiRef = useRef();
+  const [displayEmojiPicker, setDisplayEmojiPicker] = useState(false);
   const [message, setMessage] = useState("");
   const { selectedChatType, selectedChatData, userInfo } = useAppStore();
   const socket = useSocket();
@@ -17,11 +18,30 @@ export default function MessageBar({ isSmall, isTablet }) {
       socket.emit("sendMessage", {
         sender: userInfo._id,
         recipient: selectedChatData.id,
-        content: message,
+        content: message || " ",
         messageType: "text",
         fileUrl: undefined,
       });
     }
+    setMessage("");
+  };
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (emojiRef.current && !emojiRef.current.contains(e.target)) {
+        setDisplayEmojiPicker(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [emojiRef]);
+  const handleEmoji = (emojiData) => {
+    let pos = document.getElementById("input").selectionStart;
+
+    setMessage(
+      (prev) => prev.slice(0, pos) + emojiData.emoji + prev.slice(pos)
+    );
   };
   return (
     <>
@@ -51,34 +71,38 @@ export default function MessageBar({ isSmall, isTablet }) {
         <button
           className="mx-7 w-8 pt-1"
           onClick={() => {
-            setDisplay((prev) => !prev);
+            setDisplayEmojiPicker(true);
           }}
         >
           <img src={emojiIcon} alt=""></img>
         </button>
         <button
-          className={`flex text-black ml-auto mr-4 bg-[#00eeff] justify-center rounded ${
+          className={`flex text-black ml-auto mr-4  justify-center rounded ${
             isSmall
               ? "text-lg px-5 py-2"
               : isTablet
               ? "text-lg px-6 py-3"
               : "text-xl px-7 py-4"
-          } 
-          font-bold hover:opacity-80  active:outline-dashed active:outline-2 active:outline-offset-2 active:outline-cyan-500`}
-          onClick={handleSendMessage}
+          } ${
+            message
+              ? "hover:opacity-80  active:outline-dashed active:outline-2 active:outline-offset-2 active:outline-cyan-500 bg-[#00eeff]"
+              : "bg-gray-800"
+          }
+          font-bold `}
+          onClick={() => {
+            if (message) handleSendMessage();
+          }}
         >
           Send
         </button>
       </div>
-      <div className="absolute bottom-24 right-32">
+      <div className="absolute bottom-24 right-32" ref={emojiRef}>
         <Picker
-          open={display}
+          open={displayEmojiPicker}
+          theme="dark"
+          autoFocusSearch={true}
           onEmojiClick={(emojiData, event) => {
-            let pos = document.getElementById("input").selectionStart;
-            setMessage(
-              (prev) => prev.slice(0, pos) + emojiData.emoji + prev.slice(pos)
-            );
-            setDisplay(!display);
+            handleEmoji(emojiData);
           }}
         ></Picker>
       </div>

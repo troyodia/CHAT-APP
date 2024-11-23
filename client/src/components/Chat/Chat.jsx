@@ -1,5 +1,3 @@
-import defaultImg from "../../images/default.jpeg";
-import defaultImg2 from "../../images/windtunnel.jpg";
 import block from "../../images/icons/block.png";
 import cancel from "../../images/icons/cancel.png";
 import settings from "../../images/icons/settingsblue.png";
@@ -7,58 +5,12 @@ import { useMediaQuery } from "react-responsive";
 import { useEffect, useRef, useState } from "react";
 import { useAppStore } from "../../store/index.js";
 import MessageBar from "./MessageBar.jsx";
-const SentMessage = ({ message, pageSize }) => {
-  return (
-    <div className="ml-auto flex flex-col mr-4 mt-4 justify-items text-left">
-      <p
-        className={`p-4 border border-solid flex border-sky-600 ${
-          pageSize.isSmall
-            ? "w-[450px]"
-            : pageSize.isTablet
-            ? "w-[500px]"
-            : "w-[700px]"
-        }
-         text-black bg-[#00eeff] rounded-xl`}
-      >
-        {message}{" "}
-      </p>
-      <div className="mt-1 flex">55 min ago</div>
-    </div>
-  );
-};
-const RecievedMessage = ({ message, pageSize }) => {
-  return (
-    <div className="mr-auto flex ml-4 mt-4 justify-items">
-      <div className="w-12 h-12 mr-5">
-        <img
-          className="w-12 h-12 rounded-lg object-cover"
-          src={defaultImg}
-          alt=""
-        ></img>
-      </div>
-      <div className="text-left  ">
-        <p
-          className={`p-4 border border-solid border-white/30 bg-white/10 flex 
-        rounded-xl ${
-          pageSize.isSmall
-            ? "w-[450px]"
-            : pageSize.isTablet
-            ? "w-[500px]"
-            : "w-[700px]"
-        }`}
-        >
-          {message}
-        </p>
-        <div className="mt-1">55 min ago</div>
-      </div>
-    </div>
-  );
-};
+import MessageContainer from "./MessageContainer.jsx";
 
 export default function Chat({ updateSettings }) {
   const endRef = useRef("");
   useEffect(() => {
-    endRef.current.scrollIntoView({ behaviour: "smooth" });
+    if (endRef.current) endRef.current.scrollIntoView({ behaviour: "smooth" });
   }, []);
   const isTablet = useMediaQuery({ maxWidth: 1400 });
   const isSmall = useMediaQuery({ maxWidth: 1140 });
@@ -124,39 +76,13 @@ export default function Chat({ updateSettings }) {
           </button>
         </div>
       </div>
-      <div
-        className="flex flex-col w-full h-full  bg-[#0E0E10] overflow-auto scrollbar-hidden scrollbar-hidden::-webkit-scrollbar"
-        id="chat-box"
-      >
-        {/*Image configuration for sent images*/}
-        {/* <div
-          className={`ml-auto mt-4 mr-4 ${
-            isTablet ? "max-w-[700px] h-[450px]" : "max-w-[700px] h-[550px]"
-          } flex`}
-        >
-          <img
-            className="rounded-3xl w-full h-full object-cover"
-            src={defaultImg2}
-            alt=""
-          ></img>
-        </div> */}
 
-        <SentMessage
-          message={`It was popularised in the 1960s with the release of Letraset
-                    sheets containing Lorem Ipsum passages, and more recently with
-                    desktop publishing software like Aldus PageMaker including
-                    versions of Lorem Ipsum thththth.`}
-          pageSize={{ isTablet, isSmall }}
-        ></SentMessage>
-        <RecievedMessage
-          message={`It was popularised in the 1960s with the release of Letraset
-                    sheets containing Lorem Ipsum passages, and more recently with
-                    desktop publishing software like Aldus PageMaker including
-                    versions of Lorem Ipsum thththth.`}
-          pageSize={{ isTablet, isSmall }}
-        ></RecievedMessage>
-        <div className="min-h-10" ref={endRef}></div>
-      </div>
+      <MessageContainer
+        isSmall={isSmall}
+        isTablet={isTablet}
+      ></MessageContainer>
+      <div className="" ref={endRef}></div>
+
       <MessageBar isSmall={isSmall} isTablet={isTablet}></MessageBar>
     </div>
   );
