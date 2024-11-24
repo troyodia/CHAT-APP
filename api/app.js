@@ -15,7 +15,6 @@ const messageRouter = require("./routes/messages");
 const notFoundErrorMiddleware = require("./middleware/not-found");
 const errorHandlerMiddleware = require("./middleware/error-handler");
 const authorize = require("./middleware/authorize");
-const upload = require("./middleware/multer");
 const socketSetUp = require("./contollers/socket");
 
 app.use(express.json());
@@ -27,7 +26,6 @@ app.use(
 );
 app.use(cookieParser());
 
-app.use(upload.single("image"));
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/user", authorize, userRouter);
 app.use("/api/v1/contact", authorize, contactRouter);

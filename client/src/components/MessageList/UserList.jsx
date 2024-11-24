@@ -10,7 +10,6 @@ export default function UserList({
   lastname,
   id,
   handleDirectMessageClick,
-  isActive,
 }) {
   const getMessagesURL = "http://localhost:5000/api/v1/messages/getMessages";
   const isMobile = useMediaQuery({ maxWidth: 1200 });
@@ -22,13 +21,14 @@ export default function UserList({
     selectedChatType,
     selectedChatMessages,
     addMessage,
+    activeItem,
   } = useAppStore();
 
   return (
     <div
       className={`flex w-full items-center 
      px-4 py-2 border border-solid border-transparent rounded-lg hover:border-white ${
-       isActive ? "bg-white text-black" : ""
+       activeItem === id ? "bg-white text-black" : ""
      }`}
       onClick={() => {
         handleDirectMessageClick(id);
@@ -50,7 +50,7 @@ export default function UserList({
       </div>
       <div className="ml-4">
         <p
-          className={`font-semibold ${
+          className={`font-semibold capitalize ${
             transitionPage ? "text-xl" : isMobile ? "text-sm" : "text-lg"
           }`}
         >

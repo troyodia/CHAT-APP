@@ -28,6 +28,8 @@ export default function AddNewUserModal({ closeModal }) {
     userInfo,
     directMessageContactList,
     setDirectMessageContactList,
+    activeItem,
+    setActiveItem,
   } = useAppStore();
   const updateContactList = (contact) => {
     if (contact) {
@@ -55,15 +57,9 @@ export default function AddNewUserModal({ closeModal }) {
   }, [search]);
   const addToContactList = async (contactId) => {
     try {
-      // console.log(contactId);
       const res = await axiosInstance.post(
         contactListUrl,
         { contactId },
-        // firstname: contact.firstname,
-        // lastname: contact.lastname,
-        // email: contact.email,
-        // image: contact.image,
-        // owner: userInfo._id,
         {
           withCredentials: true,
         }
@@ -150,6 +146,7 @@ export default function AddNewUserModal({ closeModal }) {
                         lastname: contact.lastname,
                         id: contact._id,
                       });
+                      setActiveItem(contact._id);
                     }}
                   >
                     <img className="w-4" src={plusIcon} alt=""></img>

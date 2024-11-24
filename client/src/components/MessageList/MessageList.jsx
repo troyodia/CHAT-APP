@@ -194,7 +194,7 @@ export default function MessageList() {
             )}
           </div>
           <div
-            className={`flex ${
+            className={`flex capitalize ${
               transitionPage ? "text-xl" : "text-base"
             } font-semibold max-w-52`}
           >

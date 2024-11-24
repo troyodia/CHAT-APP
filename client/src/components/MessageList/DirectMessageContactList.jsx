@@ -39,7 +39,6 @@ export default function DirectMessageContactList() {
                 lastname={item?.lastname}
                 id={item?._id}
                 handleDirectMessageClick={handleDirectMessageClick}
-                isActive={activeItem === item?._id}
                 key={item?._id}
               ></UserList>
             );

@@ -47,7 +47,7 @@ export default function Chat({ updateSettings }) {
             )}
           </div>
           <div>
-            <p className="font-semibold text-xl mx-auto">
+            <p className="font-semibold text-xl mx-auto capitalize">
               {selectedChatData
                 ? selectedChatData.firstname + " " + selectedChatData.lastname
                 : ""}
