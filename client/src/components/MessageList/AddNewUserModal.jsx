@@ -6,7 +6,7 @@ import close from "../../images/icons/close.png";
 import * as animationData from "../../lottie/lottie.json";
 import axiosInstance from "../../utils/axiosInstance";
 import { useAppStore } from "../../store";
-export default function AddNewUserModal({ closeModal, updateContactList }) {
+export default function AddNewUserModal({ closeModal }) {
   const [search, setSearch] = useState("");
   const [searchedContacts, setSearchContacts] = useState([]);
   const [cancelModal, setCancelModal] = useState(false);
@@ -22,7 +22,18 @@ export default function AddNewUserModal({ closeModal, updateContactList }) {
       preserveAspectRatio: "xMidYMid slice",
     },
   };
-  const { setSelectedChatType, setSelectedChatData, userInfo } = useAppStore();
+  const {
+    setSelectedChatType,
+    setSelectedChatData,
+    userInfo,
+    directMessageContactList,
+    setDirectMessageContactList,
+  } = useAppStore();
+  const updateContactList = (contact) => {
+    if (contact) {
+      setDirectMessageContactList([...directMessageContactList, ...contact]);
+    }
+  };
   useEffect(() => {
     const searchContacts = async () => {
       try {

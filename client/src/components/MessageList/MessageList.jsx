@@ -19,6 +19,7 @@ import AddNewUserModal from "./AddNewUserModal";
 import AddNewChannelModal from "./AddNewChannel";
 import axiosInstance from "../../utils/axiosInstance";
 import { useAppStore } from "../../store";
+import DirectMessageContactList from "./DirectMessageContactList";
 
 export default function MessageList() {
   const [addFlag, setAddFlag] = useState(false);
@@ -29,27 +30,18 @@ export default function MessageList() {
   const [showSearch, setShowSearch] = useState(false);
   const [showSearchChannel, setShowSearchChannel] = useState(false);
 
-  // const [activeItem, setActiveItem] = useState("");
-  const [contacts, setContacts] = useState([]);
   const navigate = useNavigate();
   const location = useLocation();
-  // const handleDirectMessageClick = (id) => {
-  //   activeItem === id ? setActiveItem(id) : setActiveItem(id);
-  // };
+
   const isMobile = useMediaQuery({ maxWidth: 1200 });
   const transitionPage = useMediaQuery({ maxWidth: 940 });
   const lg = useMediaQuery({ maxWidth: 1006 });
   const md = useMediaQuery({ maxWidth: 768 });
 
   const logOutUrl = "http://localhost:5000/api/v1/auth/logout";
-  const contactListUrl =
-    "http://localhost:5000/api/v1/contactList/getContactList";
 
-  const { userInfo, activeItem, setActiveItem } = useAppStore();
+  const { userInfo } = useAppStore();
 
-  const handleDirectMessageClick = (id) => {
-    activeItem === id ? setActiveItem(id) : setActiveItem(id);
-  };
   const loggOutUser = async () => {
     try {
       const res = await axiosInstance(logOutUrl, { withCredentials: true });
@@ -74,27 +66,6 @@ export default function MessageList() {
   const closeModal = () => {
     setAddFlag((prev) => !prev);
     setDisplay((prev) => !prev);
-  };
-  const getContactList = useCallback(async () => {
-    try {
-      const res = await axiosInstance.get(contactListUrl, {
-        withCredentials: true,
-      });
-      if (res.data && res.status === 200) {
-        // console.log(res.data);
-        setContacts(res.data);
-      }
-    } catch (error) {
-      console.log(error?.response?.data?.msg);
-    }
-  }, []);
-
-  useEffect(() => {
-    getContactList();
-  }, [getContactList]);
-
-  const updateContactList = (contact) => {
-    if (contact) setContacts([...contacts, ...contact]);
   };
 
   return (
@@ -160,23 +131,7 @@ export default function MessageList() {
           ) : (
             ""
           )}
-          <div className="w-full bg-[#0E0E10] rounded-lg space-y-2 max-h-56 overflow-auto scrollbar-hidden scrollbar-hidden::-webkit-scrollbar">
-            {contacts.length > 0
-              ? contacts.map((item) => {
-                  return (
-                    <UserList
-                      image={item?.image}
-                      firstname={item?.firstname}
-                      lastname={item?.lastname}
-                      id={item?._id}
-                      handleDirectMessageClick={handleDirectMessageClick}
-                      isActive={activeItem === item?._id}
-                      key={item?._id}
-                    ></UserList>
-                  );
-                })
-              : ""}
-          </div>
+          <DirectMessageContactList></DirectMessageContactList>
         </div>
         <div className="flex flex-col w-full items-center px-10 mb-10">
           <div className="flex w-full mb-4">
@@ -282,10 +237,7 @@ export default function MessageList() {
         </div>
       </div>
       {display ? (
-        <AddNewUserModal
-          closeModal={closeModal}
-          updateContactList={updateContactList}
-        ></AddNewUserModal>
+        <AddNewUserModal closeModal={closeModal}></AddNewUserModal>
       ) : (
         ""
       )}
