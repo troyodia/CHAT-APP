@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import defaultImg from "../../images/default.jpeg";
 import { useMediaQuery } from "react-responsive";
 import { useAppStore } from "../../store";
+import axiosInstance from "../../utils/axiosInstance";
 
 export default function UserList({
   image,
@@ -11,9 +12,7 @@ export default function UserList({
   handleDirectMessageClick,
   isActive,
 }) {
-  // const [border, setBorder] = useState(false);
-  // const handleColor = () => {
-  //   setBorder((prev) => !prev);
+  const getMessagesURL = "http://localhost:5000/api/v1/messages/getMessages";
   const isMobile = useMediaQuery({ maxWidth: 1200 });
   const transitionPage = useMediaQuery({ maxWidth: 940 });
   const {
@@ -21,8 +20,9 @@ export default function UserList({
     setSelectedChatData,
     selectedChatData,
     selectedChatType,
+    selectedChatMessages,
+    addMessage,
   } = useAppStore();
-  // };
 
   return (
     <div

@@ -2,6 +2,7 @@ import { useEffect, useRef } from "react";
 import defaultImg from "../../images/default.jpeg";
 import { useAppStore } from "../../store";
 import dayjs from "dayjs";
+import axiosInstance from "../../utils/axiosInstance";
 
 export default function MessageContainer({ isSmall, isTablet }) {
   const endRef = useRef();
@@ -11,6 +12,29 @@ export default function MessageContainer({ isSmall, isTablet }) {
   useEffect(() => {
     if (endRef.current) endRef.current.scrollIntoView({ behaviour: "smooth" });
   }, [selectedChatMessages]);
+  const getMessagesURL = "http://localhost:5000/api/v1/messages/getMessages";
+  useEffect(() => {
+    const { addMessage, setSelectedChatMessages } = useAppStore.getState();
+
+    const populateMessages = async () => {
+      try {
+        const res = await axiosInstance.post(
+          getMessagesURL,
+          { contactId: selectedChatData.id },
+          { withCredentials: true }
+        );
+        if (res.data && res.status === 200) {
+          setSelectedChatMessages(res.data);
+        }
+      } catch (error) {
+        console.log(error?.response?.data?.msg);
+      }
+    };
+    if (selectedChatData) {
+      if (selectedChatType === "contact") populateMessages();
+    }
+  }, [selectedChatData, selectedChatType]);
+
   const renderMessages = () => {
     let latestDate = null;
     return selectedChatMessages.map((message) => {

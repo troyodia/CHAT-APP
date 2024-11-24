@@ -11,7 +11,8 @@ const getMessages = async (req, res) => {
       { sender: userId, recipient: contactId },
       { sender: contactId, recipient: userId },
     ],
-  });
+  }).sort({ timeStamps: 1 });
+
   res.status(StatusCodes.OK).json(messages);
 };
 module.exports = getMessages;
