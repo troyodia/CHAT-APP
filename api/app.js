@@ -7,12 +7,11 @@ const cookieParser = require("cookie-parser");
 const connectDB = require("./db/connect");
 const app = express();
 const http = require("http");
-const httpServer = http.createServer(app);
 const authRouter = require("./routes/auth");
 const userRouter = require("./routes/userInfo");
 const contactRouter = require("./routes/contacts");
 const contactListRouter = require("./routes/contactList");
-
+const messageRouter = require("./routes/messages");
 const notFoundErrorMiddleware = require("./middleware/not-found");
 const errorHandlerMiddleware = require("./middleware/error-handler");
 const authorize = require("./middleware/authorize");
@@ -33,6 +32,7 @@ app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/user", authorize, userRouter);
 app.use("/api/v1/contact", authorize, contactRouter);
 app.use("/api/v1/contactList", authorize, contactListRouter);
+app.use("/api/v1/messages", authorize, messageRouter);
 
 app.get("/home", (req, res) => {
   res.send("home");
