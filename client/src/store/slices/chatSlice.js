@@ -5,6 +5,7 @@ export const createChatSlice = (set, get) => ({
   selectedChatMessages: [],
   directMessageContactList: [],
   uploadedFiles: [],
+  reply: undefined,
   setSelectedChatType: (selectedChatType) => set({ selectedChatType }),
   setSelectedChatData: (selectedChatData) => set({ selectedChatData }),
   setDirectMessageContactList: (directMessageContactList) =>
@@ -13,6 +14,7 @@ export const createChatSlice = (set, get) => ({
     set({ selectedChatMessages }),
   setActiveItem: (activeItem) => set({ activeItem }),
   setUploadedFiles: (uploadedFiles) => set({ uploadedFiles }),
+  setReply: (reply) => set({ reply }),
   closeChat: () =>
     set({
       selectedChatType: undefined,

@@ -1,5 +1,8 @@
 import { useEffect, useRef } from "react";
 import defaultImg from "../../images/default.jpeg";
+import replyIcon from "../../images/icons/reply.png";
+import replyRightIcon from "../../images/icons/replyright.png";
+
 import { useAppStore } from "../../store";
 import dayjs from "dayjs";
 import axiosInstance from "../../utils/axiosInstance";
@@ -7,8 +10,17 @@ import axiosInstance from "../../utils/axiosInstance";
 export default function MessageContainer({ isSmall, isTablet }) {
   const endRef = useRef();
 
-  const { selectedChatMessages, selectedChatData, userInfo, selectedChatType } =
-    useAppStore();
+  const {
+    selectedChatMessages,
+    selectedChatData,
+    userInfo,
+    selectedChatType,
+    setReply,
+    reply,
+  } = useAppStore();
+  useEffect(() => {
+    console.log(reply);
+  }, [reply]);
   useEffect(() => {
     if (endRef.current) endRef.current.scrollIntoView({ behaviour: "smooth" });
   }, [selectedChatMessages]);
@@ -63,12 +75,29 @@ export default function MessageContainer({ isSmall, isTablet }) {
     return (
       <div
         className={`${
-          isSender ? "ml-auto mr-4 text-left" : "ml-4  "
-        } flex flex-col mt-4 justify-items w-fit max-w-[900px] min-w-0 
+          isSender ? " ml-auto mr-4 text-left" : "ml-4  "
+        }relative flex flex-col mt-4 justify-items w-fit max-w-[900px] min-w-0 
 
        
          `}
       >
+        <button
+          className={`w-full group`}
+          onClick={() => {
+            setReply({
+              id: message.sender,
+              message: message.content ? message.content : message.fileUrl,
+            });
+          }}
+        >
+          <img
+            className={`w-6 invisible group-hover:visible ${
+              !isSender && "ml-auto"
+            }`}
+            src={isSender ? replyRightIcon : replyIcon}
+            alt=""
+          ></img>
+        </button>
         {message.messageType === "text" && (
           <div
             className={`${
@@ -87,6 +116,15 @@ export default function MessageContainer({ isSmall, isTablet }) {
         >
           {dayjs(message.timeStamps).format("h:mm A")}
         </div>
+        {/* <div
+          className={`absolute  -top-5 w-6  ${isSender ? "left-0" : "right-0"}`}
+        >
+          <img
+            className="w-full"
+            src={isSender ? replyRight : reply}
+            alt=""
+          ></img>
+        </div> */}
       </div>
     );
   };

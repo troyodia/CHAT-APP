@@ -23,6 +23,8 @@ export default function MessageBar({ isSmall, isTablet }) {
     setUploadedFiles,
     uploadedFiles,
     removeFiles,
+    reply,
+    setReply,
   } = useAppStore();
   const socket = useSocket();
 
@@ -95,14 +97,21 @@ export default function MessageBar({ isSmall, isTablet }) {
       console.log(error?.response?.data?.msg);
     }
   };
-  useEffect(() => {
-    console.log(uploadedFiles);
-  }, [uploadedFiles]);
+  // useEffect(() => {
+  //   console.log(uploadedFiles);
+  // }, [uploadedFiles]);
   const isImage = (file) => {
     if (file) {
       const regex =
         /\.(jpg|jpeg|png|gif|bmp|tiff|tif|webp|svg|ico|heic|heif)$/i;
       return regex.test(file);
+    }
+  };
+  const handleReply = () => {
+    if (reply && reply.id === userInfo._id) {
+      return userInfo.firstname;
+    } else {
+      return selectedChatData.firstname;
     }
   };
   return (
@@ -184,36 +193,21 @@ export default function MessageBar({ isSmall, isTablet }) {
           </button>
         </div>
         <div className="flex flex-col w-full ">
-          {/* {uploadFile.length > 1 && uploadFile.map((file)=>{ 
-            return(   
-            <div className="bg-white/10 "> 
-              {isImage(file) ?  <div className="bg-white/10"></div> : <div></div>}
-            </div>)
-            })} */}
-          {/* <div className=" bg-transparent ml-8 p-3 space-x-6 flex  w-[1330px] overflow-x-scroll border border-solid ">
-            <div className="w-14 relative">
-              <img className="rounded-lg" src={defaultImage} alt=""></img>
-              <button className="absolute -top-4 -right-4">
-                <img className=" w-7" src={cancel} alt=""></img>
+          {reply && (
+            <div className="flex items-center ml-8 text-white text-lg italic bg-white/20 pl-2 py-1 rounded-md">
+              <button
+                onClick={() => {
+                  setReply(undefined);
+                }}
+              >
+                <img className="w-6 mr-2" src={cancel} alt=""></img>
               </button>
-            </div>
-            <div className="relative bg-white/30 w-32 p-1 flex items-center">
-              <img className="w-7" src={fileImage} alt=""></img>
-
-              <div className="flex flex-col truncate ml-2">
-                <p className="text-xs truncate">
-                  the pdf the pdf the pdf thehe
-                </p>
-                <p className="text-xs text-gray-300">PDF</p>
-                <button className="absolute -top-4 -right-4">
-                  <img className=" w-7 " src={cancel} alt=""></img>
-                </button>
+              <div>
+                Replying to{" "}
+                <span className="text-[#F5DEB3]">{handleReply()}</span>
               </div>
             </div>
-          </div> */}
-          <div className=" ml-8 text-[#F5DEB3] text-lg italic bg-white/20 pl-2 py-1 rounded-md">
-            Replying to name
-          </div>
+          )}
 
           <input
             type="text"
