@@ -113,6 +113,7 @@ const addProfileImage = async (req, res) => {
     { image: filename },
     { runValidators: true, new: true }
   );
+  console.log(req.file);
   res.status(StatusCodes.OK).json({
     userId: updateUser._id,
     email: updateUser.email,

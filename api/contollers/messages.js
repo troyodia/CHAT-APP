@@ -15,4 +15,10 @@ const getMessages = async (req, res) => {
 
   res.status(StatusCodes.OK).json(messages);
 };
-module.exports = getMessages;
+const uploadFile = async (req, res) => {
+  if (!req.file) throw new BadRequestError("file not uploaded");
+  const { filename } = req.file;
+  console.log(req.file, filename);
+  res.status(StatusCodes.OK).json({ filePath: filename });
+};
+module.exports = { getMessages, uploadFile };

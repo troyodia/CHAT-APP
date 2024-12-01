@@ -4,6 +4,7 @@ export const createChatSlice = (set, get) => ({
   selectedChatData: undefined,
   selectedChatMessages: [],
   directMessageContactList: [],
+  uploadedFiles: [],
   setSelectedChatType: (selectedChatType) => set({ selectedChatType }),
   setSelectedChatData: (selectedChatData) => set({ selectedChatData }),
   setDirectMessageContactList: (directMessageContactList) =>
@@ -11,6 +12,7 @@ export const createChatSlice = (set, get) => ({
   setSelectedChatMessages: (selectedChatMessages) =>
     set({ selectedChatMessages }),
   setActiveItem: (activeItem) => set({ activeItem }),
+  setUploadedFiles: (uploadedFiles) => set({ uploadedFiles }),
   closeChat: () =>
     set({
       selectedChatType: undefined,
@@ -35,6 +37,12 @@ export const createChatSlice = (set, get) => ({
               : message.sender._id,
         },
       ],
+    });
+  },
+  removeFiles: (file) => {
+    const uploadedFiles = get().uploadedFiles;
+    set({
+      uploadedFiles: [...uploadedFiles.filter((myFile) => myFile !== file)],
     });
   },
 });

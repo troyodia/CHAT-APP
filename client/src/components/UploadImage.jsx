@@ -10,7 +10,7 @@ export default function UploadImage({ updateImgData }) {
 
   const handleFileUpload = (e) => {
     e.preventDefault();
-    fileUploadRef.current.click();
+    if (fileUploadRef.current) fileUploadRef.current.click();
   };
   const uploadImageDisplay = async () => {
     const file = fileUploadRef.current.files[0];
@@ -32,8 +32,7 @@ export default function UploadImage({ updateImgData }) {
         headers: { "Content-Type": "multipart/form-data" },
         withCredentials: true,
       });
-      if (res.status === 200) {
-        const { image } = res.data;
+      if (res.data && res.status === 200) {
         console.log(res.data);
       }
     } catch (error) {
