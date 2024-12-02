@@ -21,4 +21,5 @@ const uploadFile = async (req, res) => {
   console.log(req.file, filename);
   res.status(StatusCodes.OK).json({ filePath: filename });
 };
+
 module.exports = { getMessages, uploadFile };

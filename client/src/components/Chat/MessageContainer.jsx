@@ -9,6 +9,7 @@ import dayjs from "dayjs";
 import axiosInstance from "../../utils/axiosInstance";
 import { isImage } from "../../utils/isImage";
 import { v4 as uuidv4 } from "uuid";
+import axios from "axios";
 
 export default function MessageContainer({ isSmall, isTablet }) {
   const endRef = useRef();
@@ -51,6 +52,29 @@ export default function MessageContainer({ isSmall, isTablet }) {
     }
   }, [selectedChatData, selectedChatType]);
 
+  const downloadFile = async (url) => {
+    try {
+      const res = await axios.get(
+        `http://localhost:5000/uploads/files/${url}`,
+        { responseType: "blob" }
+      );
+      if (res.data && res.status === 200) {
+        const urlBlob = new Blob([res.data]);
+        const tempURL = window.URL.createObjectURL(urlBlob);
+
+        const tempLink = document.createElement("a");
+        tempLink.href = tempURL;
+        tempLink.setAttribute("download", url);
+        document.body.appendChild(tempLink);
+        tempLink.click();
+
+        document.body.removeChild(tempLink);
+        window.URL.revokeObjectURL(tempURL);
+      }
+    } catch (error) {
+      console.log(error?.response?.data?.msg);
+    }
+  };
   const renderMessages = () => {
     let latestDate = null;
     return selectedChatMessages.map((message) => {
@@ -142,6 +166,7 @@ export default function MessageContainer({ isSmall, isTablet }) {
                 className={`flex items-center justify-between border border-solid rounded-md p-6 w-[350px] bg-white/10 ${
                   isSender ? "border-sky-500 " : "border-white/30"
                 }`}
+                key={message._id}
               >
                 <div className="flex items-center justify-center w-14 h-14 rounded-full bg-black/60">
                   <img className="w-8" src={fileImage} alt=""></img>
@@ -149,7 +174,10 @@ export default function MessageContainer({ isSmall, isTablet }) {
                 <div className=" w-[120px] text-lg text-[#F5DEB3] break-all">
                   {file}
                 </div>
-                <button className="flex items-center justify-center w-14 h-14 rounded-full bg-black/60">
+                <button
+                  className="flex items-center justify-center w-14 h-14 rounded-full bg-black/60"
+                  onClick={() => downloadFile(file)}
+                >
                   <img className="w-12" src={downloadIcon} alt=""></img>
                 </button>
               </div>
