@@ -10,7 +10,7 @@ export const useSocket = () => {
 };
 export default function SocketProvider({ children }) {
   const socket = useRef();
-  const { userInfo } = useAppStore();
+  const { userInfo, setUploadedFiles } = useAppStore();
 
   useEffect(() => {
     if (userInfo) {

@@ -25,6 +25,8 @@ export default function MessageBar({ isSmall, isTablet }) {
     removeFiles,
     reply,
     setReply,
+    isFile,
+    setIsFile,
   } = useAppStore();
   const socket = useSocket();
 
@@ -32,13 +34,24 @@ export default function MessageBar({ isSmall, isTablet }) {
 
   const handleSendMessage = () => {
     if (selectedChatType === "contact") {
-      socket.emit("sendMessage", {
-        sender: userInfo._id,
-        recipient: selectedChatData.id,
-        content: message,
-        messageType: "text",
-        fileUrl: undefined,
-      });
+      if (message && uploadedFiles.length < 1) {
+        socket.emit("sendMessage", {
+          sender: userInfo._id,
+          recipient: selectedChatData.id,
+          content: message,
+          messageType: "text",
+          fileUrl: undefined,
+        });
+      }
+      if (!message && uploadedFiles.length > 0) {
+        socket.emit("sendMessage", {
+          sender: userInfo._id,
+          recipient: selectedChatData.id,
+          content: undefined,
+          messageType: "file",
+          fileUrl: uploadedFiles,
+        });
+      }
     }
     setMessage("");
   };
@@ -65,6 +78,7 @@ export default function MessageBar({ isSmall, isTablet }) {
 
     if (fileUploadRef.current) {
       fileUploadRef.current.click();
+      setIsFile(true);
     }
   };
   const handleFileUpload = async () => {
@@ -116,13 +130,13 @@ export default function MessageBar({ isSmall, isTablet }) {
   };
   return (
     <div className="w-full bg-[#0E0E10] ">
-      {uploadedFiles.length > 0 && (
+      {uploadedFiles.length > 0 && isFile && (
         <div className=" flex shrink bg-[#0E0E10] w-[600px] gap-x-6 overflow-auto p-3 h-20">
           {uploadedFiles.map((file) => {
             return isImage(file) ? (
               <div className="w-14  relative flex shrink-0 " key={uuidv4()}>
                 <img
-                  className="rounded-lg  w-full"
+                  className="rounded-lg  w-full object-cover"
                   src={`http://localhost:5000/uploads/files/${file}`}
                   alt=""
                 ></img>
@@ -238,13 +252,15 @@ export default function MessageBar({ isSmall, isTablet }) {
               ? "text-lg px-6 py-3"
               : "text-xl px-7 py-4"
           } ${
-            message
+            message || uploadedFiles.length > 0
               ? "  hover:outline-dashed hover:outline-3 hover:outline-offset-4 hover:outline-cyan-300 bg-[#00eeff]"
               : "bg-gray-800"
           }
           font-bold `}
           onClick={() => {
-            if (message) handleSendMessage();
+            if (message || uploadedFiles.length > 0) handleSendMessage();
+            setIsFile(false);
+            setUploadedFiles([]);
           }}
         >
           Send
