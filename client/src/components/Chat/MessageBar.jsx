@@ -254,7 +254,7 @@ export default function MessageBar({ isSmall, isTablet }) {
           } ${
             message || uploadedFiles.length > 0
               ? "  hover:outline-dashed hover:outline-3 hover:outline-offset-4 hover:outline-cyan-300 bg-[#00eeff]"
-              : "bg-gray-800"
+              : "bg-gray-800 cursor-not-allowed"
           }
           font-bold `}
           onClick={() => {

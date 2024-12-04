@@ -1,9 +1,10 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import defaultImg from "../../images/default.jpeg";
 import replyIcon from "../../images/icons/reply.png";
 import replyRightIcon from "../../images/icons/replyright.png";
 import fileImage from "../../images/icons/myfile.png";
 import downloadIcon from "../../images/icons/download.png";
+import closeIcon from "../../images/icons/close.png";
 import { useAppStore } from "../../store";
 import dayjs from "dayjs";
 import axiosInstance from "../../utils/axiosInstance";
@@ -13,7 +14,9 @@ import axios from "axios";
 
 export default function MessageContainer({ isSmall, isTablet }) {
   const endRef = useRef();
-
+  const getMessagesURL = "http://localhost:5000/api/v1/messages/getMessages";
+  const [isFullScreen, setIsFullScreen] = useState(false);
+  const [fullScreenParams, setFullScreenParams] = useState(null);
   const {
     selectedChatMessages,
     selectedChatData,
@@ -29,7 +32,7 @@ export default function MessageContainer({ isSmall, isTablet }) {
   useEffect(() => {
     if (endRef.current) endRef.current.scrollIntoView({ behaviour: "smooth" });
   }, [selectedChatMessages]);
-  const getMessagesURL = "http://localhost:5000/api/v1/messages/getMessages";
+
   useEffect(() => {
     const { addMessage, setSelectedChatMessages } = useAppStore.getState();
 
@@ -117,11 +120,11 @@ export default function MessageContainer({ isSmall, isTablet }) {
       <div
         className={`${
           isSender ? " ml-auto mr-4 text-left" : "ml-4  "
-        } group/reply relative flex flex-col mt-4 justify-items w-fit max-w-[900px] min-w-0 
+        } group/items relative flex flex-col mt-4 justify-items w-fit max-w-[900px] min-w-0 
          `}
       >
         <button
-          className={`w-full group`}
+          className={`w-full group `}
           onClick={() => {
             setReply({
               id: message.sender,
@@ -130,13 +133,14 @@ export default function MessageContainer({ isSmall, isTablet }) {
           }}
         >
           <img
-            className={`w-6 invisible group-hover:visible group-hover/reply:visible ${
+            className={`w-6 invisible group-hover:visible group-hover/items:visible ${
               !isSender && "ml-auto"
             }`}
             src={isSender ? replyRightIcon : replyIcon}
             alt=""
           ></img>
         </button>
+
         {message.messageType === "text" && (
           <div
             className={`${
@@ -152,14 +156,24 @@ export default function MessageContainer({ isSmall, isTablet }) {
           message.fileUrl.map((file) => {
             console.log(file);
             return isImage(file) ? (
-              <div className="w-full mb-4 " key={message._id}>
+              <div className="w-full mb-4 relative" key={message._id}>
                 <img
                   className={`${
                     isSender ? "border-sky-500 " : "border-white/30"
-                  } rounded-3xl max-w-[600px] max-h-[600px] object-contain border border-solid `}
+                  } rounded-3xl max-w-[600px] max-h-[600px] object-contain border border-solid cursor-pointer`}
                   src={`http://localhost:5000/uploads/files/${file}`}
                   alt=""
+                  onClick={() => {
+                    setIsFullScreen(true);
+                    setFullScreenParams(file);
+                  }}
                 ></img>
+                <button
+                  className="absolute top-2 right-2 flex  items-center justify-center w-10 h-10 rounded-full bg-black invisible group-hover/items:visible"
+                  onClick={() => downloadFile(file)}
+                >
+                  <img className="w-8 ml-0.5" src={downloadIcon} alt=""></img>
+                </button>
               </div>
             ) : (
               <div
@@ -171,7 +185,7 @@ export default function MessageContainer({ isSmall, isTablet }) {
                 <div className="flex items-center justify-center w-14 h-14 rounded-full bg-black/60">
                   <img className="w-8" src={fileImage} alt=""></img>
                 </div>
-                <div className=" w-[120px] text-lg text-[#F5DEB3] break-all">
+                <div className=" w-[150px] text-lg text-[#F5DEB3] break-all">
                   {file}
                 </div>
                 <button
@@ -193,25 +207,39 @@ export default function MessageContainer({ isSmall, isTablet }) {
       </div>
     );
   };
+
   return (
-    <div
-      className="flex flex-col w-full h-full  bg-[#0E0E10] overflow-auto scrollbar-hidden scrollbar-hidden::-webkit-scrollbar"
-      id="chat-box"
-    >
-      {/*Image configuration for sent images*/}
-      {/* <div
-          className={`ml-auto mt-4 mr-4 ${
-            isTablet ? "max-w-[700px] h-[450px]" : "max-w-[700px] h-[550px]"
-          } flex`}
-        >
-          <img
-            className="rounded-3xl w-full h-full object-cover"
-            src={defaultImg2}
-            alt=""
-          ></img>
-        </div> */}
-      {renderMessages()}
-      <div className="" ref={endRef}></div>
-    </div>
+    <>
+      <div
+        className=" flex flex-col w-full h-full  bg-[#0E0E10] overflow-auto scrollbar-hidden scrollbar-hidden::-webkit-scrollbar"
+        id="chat-box"
+      >
+        {renderMessages()}
+        <div className="" ref={endRef}></div>
+        {isFullScreen && (
+          <div className="fixed flex justify-center items-center w-full inset-0 m-auto z-[2000]  backdrop-blur-lg">
+            <div className="absolute bottom-5 left-1/2 -translate-x-1/2 flex space-x-5">
+              <button
+                className="flex justify-center items-center w-12 h-12 rounded-full bg-white/20"
+                onClick={() => downloadFile(fullScreenParams)}
+              >
+                <img className="w-8 h-6" src={downloadIcon} alt=""></img>
+              </button>
+              <button
+                className="flex justify-center items-center w-12 h-12 rounded-full bg-white/20"
+                onClick={() => setIsFullScreen(false)}
+              >
+                <img className="w-5 h-5" src={closeIcon} alt=""></img>
+              </button>
+            </div>
+            <img
+              className="max-w-[850px] max-h-[850px] w-full object-contain"
+              src={`http://localhost:5000/uploads/files/${fullScreenParams}`}
+              alt=""
+            ></img>
+          </div>
+        )}
+      </div>
+    </>
   );
 }
