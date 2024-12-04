@@ -5,6 +5,8 @@ import replyRightIcon from "../../images/icons/replyright.png";
 import fileImage from "../../images/icons/myfile.png";
 import downloadIcon from "../../images/icons/download.png";
 import closeIcon from "../../images/icons/close.png";
+import rasengan from "../../images/icons/newrasengan.png";
+
 import { useAppStore } from "../../store";
 import dayjs from "dayjs";
 import axiosInstance from "../../utils/axiosInstance";
@@ -25,6 +27,8 @@ export default function MessageContainer({ isSmall, isTablet }) {
     setReply,
     reply,
     setIsFile,
+    isDownloading,
+    setIsDownloading,
   } = useAppStore();
   useEffect(() => {
     console.log(reply);
@@ -56,6 +60,7 @@ export default function MessageContainer({ isSmall, isTablet }) {
   }, [selectedChatData, selectedChatType]);
 
   const downloadFile = async (url) => {
+    setIsDownloading(true);
     try {
       const res = await axios.get(
         `http://localhost:5000/uploads/files/${url}`,
@@ -73,6 +78,9 @@ export default function MessageContainer({ isSmall, isTablet }) {
 
         document.body.removeChild(tempLink);
         window.URL.revokeObjectURL(tempURL);
+        setTimeout(() => {
+          setIsDownloading(false);
+        }, 2000);
       }
     } catch (error) {
       console.log(error?.response?.data?.msg);
@@ -218,7 +226,7 @@ export default function MessageContainer({ isSmall, isTablet }) {
         <div className="" ref={endRef}></div>
         {isFullScreen && (
           <div className="fixed flex justify-center items-center w-full inset-0 m-auto z-[2000]  backdrop-blur-lg">
-            <div className="absolute bottom-5 left-1/2 -translate-x-1/2 flex space-x-5">
+            <div className="absolute top-5 left-1/2 -translate-x-1/2 flex space-x-5">
               <button
                 className="flex justify-center items-center w-12 h-12 rounded-full bg-white/20"
                 onClick={() => downloadFile(fullScreenParams)}
@@ -237,6 +245,13 @@ export default function MessageContainer({ isSmall, isTablet }) {
               src={`http://localhost:5000/uploads/files/${fullScreenParams}`}
               alt=""
             ></img>
+          </div>
+        )}
+
+        {isDownloading && (
+          <div className="fixed flex justify-center items-center bottom-8 left-1/2 -translate-x-1/2  z-[3000] rounded-full px-5 py-3 bg-black">
+            <img className="rounded-lg w-8" src={rasengan} alt=""></img>
+            <div className="ml-4 text-lg">Downloading...</div>
           </div>
         )}
       </div>
