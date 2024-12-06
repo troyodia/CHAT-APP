@@ -23,9 +23,9 @@ export default function Chat({ updateSettings }) {
     setActiveItem,
     selectedChatMessages,
   } = useAppStore();
-  useEffect(() => {
-    console.log(selectedChatMessages);
-  }, [selectedChatMessages]);
+  // useEffect(() => {
+  //   console.log(selectedChatMessages);
+  // }, [selectedChatMessages]);
 
   return (
     <div

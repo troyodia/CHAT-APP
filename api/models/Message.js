@@ -13,7 +13,7 @@ const MessageSchema = new mongoose.Schema({
   },
   messageType: {
     type: String,
-    enum: ["text", "file"],
+    enum: ["text", "file", "combined"],
     required: true,
   },
   content: {
@@ -30,6 +30,22 @@ const MessageSchema = new mongoose.Schema({
       },
     },
   ],
+  contentAndFile: {
+    text: {
+      type: String,
+      required: function () {
+        return this.messageType === "combined";
+      },
+    },
+    files: [
+      {
+        type: String,
+        required: function () {
+          return this.messageType === "combined";
+        },
+      },
+    ],
+  },
   timeStamps: {
     type: Date,
     default: Date.now,

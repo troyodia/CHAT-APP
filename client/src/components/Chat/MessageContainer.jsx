@@ -122,6 +122,82 @@ export default function MessageContainer({ isSmall, isTablet }) {
       );
     });
   };
+  const renderText = (content, isSender) => {
+    return (
+      <div
+        className={`${
+          isSender
+            ? "border-sky-500 text-sky-500 bg-[#00eeff]/20 "
+            : "border-white/30 bg-white/10 "
+        } flex border border-solid rounded-lg p-4`}
+      >
+        <p className={`flex w-full break-all`}>{content}</p>
+      </div>
+    );
+  };
+  const renderFile = (file, isSender, id) => {
+    return isImage(file) ? (
+      <div className="mb-4 relative group/images">
+        <img
+          className={`${
+            isSender ? "border-sky-500 " : "border-white/30"
+          } rounded-3xl max-w-[600px] max-h-[600px] object-contain border border-solid cursor-pointer`}
+          src={`http://localhost:5000/uploads/files/${file}`}
+          alt=""
+          onClick={() => {
+            setIsFullScreen(true);
+            setFullScreenParams(file);
+          }}
+        ></img>
+        <button
+          className="absolute top-2 right-2 flex  items-center justify-center w-10 h-10 rounded-full bg-black invisible group-hover/images:visible"
+          onClick={() => downloadFile(file)}
+        >
+          <img className="w-8 ml-0.5" src={downloadIcon} alt=""></img>
+        </button>
+      </div>
+    ) : (
+      <div
+        className={`flex items-center justify-between border border-solid rounded-md p-6 w-[350px] bg-white/10 mb-4 ${
+          isSender ? "border-sky-500 " : "border-white/30"
+        }`}
+      >
+        <div className="flex items-center justify-center w-14 h-14 rounded-full bg-black/60">
+          <img className="w-8" src={fileImage} alt=""></img>
+        </div>
+        <div className=" w-[150px] text-lg text-[#F5DEB3] break-all">
+          {file}
+        </div>
+        <button
+          className="flex items-center justify-center w-14 h-14 rounded-full bg-black/60"
+          onClick={() => downloadFile(file)}
+        >
+          <img className="w-12" src={downloadIcon} alt=""></img>
+        </button>
+      </div>
+    );
+  };
+  const replyButton = (content, sender, fileUrl, isSender) => {
+    return (
+      <button
+        className={`w-full group `}
+        onClick={() => {
+          setReply({
+            id: sender,
+            message: content ? content : fileUrl,
+          });
+        }}
+      >
+        <img
+          className={`w-6 invisible group-hover:visible group-hover/files:visible group-hover/texts:visible ${
+            !isSender && "ml-auto"
+          }`}
+          src={isSender ? replyRightIcon : replyIcon}
+          alt=""
+        ></img>
+      </button>
+    );
+  };
   const renderDirectMessages = (message) => {
     const isSender = message.sender === userInfo._id;
     return (
@@ -131,7 +207,7 @@ export default function MessageContainer({ isSmall, isTablet }) {
         } group/items relative flex flex-col mt-4 justify-items w-fit max-w-[900px] min-w-0 
          `}
       >
-        <button
+        {/* <button
           className={`w-full group `}
           onClick={() => {
             setReply({
@@ -147,64 +223,55 @@ export default function MessageContainer({ isSmall, isTablet }) {
             src={isSender ? replyRightIcon : replyIcon}
             alt=""
           ></img>
-        </button>
+        </button> */}
 
         {message.messageType === "text" && (
-          <div
-            className={`${
+          <div className=" group/texts">
+            {replyButton(
+              message.content,
+              message.sender,
+              message.fileUrl,
               isSender
-                ? "border-sky-500 text-sky-500 bg-[#00eeff]/20 "
-                : "border-white/30 bg-white/10 "
-            } flex border border-solid rounded-lg p-4 w-full h-full`}
-          >
-            <p className={`flex w-full break-all`}>{message.content}</p>
+            )}
+            {renderText(message.content, isSender)}
           </div>
         )}
+
         {message.messageType === "file" &&
           message.fileUrl.map((file) => {
-            console.log(file);
-            return isImage(file) ? (
-              <div className="w-full mb-4 relative" key={message._id}>
-                <img
-                  className={`${
-                    isSender ? "border-sky-500 " : "border-white/30"
-                  } rounded-3xl max-w-[600px] max-h-[600px] object-contain border border-solid cursor-pointer`}
-                  src={`http://localhost:5000/uploads/files/${file}`}
-                  alt=""
-                  onClick={() => {
-                    setIsFullScreen(true);
-                    setFullScreenParams(file);
-                  }}
-                ></img>
-                <button
-                  className="absolute top-2 right-2 flex  items-center justify-center w-10 h-10 rounded-full bg-black invisible group-hover/items:visible"
-                  onClick={() => downloadFile(file)}
-                >
-                  <img className="w-8 ml-0.5" src={downloadIcon} alt=""></img>
-                </button>
-              </div>
-            ) : (
-              <div
-                className={`flex items-center justify-between border border-solid rounded-md p-6 w-[350px] bg-white/10 ${
-                  isSender ? "border-sky-500 " : "border-white/30"
-                }`}
-                key={message._id}
-              >
-                <div className="flex items-center justify-center w-14 h-14 rounded-full bg-black/60">
-                  <img className="w-8" src={fileImage} alt=""></img>
-                </div>
-                <div className=" w-[150px] text-lg text-[#F5DEB3] break-all">
-                  {file}
-                </div>
-                <button
-                  className="flex items-center justify-center w-14 h-14 rounded-full bg-black/60"
-                  onClick={() => downloadFile(file)}
-                >
-                  <img className="w-12" src={downloadIcon} alt=""></img>
-                </button>
+            return (
+              <div className=" group/files" key={uuidv4()}>
+                {replyButton(message.content, message.sender, file, isSender)}
+                {renderFile(file, isSender, message._id)}
               </div>
             );
           })}
+
+        {message.messageType === "combined" && (
+          <div
+            className={`flex flex-col ${
+              isSender ? "items-end" : "items-start"
+            }`}
+          >
+            {message.contentAndFile.files.map((file) => {
+              return (
+                <div className=" group/files" key={uuidv4()}>
+                  {replyButton(message.content, message.sender, file, isSender)}
+                  {renderFile(file, isSender, message._id)}
+                </div>
+              );
+            })}
+            <div className=" group/texts">
+              {replyButton(
+                message.content,
+                message.sender,
+                message.fileUrl,
+                isSender
+              )}
+              {renderText(message.contentAndFile.text, isSender)}
+            </div>
+          </div>
+        )}
         <div
           className={`mt-1 flex ${
             isSender ? "justify-end" : "justify-start"

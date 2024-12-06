@@ -41,6 +41,7 @@ export default function MessageBar({ isSmall, isTablet }) {
           content: message,
           messageType: "text",
           fileUrl: undefined,
+          contentAndFile: undefined,
         });
       }
       if (!message && uploadedFiles.length > 0) {
@@ -50,6 +51,20 @@ export default function MessageBar({ isSmall, isTablet }) {
           content: undefined,
           messageType: "file",
           fileUrl: uploadedFiles,
+          contentAndFile: undefined,
+        });
+      }
+      if (message && uploadedFiles.length > 0) {
+        socket.emit("sendMessage", {
+          sender: userInfo._id,
+          recipient: selectedChatData.id,
+          content: undefined,
+          messageType: "combined",
+          fileUrl: undefined,
+          contentAndFile: {
+            text: message,
+            files: uploadedFiles,
+          },
         });
       }
     }
