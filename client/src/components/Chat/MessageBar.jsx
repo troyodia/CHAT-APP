@@ -42,6 +42,7 @@ export default function MessageBar({ isSmall, isTablet }) {
           messageType: "text",
           fileUrl: undefined,
           contentAndFile: undefined,
+          reply: reply ? reply : undefined,
         });
       }
       if (!message && uploadedFiles.length > 0) {
@@ -52,6 +53,7 @@ export default function MessageBar({ isSmall, isTablet }) {
           messageType: "file",
           fileUrl: uploadedFiles,
           contentAndFile: undefined,
+          reply: reply ? reply : undefined,
         });
       }
       if (message && uploadedFiles.length > 0) {
@@ -65,9 +67,11 @@ export default function MessageBar({ isSmall, isTablet }) {
             text: message,
             files: uploadedFiles,
           },
+          reply: reply ? reply : undefined,
         });
       }
     }
+    setReply(undefined);
     setMessage("");
   };
   useEffect(() => {
@@ -112,15 +116,6 @@ export default function MessageBar({ isSmall, isTablet }) {
       if (res.data && res.status === 200) {
         console.log(res.data.filePath);
         setUploadedFiles([...uploadedFiles, res.data.filePath]);
-        // if (selectedChatType === "contact") {
-        //   socket.emit("sendMessage", {
-        //     sender: userInfo._id,
-        //     recipient: selectedChatData.id,
-        //     content: undefined,
-        //     messageType: "file",
-        //     fileUrl: res.data.filePath,
-        //   });
-        // }
       }
     } catch (error) {
       console.log(error?.response?.data?.msg);
@@ -136,7 +131,7 @@ export default function MessageBar({ isSmall, isTablet }) {
       return regex.test(file);
     }
   };
-  const handleReply = () => {
+  const handleReplyName = () => {
     if (reply && reply.id === userInfo._id) {
       return userInfo.firstname;
     } else {
@@ -190,7 +185,7 @@ export default function MessageBar({ isSmall, isTablet }) {
       )}
 
       <div className="flex mt-auto  w-full items-center justify-center bg-[#0E0E10] pb-4">
-        <div className="flex mr-auto space-x-3 ml-4 ">
+        <div className={`flex mr-auto space-x-3 ml-4 ${reply ? "mt-9" : ""}`}>
           <form className="">
             <button
               type="submit"
@@ -233,7 +228,7 @@ export default function MessageBar({ isSmall, isTablet }) {
               </button>
               <div>
                 Replying to{" "}
-                <span className="text-[#F5DEB3]">{handleReply()}</span>
+                <span className="text-[#F5DEB3]">{handleReplyName()}</span>
               </div>
             </div>
           )}
@@ -252,7 +247,7 @@ export default function MessageBar({ isSmall, isTablet }) {
         </div>
         <button
           // className={`mx-7 w-8 ${"pt-14"} pt-1`}
-          className={`mx-7 w-8 flex shrink-0`}
+          className={`mx-7 w-8 flex shrink-0 ${reply ? "mt-9" : ""} `}
           onClick={() => {
             setDisplayEmojiPicker(true);
           }}
@@ -270,7 +265,7 @@ export default function MessageBar({ isSmall, isTablet }) {
             message || uploadedFiles.length > 0
               ? "  hover:outline-dashed hover:outline-3 hover:outline-offset-4 hover:outline-cyan-300 bg-[#00eeff]"
               : "bg-gray-800 cursor-not-allowed"
-          }
+          } ${reply ? "mt-9" : ""}
           font-bold `}
           onClick={() => {
             if (message || uploadedFiles.length > 0) handleSendMessage();

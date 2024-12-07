@@ -46,6 +46,18 @@ const MessageSchema = new mongoose.Schema({
       },
     ],
   },
+  reply: {
+    sender: {
+      type: String,
+      required: true,
+    },
+    repliedText: {
+      type: String,
+    },
+    repliedFile: {
+      type: String,
+    },
+  },
   timeStamps: {
     type: Date,
     default: Date.now,

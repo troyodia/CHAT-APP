@@ -6,6 +6,8 @@ import fileImage from "../../images/icons/myfile.png";
 import downloadIcon from "../../images/icons/download.png";
 import closeIcon from "../../images/icons/close.png";
 import rasengan from "../../images/icons/newrasengan.png";
+import repliedIcon from "../../images/icons/replyIcon.png";
+import repliedIconFlip from "../../images/icons/replyIconFlip.png";
 
 import { useAppStore } from "../../store";
 import dayjs from "dayjs";
@@ -137,7 +139,7 @@ export default function MessageContainer({ isSmall, isTablet }) {
   };
   const renderFile = (file, isSender, id) => {
     return isImage(file) ? (
-      <div className="mb-4 relative group/images">
+      <div className="mb-2 relative group/images">
         <img
           className={`${
             isSender ? "border-sky-500 " : "border-white/30"
@@ -158,7 +160,7 @@ export default function MessageContainer({ isSmall, isTablet }) {
       </div>
     ) : (
       <div
-        className={`flex items-center justify-between border border-solid rounded-md p-6 w-[350px] bg-white/10 mb-4 ${
+        className={`flex items-center justify-between border border-solid rounded-md p-6 w-[350px] bg-white/10 mb-2 ${
           isSender ? "border-sky-500 " : "border-white/30"
         }`}
       >
@@ -177,14 +179,15 @@ export default function MessageContainer({ isSmall, isTablet }) {
       </div>
     );
   };
-  const replyButton = (content, sender, fileUrl, isSender) => {
+  const replyButton = (replyContent, sender, replyFile, isSender) => {
     return (
       <button
-        className={`w-full group `}
+        className={`w-full group  `}
         onClick={() => {
           setReply({
-            id: sender,
-            message: content ? content : fileUrl,
+            sender: sender,
+            repliedText: replyContent,
+            repliedFile: replyFile,
           });
         }}
       >
@@ -198,16 +201,24 @@ export default function MessageContainer({ isSmall, isTablet }) {
       </button>
     );
   };
+  const handleReplyName = (replyId) => {
+    if (replyId === userInfo._id) {
+      return userInfo.firstname;
+    } else {
+      return selectedChatData.firstname;
+    }
+  };
   const renderDirectMessages = (message) => {
     const isSender = message.sender === userInfo._id;
     return (
-      <div
-        className={`${
-          isSender ? " ml-auto mr-4 text-left" : "ml-4  "
-        } group/items relative flex flex-col mt-4 justify-items w-fit max-w-[900px] min-w-0 
+      <div>
+        <div
+          className={`${
+            isSender ? " ml-auto mr-4 text-left items-end" : "ml-4  items-start"
+          } group/items relative flex flex-col mt-4 justify-items w-fit max-w-[900px] min-w-0 
          `}
-      >
-        {/* <button
+        >
+          {/* <button
           className={`w-full group `}
           onClick={() => {
             setReply({
@@ -224,36 +235,52 @@ export default function MessageContainer({ isSmall, isTablet }) {
             alt=""
           ></img>
         </button> */}
-
-        {message.messageType === "text" && (
-          <div className=" group/texts">
-            {replyButton(
-              message.content,
-              message.sender,
-              message.fileUrl,
-              isSender
-            )}
-            {renderText(message.content, isSender)}
-          </div>
-        )}
-
-        {message.messageType === "file" &&
-          message.fileUrl.map((file) => {
-            return (
-              <div className=" group/files" key={uuidv4()}>
-                {replyButton(message.content, message.sender, file, isSender)}
-                {renderFile(file, isSender, message._id)}
+          {message.reply && (
+            <div className="flex border p-2 items-center space-x-4  ">
+              <div className="flex">
+                <img className="w-7" src={repliedIconFlip} alt=""></img>
+                <p className="italic font-bold ">
+                  {" "}
+                  @{handleReplyName(message.reply.sender)}
+                </p>
               </div>
-            );
-          })}
+              {message.reply.repliedText ? (
+                <p className="text-sm text-[#F5DEB3] break-all max-h-10 max-w-[550px] line-clamp-2">
+                  {message.reply.repliedText}
+                </p>
+              ) : isImage(message.reply.repliedFile) ? (
+                <div className="w-10 h-10">
+                  <img
+                    className=" w-full h-full object-cover rounded-md"
+                    src={`http://localhost:5000/uploads/files/${message.reply.repliedFile}`}
+                    alt=""
+                  ></img>
+                </div>
+              ) : (
+                <div className="flex truncate space-x-2 items-center">
+                  <img className="w-6" src={fileImage} alt=""></img>
+                  <p className="max-w-96 truncate text-sm text-[#F5DEB3]">
+                    {message.reply.repliedFile}
+                  </p>
+                </div>
+              )}
+            </div>
+          )}
 
-        {message.messageType === "combined" && (
-          <div
-            className={`flex flex-col ${
-              isSender ? "items-end" : "items-start"
-            }`}
-          >
-            {message.contentAndFile.files.map((file) => {
+          {message.messageType === "text" && (
+            <div className=" group/texts">
+              {replyButton(
+                message.content,
+                message.sender,
+                undefined,
+                isSender
+              )}
+              {renderText(message.content, isSender)}
+            </div>
+          )}
+
+          {message.messageType === "file" &&
+            message.fileUrl.map((file) => {
               return (
                 <div className=" group/files" key={uuidv4()}>
                   {replyButton(message.content, message.sender, file, isSender)}
@@ -261,23 +288,39 @@ export default function MessageContainer({ isSmall, isTablet }) {
                 </div>
               );
             })}
-            <div className=" group/texts">
-              {replyButton(
-                message.content,
-                message.sender,
-                message.fileUrl,
-                isSender
-              )}
-              {renderText(message.contentAndFile.text, isSender)}
+
+          {message.messageType === "combined" && (
+            <div
+              className={`flex flex-col ${
+                isSender ? "items-end" : "items-start"
+              }`}
+            >
+              {message.contentAndFile.files.map((file) => {
+                return (
+                  <div className=" group/files" key={uuidv4()}>
+                    {replyButton(undefined, message.sender, file, isSender)}
+                    {renderFile(file, isSender, message._id)}
+                  </div>
+                );
+              })}
+              <div className=" group/texts">
+                {replyButton(
+                  message.content,
+                  message.sender,
+                  undefined,
+                  isSender
+                )}
+                {renderText(message.contentAndFile.text, isSender)}
+              </div>
             </div>
+          )}
+          <div
+            className={`mt-1 flex ${
+              isSender ? "justify-end" : "justify-start"
+            } text-[#F5DEB3]`}
+          >
+            {dayjs(message.timeStamps).format("h:mm A")}
           </div>
-        )}
-        <div
-          className={`mt-1 flex ${
-            isSender ? "justify-end" : "justify-start"
-          } text-[#F5DEB3]`}
-        >
-          {dayjs(message.timeStamps).format("h:mm A")}
         </div>
       </div>
     );
