@@ -28,6 +28,10 @@ app.use(
   "/uploads/files",
   express.static(path.join(__dirname, "uploads/files"))
 );
+app.use(
+  "/uploads/audioFiles",
+  express.static(path.join(__dirname, "uploads/audioFiles"))
+);
 app.use(cookieParser());
 
 app.use("/api/v1/auth", authRouter);

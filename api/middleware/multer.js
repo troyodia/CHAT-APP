@@ -16,7 +16,16 @@ const fileStorage = multer.diskStorage({
     cb(null, file.originalname + Date.now() + path.extname(file.originalname));
   },
 });
+const audioFileStorage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "uploads/audioFiles/");
+  },
+  filename: function (req, file, cb) {
+    cb(null, file.originalname + Date.now() + path.extname(file.originalname));
+  },
+});
 const upload = multer({ storage });
 const fileUpload = multer({ storage: fileStorage });
+const audioFileUpload = multer({ storage: audioFileStorage });
 
-module.exports = { upload, fileUpload };
+module.exports = { upload, fileUpload, audioFileUpload };

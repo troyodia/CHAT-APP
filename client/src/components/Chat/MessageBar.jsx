@@ -10,12 +10,15 @@ import axiosInstance from "../../utils/axiosInstance";
 import defaultImage from "../../images/default.png";
 import fileImage from "../../images/icons/myfile.png";
 import cancel from "../../images/icons/cancelround.png";
+
 import { v4 as uuidv4 } from "uuid";
+import AudioRecorder from "./AudioRecorder";
 export default function MessageBar({ isSmall, isTablet }) {
   const emojiRef = useRef();
   const fileUploadRef = useRef();
   const [displayEmojiPicker, setDisplayEmojiPicker] = useState(false);
   const [message, setMessage] = useState("");
+  const [showRecorder, setShowRecorder] = useState(false);
   const {
     selectedChatType,
     selectedChatData,
@@ -138,9 +141,12 @@ export default function MessageBar({ isSmall, isTablet }) {
       return selectedChatData.firstname;
     }
   };
+  const displayAudioRecorder = () => {
+    setShowRecorder(false);
+  };
   return (
-    <div className="w-full bg-[#0E0E10] ">
-      {uploadedFiles.length > 0 && isFile && (
+    <div className="w-full  bg-[#0E0E10] ">
+      {uploadedFiles.length > 0 && isFile && !showRecorder && (
         <div className=" flex shrink bg-[#0E0E10] w-[600px] gap-x-6 overflow-auto p-3 h-20">
           {uploadedFiles.map((file) => {
             return isImage(file) ? (
@@ -183,100 +189,108 @@ export default function MessageBar({ isSmall, isTablet }) {
           })}
         </div>
       )}
-
-      <div className="flex mt-auto  w-full items-center justify-center bg-[#0E0E10] pb-4">
-        <div className={`flex mr-auto space-x-3 ml-4 ${reply ? "mt-9" : ""}`}>
-          <form className="">
-            <button
-              type="submit"
-              className={`w-8 `} //pt-3
-              onClick={handleFileAttachementClick}
-            >
-              <img
-                className="p-1 hover:outline hover:outline-1 hover:outline-dashed"
-                src={uploadFile}
-                alt=""
-              ></img>
-            </button>
-            <input
-              type="file"
-              hidden
-              ref={fileUploadRef}
-              onChange={handleFileUpload}
-            ></input>
-          </form>
-          <button
-            className={`w-6 `} //pt-1
-          >
-            <img src={cameraFooterIcon} alt=""></img>
-          </button>
-          <button
-            className={`w-7 `} //pt-1
-          >
-            <img src={microphoneIcon} alt=""></img>
-          </button>
-        </div>
-        <div className="flex flex-col w-full ">
-          {reply && (
-            <div className="flex items-center ml-8 text-white text-lg italic bg-white/20 pl-2 py-1 rounded-md">
+      {!showRecorder && (
+        <div className="flex mt-auto   w-full items-center justify-center  py-4">
+          <div className={`flex mr-auto space-x-3 ml-4 ${reply ? "mt-9" : ""}`}>
+            <form className="">
               <button
+                type="submit"
+                className={`w-8 `} //pt-3
+                onClick={handleFileAttachementClick}
+              >
+                <img
+                  className="p-1 hover:outline hover:outline-1 hover:outline-dashed"
+                  src={uploadFile}
+                  alt=""
+                ></img>
+              </button>
+              <input
+                type="file"
+                hidden
+                ref={fileUploadRef}
+                onChange={handleFileUpload}
+              ></input>
+            </form>
+            <button
+              className={`w-6 `} //pt-1
+            >
+              <img src={cameraFooterIcon} alt=""></img>
+            </button>
+            {!message && uploadedFiles.length < 1 && (
+              <button
+                className={`w-7  hover:outline hover:outline-1 hover:outline-dashed`} //pt-1
                 onClick={() => {
-                  setReply(undefined);
+                  setShowRecorder(true);
                 }}
               >
-                <img className="w-6 mr-2" src={cancel} alt=""></img>
+                <img src={microphoneIcon} alt=""></img>
               </button>
-              <div>
-                Replying to{" "}
-                <span className="text-[#F5DEB3]">{handleReplyName()}</span>
+            )}
+          </div>
+          <div className="flex flex-col w-full ">
+            {reply && (
+              <div className="flex items-center ml-8 text-white text-lg italic bg-white/20 pl-2 py-1 rounded-md">
+                <button
+                  onClick={() => {
+                    setReply(undefined);
+                  }}
+                >
+                  <img className="w-6 mr-2" src={cancel} alt=""></img>
+                </button>
+                <div>
+                  Replying to{" "}
+                  <span className="text-[#F5DEB3]">{handleReplyName()}</span>
+                </div>
               </div>
-            </div>
-          )}
+            )}
 
-          <input
-            type="text"
-            value={message}
-            className="ml-8 flex-1 py-4 pl-4 bg-white/10 rounded-md outline-none text-lg 
-            focus:outline focus:outline-dashed focus:outline-white/30 min-w-2 "
-            placeholder="Type a message"
-            id="input"
-            onChange={(e) => {
-              setMessage(e.target.value);
+            <input
+              type="text"
+              value={message}
+              className="ml-8 flex-1 py-4 pl-4 bg-white/5 rounded-md outline-none text-lg 
+            focus:outline focus:outline-3 focus:outline-dashed focus:outline-white min-w-2 "
+              placeholder="Type a message"
+              id="input"
+              onChange={(e) => {
+                setMessage(e.target.value);
+              }}
+            ></input>
+          </div>
+          <button
+            // className={`mx-7 w-8 ${"pt-14"} pt-1`}
+            className={`mx-7 w-8 flex shrink-0 ${reply ? "mt-9" : ""} `}
+            onClick={() => {
+              setDisplayEmojiPicker(true);
             }}
-          ></input>
-        </div>
-        <button
-          // className={`mx-7 w-8 ${"pt-14"} pt-1`}
-          className={`mx-7 w-8 flex shrink-0 ${reply ? "mt-9" : ""} `}
-          onClick={() => {
-            setDisplayEmojiPicker(true);
-          }}
-        >
-          <img src={emojiIcon} alt=""></img>
-        </button>
-        <button
-          className={`flex text-black ml-auto mr-4 justify-center rounded ${
-            isSmall
-              ? "text-lg px-5 py-2"
-              : isTablet
-              ? "text-lg px-6 py-3"
-              : "text-xl px-7 py-4"
-          } ${
-            message || uploadedFiles.length > 0
-              ? "  hover:outline-dashed hover:outline-3 hover:outline-offset-4 hover:outline-cyan-300 bg-[#00eeff]"
-              : "bg-gray-800 cursor-not-allowed"
-          } ${reply ? "mt-9" : ""}
+          >
+            <img src={emojiIcon} alt=""></img>
+          </button>
+          <button
+            className={`flex text-black ml-auto mr-4 justify-center rounded ${
+              isSmall
+                ? "text-lg px-5 py-2"
+                : isTablet
+                ? "text-lg px-6 py-3"
+                : "text-xl px-7 py-4"
+            } ${
+              message || uploadedFiles.length > 0
+                ? "  hover:outline-dashed hover:outline-3 hover:outline-offset-4 hover:outline-cyan-300 bg-[#00eeff]"
+                : "bg-gray-800 cursor-not-allowed"
+            } ${reply ? "mt-9" : ""}
           font-bold `}
-          onClick={() => {
-            if (message || uploadedFiles.length > 0) handleSendMessage();
-            setIsFile(false);
-            setUploadedFiles([]);
-          }}
-        >
-          Send
-        </button>
-      </div>
-
+            onClick={() => {
+              if (message || uploadedFiles.length > 0) handleSendMessage();
+              setIsFile(false);
+              setUploadedFiles([]);
+            }}
+          >
+            Send
+          </button>
+        </div>
+      )}
+      {showRecorder && (
+        <AudioRecorder showRecorder={displayAudioRecorder}></AudioRecorder>
+      )}
       <div className="absolute bottom-24 right-32" ref={emojiRef}>
         <Picker
           open={displayEmojiPicker}

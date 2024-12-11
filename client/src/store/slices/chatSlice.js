@@ -8,6 +8,7 @@ export const createChatSlice = (set, get) => ({
   reply: undefined,
   isFile: false,
   isDownloading: false,
+  audioRecording: undefined,
   setSelectedChatType: (selectedChatType) => set({ selectedChatType }),
   setSelectedChatData: (selectedChatData) => set({ selectedChatData }),
   setDirectMessageContactList: (directMessageContactList) =>
@@ -19,6 +20,7 @@ export const createChatSlice = (set, get) => ({
   setReply: (reply) => set({ reply }),
   setIsFile: (isFile) => set({ isFile }),
   setIsDownloading: (isDownloading) => set({ isDownloading }),
+  setAudioRecording: (audioRecording) => set({ audioRecording }),
   closeChat: () =>
     set({
       selectedChatType: undefined,

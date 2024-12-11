@@ -49,7 +49,6 @@ const MessageSchema = new mongoose.Schema({
   reply: {
     sender: {
       type: String,
-      required: true,
     },
     repliedText: {
       type: String,
@@ -57,6 +56,10 @@ const MessageSchema = new mongoose.Schema({
     repliedFile: {
       type: String,
     },
+  },
+  isRecording: {
+    type: Boolean,
+    default: false,
   },
   timeStamps: {
     type: Date,

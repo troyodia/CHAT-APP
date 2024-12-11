@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, Suspense, lazy } from "react";
 import defaultImg from "../../images/default.jpeg";
 import replyIcon from "../../images/icons/reply.png";
 import replyRightIcon from "../../images/icons/replyright.png";
@@ -16,11 +16,24 @@ import { isImage } from "../../utils/isImage";
 import { v4 as uuidv4 } from "uuid";
 import axios from "axios";
 
+// import VoiceMessage from "./VoiceMessage";
+
+const VoiceMessage = lazy(() => import("./VoiceMessage"));
+
 export default function MessageContainer({ isSmall, isTablet }) {
   const endRef = useRef();
+
   const getMessagesURL = "http://localhost:5000/api/v1/messages/getMessages";
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [fullScreenParams, setFullScreenParams] = useState(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [audioMessgae, setAudioMessage] = useState(null);
+  const [CurrentPlayBackTime, setCurrentPlayBackTime] = useState(0);
+  const [totalRecordingTime, setTotalRecordingTime] = useState(0);
+
+  const waveFormRef = useRef(null);
+  const waveForm = useRef(null);
+
   const {
     selectedChatMessages,
     selectedChatData,
@@ -31,10 +44,9 @@ export default function MessageContainer({ isSmall, isTablet }) {
     setIsFile,
     isDownloading,
     setIsDownloading,
+    audioRecording,
   } = useAppStore();
-  useEffect(() => {
-    console.log(reply);
-  }, [reply]);
+
   useEffect(() => {
     if (endRef.current) endRef.current.scrollIntoView({ behaviour: "smooth" });
   }, [selectedChatMessages]);
@@ -124,7 +136,7 @@ export default function MessageContainer({ isSmall, isTablet }) {
       );
     });
   };
-  const renderText = (content, isSender) => {
+  const renderText = (content, isSender, id) => {
     return (
       <div
         className={`${
@@ -137,7 +149,7 @@ export default function MessageContainer({ isSmall, isTablet }) {
       </div>
     );
   };
-  const renderFile = (file, isSender, id) => {
+  const renderFile = (file, isSender, id, isRecording) => {
     return isImage(file) ? (
       <div className="mb-2 relative group/images">
         <img
@@ -158,6 +170,10 @@ export default function MessageContainer({ isSmall, isTablet }) {
           <img className="w-8 ml-0.5" src={downloadIcon} alt=""></img>
         </button>
       </div>
+    ) : isRecording ? (
+      <Suspense fallback={<div>loading..</div>}>
+        <VoiceMessage file={file} isSender={isSender}></VoiceMessage>
+      </Suspense>
     ) : (
       <div
         className={`flex items-center justify-between border border-solid rounded-md p-6 w-[350px] bg-white/10 mb-2 ${
@@ -189,6 +205,7 @@ export default function MessageContainer({ isSmall, isTablet }) {
             repliedText: replyContent,
             repliedFile: replyFile,
           });
+          console.log(reply);
         }}
       >
         <img
@@ -218,25 +235,8 @@ export default function MessageContainer({ isSmall, isTablet }) {
           } group/items relative flex flex-col mt-4 justify-items w-fit max-w-[900px] min-w-0 
          `}
         >
-          {/* <button
-          className={`w-full group `}
-          onClick={() => {
-            setReply({
-              id: message.sender,
-              message: message.content ? message.content : message.fileUrl,
-            });
-          }}
-        >
-          <img
-            className={`w-6 invisible group-hover:visible group-hover/items:visible ${
-              !isSender && "ml-auto"
-            }`}
-            src={isSender ? replyRightIcon : replyIcon}
-            alt=""
-          ></img>
-        </button> */}
           {message.reply && (
-            <div className="flex border p-2 items-center space-x-4  ">
+            <button className="flex border p-2 items-center space-x-4  ">
               <div className="flex">
                 <img className="w-7" src={repliedIconFlip} alt=""></img>
                 <p className="italic font-bold ">
@@ -264,7 +264,7 @@ export default function MessageContainer({ isSmall, isTablet }) {
                   </p>
                 </div>
               )}
-            </div>
+            </button>
           )}
 
           {message.messageType === "text" && (
@@ -275,7 +275,7 @@ export default function MessageContainer({ isSmall, isTablet }) {
                 undefined,
                 isSender
               )}
-              {renderText(message.content, isSender)}
+              {renderText(message.content, isSender, message._id)}
             </div>
           )}
 
@@ -283,8 +283,8 @@ export default function MessageContainer({ isSmall, isTablet }) {
             message.fileUrl.map((file) => {
               return (
                 <div className=" group/files" key={uuidv4()}>
-                  {replyButton(message.content, message.sender, file, isSender)}
-                  {renderFile(file, isSender, message._id)}
+                  {replyButton(undefined, message.sender, file, isSender)}
+                  {renderFile(file, isSender, message._id, message.isRecording)}
                 </div>
               );
             })}
@@ -299,7 +299,12 @@ export default function MessageContainer({ isSmall, isTablet }) {
                 return (
                   <div className=" group/files" key={uuidv4()}>
                     {replyButton(undefined, message.sender, file, isSender)}
-                    {renderFile(file, isSender, message._id)}
+                    {renderFile(
+                      file,
+                      isSender,
+                      message._id,
+                      message.isRecording
+                    )}
                   </div>
                 );
               })}
@@ -329,7 +334,7 @@ export default function MessageContainer({ isSmall, isTablet }) {
   return (
     <>
       <div
-        className=" flex flex-col w-full h-full  bg-[#0E0E10] overflow-auto scrollbar-hidden scrollbar-hidden::-webkit-scrollbar"
+        className=" flex flex-col w-full h-full  bg-[#0E0E10] overflow-auto scrollbar-hidden scrollbar-hidden::-webkit-scrollbar  pb-8"
         id="chat-box"
       >
         {renderMessages()}
