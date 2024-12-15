@@ -1,26 +1,14 @@
 import React from "react";
-import block from "../../images/icons/block.png";
-import cancel from "../../images/icons/cancel.png";
-import settings from "../../images/icons/settingsblue.png";
+import block from "../../images/icons/blockUserIcon.png";
+import cancel from "../../images/icons/cancelround.png";
+import settings from "../../images/icons/settingsIcon.png";
 import { useEffect, useRef, useState } from "react";
 import { useAppStore } from "../../store/index.js";
 import { shallow, useShallow } from "zustand/shallow";
-
+import phoneCallIcon from "../../images/icons/telephone.png";
+import videoCallIcon from "../../images/icons/videoCallIcon.png";
 export default function ChatHeader() {
   console.log("child");
-  //   const {
-  //     selectedChatData,
-  //     closeChat,
-  //     userInfo,
-  //     setActiveItem,
-  //     selectedChatMessages,
-  //     toggleSettings,
-  //     setToggleSettings,
-  //   } = useAppStore();
-  //   const selectedChatData = useAppStore((state) => state.selectedChatData);
-  //   const setActiveItem = useAppStore((state) => state.setActiveItem);
-  //   const closeChat = useAppStore((state) => state.closeChat);
-  //   const setToggleSettings = useAppStore((state) => state.setToggleSettings);
   const { selectedChatData, setActiveItem, closeChat, setToggleSettings } =
     useAppStore(
       useShallow((state) => ({
@@ -54,7 +42,7 @@ export default function ChatHeader() {
       </div>
       <div className="flex ml-10">
         <button
-          className="w-5 pt-1"
+          className="w-9 pt-1"
           onClick={() => {
             closeChat();
             setActiveItem(undefined);
@@ -63,14 +51,26 @@ export default function ChatHeader() {
           <img src={cancel} alt=""></img>
         </button>
       </div>
-      <div className="flex mr-8 ml-auto">
-        <button className="w-8">
+      <div className="mr-6 ml-auto">
+        <button className="w-7">
+          <img src={phoneCallIcon} alt=""></img>
+        </button>
+      </div>
+      <div className="mr-6 pt-1">
+        <button
+          className="w-10" //pt-1
+        >
+          <img src={videoCallIcon} alt=""></img>
+        </button>
+      </div>
+      <div className="flex mr-6 ">
+        <button className="w-10">
           <img src={block} alt=""></img>
         </button>
       </div>
-      <div className="flex mr-8 ">
+      <div className="flex mr-6 ">
         <button
-          className="w-9"
+          className="w-7"
           onClick={() => {
             setToggleSettings();
           }}

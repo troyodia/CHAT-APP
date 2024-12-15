@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from "react";
 import uploadFile from "../../images/icons/uploadfile.png";
-import cameraFooterIcon from "../../images/icons/camerafooter.png";
 import microphoneIcon from "../../images/icons/microphone.png";
 import emojiIcon from "../../images/icons/emoji.png";
 import Picker from "emoji-picker-react";
@@ -220,11 +219,7 @@ export default function MessageBar() {
                 onChange={handleFileUpload}
               ></input>
             </form>
-            <button
-              className={`w-6 `} //pt-1
-            >
-              <img src={cameraFooterIcon} alt=""></img>
-            </button>
+
             {!message && uploadedFiles.length < 1 && (
               <button
                 className={`w-7  hover:outline hover:outline-1 hover:outline-dashed`} //pt-1

@@ -1,11 +1,6 @@
-import block from "../../images/icons/block.png";
-import cancel from "../../images/icons/cancel.png";
-import settings from "../../images/icons/settingsblue.png";
 import { useMediaQuery } from "react-responsive";
 import { useEffect, useRef, useState } from "react";
-import { useAppStore } from "../../store/index.js";
 import MessageBar from "./MessageBar.jsx";
-import MessageContainer from "./MessageContainer/MessageContainer.jsx";
 import ChatHeader from "./ChatHeader.jsx";
 import Messages from "./MessageContainer/Messages.jsx";
 
