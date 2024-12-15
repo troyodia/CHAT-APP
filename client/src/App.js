@@ -30,7 +30,6 @@ function App() {
               path="/chat-page"
               element={
                 <PrivateRoutes>
-                  {/* <ChatPage></ChatPage> */}
                   <ChatPageContainer></ChatPageContainer>
                 </PrivateRoutes>
               }

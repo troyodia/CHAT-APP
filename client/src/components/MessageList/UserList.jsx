@@ -1,3 +1,4 @@
+import React, { useCallback } from "react";
 import { useEffect, useState } from "react";
 import defaultImg from "../../images/default.jpeg";
 import { useMediaQuery } from "react-responsive";
@@ -5,23 +6,26 @@ import { useAppStore } from "../../store";
 import axiosInstance from "../../utils/axiosInstance";
 import { useShallow } from "zustand/shallow";
 
-export default function UserList({
-  image,
-  firstname,
-  lastname,
-  id,
-  handleDirectMessageClick,
-}) {
+function UserList({ image, firstname, lastname, id }) {
   const getMessagesURL = "http://localhost:5000/api/v1/messages/getMessages";
   const isMobile = useMediaQuery({ maxWidth: 1200 });
   const transitionPage = useMediaQuery({ maxWidth: 940 });
-  const { setSelectedChatType, setSelectedChatData, activeItem } = useAppStore(
+  const {
+    setSelectedChatType,
+    setSelectedChatData,
+    activeItem,
+    setActiveItem,
+  } = useAppStore(
     useShallow((state) => ({
       setSelectedChatType: state.setSelectedChatType,
       setSelectedChatData: state.setSelectedChatData,
       activeItem: state.activeItem,
+      setActiveItem: state.setActiveItem,
     }))
   );
+  const handleDirectMessageClick = (id) => {
+    activeItem === id ? setActiveItem(id) : setActiveItem(id);
+  };
 
   return (
     <div
@@ -30,14 +34,16 @@ export default function UserList({
        activeItem === id ? "bg-white text-black" : ""
      }`}
       onClick={() => {
-        handleDirectMessageClick(id);
-        setSelectedChatType("contact");
-        setSelectedChatData({
-          image,
-          firstname,
-          lastname,
-          id,
-        });
+        if (activeItem !== id) {
+          handleDirectMessageClick(id);
+          setSelectedChatType("contact");
+          setSelectedChatData({
+            image,
+            firstname,
+            lastname,
+            id,
+          });
+        }
       }}
     >
       <div className="w-10 h-10 ">
@@ -66,3 +72,4 @@ export default function UserList({
     </div>
   );
 }
+export default React.memo(UserList);

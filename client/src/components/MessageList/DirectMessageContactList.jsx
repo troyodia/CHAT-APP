@@ -1,23 +1,20 @@
+import React from "react";
 import { useAppStore } from "../../store";
 import UserList from "./UserList";
 import axiosInstance from "../../utils/axiosInstance";
 import { useCallback, useEffect } from "react";
 import { useShallow } from "zustand/shallow";
-export default function DirectMessageContactList() {
+function DirectMessageContactList() {
   const contactListUrl =
     "http://localhost:5000/api/v1/contactList/getContactList";
   // const { activeItem, setActiveItem, directMessageContactList } = useAppStore();
 
-  const { activeItem, setActiveItem, directMessageContactList } = useAppStore(
+  const { directMessageContactList } = useAppStore(
     useShallow((state) => ({
-      activeItem: state.activeItem,
-      setActiveItem: state.setActiveItem,
       directMessageContactList: state.directMessageContactList,
     }))
   );
-  const handleDirectMessageClick = (id) => {
-    activeItem === id ? setActiveItem(id) : setActiveItem(id);
-  };
+
   const getContactList = useCallback(async () => {
     const { setDirectMessageContactList } = useAppStore.getState();
     try {
@@ -46,7 +43,6 @@ export default function DirectMessageContactList() {
                 firstname={item?.firstname}
                 lastname={item?.lastname}
                 id={item?._id}
-                handleDirectMessageClick={handleDirectMessageClick}
                 key={item?._id}
               ></UserList>
             );
@@ -55,3 +51,4 @@ export default function DirectMessageContactList() {
     </div>
   );
 }
+export default React.memo(DirectMessageContactList);

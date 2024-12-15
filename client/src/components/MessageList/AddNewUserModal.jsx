@@ -7,7 +7,8 @@ import * as animationData from "../../lottie/lottie.json";
 import axiosInstance from "../../utils/axiosInstance";
 import { useAppStore } from "../../store";
 import { useShallow } from "zustand/shallow";
-export default function AddNewUserModal({ closeModal }) {
+
+export default function AddNewUserModal() {
   const [search, setSearch] = useState("");
   const [searchedContacts, setSearchContacts] = useState([]);
   const [cancelModal, setCancelModal] = useState(false);
@@ -31,6 +32,7 @@ export default function AddNewUserModal({ closeModal }) {
   //   setActiveItem,
   // } = useAppStore();
   const {
+    setDisplayDirectMessageModal,
     setSelectedChatType,
     setSelectedChatData,
     directMessageContactList,
@@ -38,6 +40,7 @@ export default function AddNewUserModal({ closeModal }) {
     setActiveItem,
   } = useAppStore(
     useShallow((state) => ({
+      setDisplayDirectMessageModal: state.setDisplayDirectMessageModal,
       setSelectedChatType: state.setSelectedChatType,
       setSelectedChatData: state.setSelectedChatData,
       directMessageContactList: state.directMessageContactList,
@@ -102,7 +105,7 @@ export default function AddNewUserModal({ closeModal }) {
           className="w-4 h-4 ml-auto mb-6"
           onClick={() => {
             setCancelModal((prev) => !prev);
-            closeModal();
+            setDisplayDirectMessageModal();
           }}
         >
           <img className="w-full h-full" src={close} alt=""></img>
@@ -152,7 +155,7 @@ export default function AddNewUserModal({ closeModal }) {
                     onClick={() => {
                       setSelectedChatType("contact");
                       setCancelModal((prev) => !prev);
-                      closeModal();
+                      setDisplayDirectMessageModal();
                       addToContactList(contact._id);
                       setSelectedChatData({
                         image: contact.image,
