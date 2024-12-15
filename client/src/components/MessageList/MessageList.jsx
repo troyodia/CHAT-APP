@@ -20,6 +20,7 @@ import AddNewChannelModal from "./AddNewChannel";
 import axiosInstance from "../../utils/axiosInstance";
 import { useAppStore } from "../../store";
 import DirectMessageContactList from "./DirectMessageContactList";
+import { shallow } from "zustand/shallow";
 
 export default function MessageList() {
   const [addFlag, setAddFlag] = useState(false);
@@ -40,7 +41,7 @@ export default function MessageList() {
 
   const logOutUrl = "http://localhost:5000/api/v1/auth/logout";
 
-  const { userInfo } = useAppStore();
+  const userInfo = useAppStore((state) => state.userInfo, shallow);
 
   const loggOutUser = async () => {
     try {

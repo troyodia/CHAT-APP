@@ -6,6 +6,7 @@ import close from "../../images/icons/close.png";
 import * as animationData from "../../lottie/lottie.json";
 import axiosInstance from "../../utils/axiosInstance";
 import { useAppStore } from "../../store";
+import { useShallow } from "zustand/shallow";
 export default function AddNewUserModal({ closeModal }) {
   const [search, setSearch] = useState("");
   const [searchedContacts, setSearchContacts] = useState([]);
@@ -22,15 +23,28 @@ export default function AddNewUserModal({ closeModal }) {
       preserveAspectRatio: "xMidYMid slice",
     },
   };
+  // const {
+  //   setSelectedChatType,
+  //   setSelectedChatData,
+  //   directMessageContactList,
+  //   setDirectMessageContactList,
+  //   setActiveItem,
+  // } = useAppStore();
   const {
     setSelectedChatType,
     setSelectedChatData,
-    userInfo,
     directMessageContactList,
     setDirectMessageContactList,
-    activeItem,
     setActiveItem,
-  } = useAppStore();
+  } = useAppStore(
+    useShallow((state) => ({
+      setSelectedChatType: state.setSelectedChatType,
+      setSelectedChatData: state.setSelectedChatData,
+      directMessageContactList: state.directMessageContactList,
+      setDirectMessageContactList: state.setDirectMessageContactList,
+      setActiveItem: state.setActiveItem,
+    }))
+  );
   const updateContactList = (contact) => {
     if (contact) {
       setDirectMessageContactList([...directMessageContactList, ...contact]);

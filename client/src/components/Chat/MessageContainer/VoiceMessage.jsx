@@ -1,12 +1,12 @@
 import React from "react";
 import { useState, useRef, useEffect } from "react";
 
-import { useAppStore } from "../../store";
 import WaveSurfer from "wavesurfer.js";
-import pauseImage from "../../images/icons/pauseIcon.png";
-import playIcon from "../../images/icons/play.png";
+import pauseImage from "../../../images/icons/pauseIcon.png";
+import playIcon from "../../../images/icons/play.png";
 
-export default function VoiceMessage({ file, isSender }) {
+function VoiceMessage({ file, isSender }) {
+  // console.log("voice message");
   const [isPlaying, setIsPlaying] = useState(false);
   const [audioMessage, setAudioMessage] = useState(null);
   const [CurrentPlayBackTime, setCurrentPlayBackTime] = useState(0);
@@ -15,21 +15,9 @@ export default function VoiceMessage({ file, isSender }) {
   const waveFormRef = useRef(null);
   const waveForm = useRef(null);
 
-  const {
-    selectedChatMessages,
-    selectedChatData,
-    userInfo,
-    selectedChatType,
-    setReply,
-    reply,
-    setIsFile,
-    isDownloading,
-    setIsDownloading,
-    audioRecording,
-  } = useAppStore();
-
   useEffect(() => {
     if (waveForm.current === null) {
+      // console.log("render");
       waveForm.current = WaveSurfer.create({
         container: waveFormRef.current,
         waveColor: "#ffffff",
@@ -44,8 +32,14 @@ export default function VoiceMessage({ file, isSender }) {
         setIsPlaying(false);
       });
     }
+
+    // return () => {
+    //   waveForm.current.destroy();
+    // };
   }, []);
   useEffect(() => {
+    // console.log("render");
+
     const audioUrl = `http://localhost:5000/uploads/audioFiles/${file}`;
     const audio = new Audio(audioUrl);
     setAudioMessage(audio);
@@ -117,3 +111,5 @@ export default function VoiceMessage({ file, isSender }) {
     </div>
   );
 }
+// export default React.memo(VoiceMessage);
+export default VoiceMessage;

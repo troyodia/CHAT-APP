@@ -9,7 +9,9 @@ import WaveSurfer from "wavesurfer.js";
 import axiosInstance from "../../utils/axiosInstance";
 import { useAppStore } from "../../store";
 import { useSocket } from "../../use-contexts/socketContext";
+import { useShallow } from "zustand/shallow";
 export default function AudioRecorder({ showRecorder }) {
+  console.log("audio recorder");
   const [recordedAudio, setRecordedAudio] = useState(null);
 
   const [recordingDuration, setRecordingDuration] = useState(0);
@@ -24,6 +26,14 @@ export default function AudioRecorder({ showRecorder }) {
   const audioRef = useRef(null);
   const mediaRecorderRef = useRef(null);
   const url = "http://localhost:5000/api/v1/messages/uploadAudioFile";
+  // const {
+  //   selectedChatData,
+  //   userInfo,
+  //   setUploadedFiles,
+  //   uploadedFiles,
+  //   reply,
+  //   setAudioRecording,
+  // } = useAppStore();
   const {
     selectedChatData,
     userInfo,
@@ -31,7 +41,16 @@ export default function AudioRecorder({ showRecorder }) {
     uploadedFiles,
     reply,
     setAudioRecording,
-  } = useAppStore();
+  } = useAppStore(
+    useShallow((state) => ({
+      selectedChatData: state.selectedChatData,
+      userInfo: state.userInfo,
+      setUploadedFiles: state.setUploadedFiles,
+      uploadedFiles: state.uploadedFiles,
+      reply: state.reply,
+      setAudioRecording: state.setAudioRecording,
+    }))
+  );
   const socket = useSocket();
   useEffect(() => {
     let intervalId;

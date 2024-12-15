@@ -4,23 +4,19 @@ export const createChatSlice = (set, get) => ({
   selectedChatData: undefined,
   selectedChatMessages: [],
   directMessageContactList: [],
-  uploadedFiles: [],
-  reply: undefined,
-  isFile: false,
-  isDownloading: false,
-  audioRecording: undefined,
+  toggleSettings: false,
+
+  setActiveItem: (activeItem) => set({ activeItem }),
   setSelectedChatType: (selectedChatType) => set({ selectedChatType }),
   setSelectedChatData: (selectedChatData) => set({ selectedChatData }),
-  setDirectMessageContactList: (directMessageContactList) =>
-    set({ directMessageContactList }),
   setSelectedChatMessages: (selectedChatMessages) =>
     set({ selectedChatMessages }),
-  setActiveItem: (activeItem) => set({ activeItem }),
-  setUploadedFiles: (uploadedFiles) => set({ uploadedFiles }),
-  setReply: (reply) => set({ reply }),
-  setIsFile: (isFile) => set({ isFile }),
-  setIsDownloading: (isDownloading) => set({ isDownloading }),
-  setAudioRecording: (audioRecording) => set({ audioRecording }),
+  setDirectMessageContactList: (directMessageContactList) =>
+    set({ directMessageContactList }),
+
+  setToggleSettings: () =>
+    set((state) => ({ toggleSettings: !state.toggleSettings })),
+
   closeChat: () =>
     set({
       selectedChatType: undefined,
@@ -45,12 +41,6 @@ export const createChatSlice = (set, get) => ({
               : message.sender._id,
         },
       ],
-    });
-  },
-  removeFiles: (file) => {
-    const uploadedFiles = get().uploadedFiles;
-    set({
-      uploadedFiles: [...uploadedFiles.filter((myFile) => myFile !== file)],
     });
   },
 });

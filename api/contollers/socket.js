@@ -47,6 +47,7 @@ const socketSetUp = (server) => {
       console.log("No user id provided during connection");
     }
     socket.on("sendMessage", sendMessage);
+
     socket.on("disconnect", () => socketDisconnet(socket));
   });
 };

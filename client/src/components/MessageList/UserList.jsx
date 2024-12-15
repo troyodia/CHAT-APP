@@ -3,6 +3,7 @@ import defaultImg from "../../images/default.jpeg";
 import { useMediaQuery } from "react-responsive";
 import { useAppStore } from "../../store";
 import axiosInstance from "../../utils/axiosInstance";
+import { useShallow } from "zustand/shallow";
 
 export default function UserList({
   image,
@@ -14,15 +15,13 @@ export default function UserList({
   const getMessagesURL = "http://localhost:5000/api/v1/messages/getMessages";
   const isMobile = useMediaQuery({ maxWidth: 1200 });
   const transitionPage = useMediaQuery({ maxWidth: 940 });
-  const {
-    setSelectedChatType,
-    setSelectedChatData,
-    selectedChatData,
-    selectedChatType,
-    selectedChatMessages,
-    addMessage,
-    activeItem,
-  } = useAppStore();
+  const { setSelectedChatType, setSelectedChatData, activeItem } = useAppStore(
+    useShallow((state) => ({
+      setSelectedChatType: state.setSelectedChatType,
+      setSelectedChatData: state.setSelectedChatData,
+      activeItem: state.activeItem,
+    }))
+  );
 
   return (
     <div

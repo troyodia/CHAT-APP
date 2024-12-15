@@ -10,15 +10,21 @@ import axiosInstance from "../../utils/axiosInstance";
 import defaultImage from "../../images/default.png";
 import fileImage from "../../images/icons/myfile.png";
 import cancel from "../../images/icons/cancelround.png";
-
+import { useMediaQuery } from "react-responsive";
 import { v4 as uuidv4 } from "uuid";
 import AudioRecorder from "./AudioRecorder";
-export default function MessageBar({ isSmall, isTablet }) {
-  const emojiRef = useRef();
-  const fileUploadRef = useRef();
+import { useShallow } from "zustand/shallow";
+import { isImage } from "../../utils/isImage";
+export default function MessageBar() {
+  console.log("message bar");
+  const emojiRef = useRef(null);
+  const fileUploadRef = useRef(null);
   const [displayEmojiPicker, setDisplayEmojiPicker] = useState(false);
   const [message, setMessage] = useState("");
   const [showRecorder, setShowRecorder] = useState(false);
+  const isTablet = useMediaQuery({ maxWidth: 1400 });
+  const isSmall = useMediaQuery({ maxWidth: 1140 });
+
   const {
     selectedChatType,
     selectedChatData,
@@ -30,7 +36,20 @@ export default function MessageBar({ isSmall, isTablet }) {
     setReply,
     isFile,
     setIsFile,
-  } = useAppStore();
+  } = useAppStore(
+    useShallow((state) => ({
+      selectedChatType: state.selectedChatType,
+      selectedChatData: state.selectedChatData,
+      userInfo: state.userInfo,
+      setUploadedFiles: state.setUploadedFiles,
+      uploadedFiles: state.uploadedFiles,
+      removeFiles: state.removeFiles,
+      reply: state.reply,
+      setReply: state.setReply,
+      isFile: state.isFile,
+      setIsFile: state.setIsFile,
+    }))
+  );
   const socket = useSocket();
 
   const url = "http://localhost:5000/api/v1/messages/uploadFile";
@@ -38,7 +57,7 @@ export default function MessageBar({ isSmall, isTablet }) {
   const handleSendMessage = () => {
     if (selectedChatType === "contact") {
       if (message && uploadedFiles.length < 1) {
-        socket.emit("sendMessage", {
+        socket?.emit("sendMessage", {
           sender: userInfo._id,
           recipient: selectedChatData.id,
           content: message,
@@ -49,7 +68,7 @@ export default function MessageBar({ isSmall, isTablet }) {
         });
       }
       if (!message && uploadedFiles.length > 0) {
-        socket.emit("sendMessage", {
+        socket?.emit("sendMessage", {
           sender: userInfo._id,
           recipient: selectedChatData.id,
           content: undefined,
@@ -60,7 +79,7 @@ export default function MessageBar({ isSmall, isTablet }) {
         });
       }
       if (message && uploadedFiles.length > 0) {
-        socket.emit("sendMessage", {
+        socket?.emit("sendMessage", {
           sender: userInfo._id,
           recipient: selectedChatData.id,
           content: undefined,
@@ -122,16 +141,6 @@ export default function MessageBar({ isSmall, isTablet }) {
       }
     } catch (error) {
       console.log(error?.response?.data?.msg);
-    }
-  };
-  // useEffect(() => {
-  //   console.log(uploadedFiles);
-  // }, [uploadedFiles]);
-  const isImage = (file) => {
-    if (file) {
-      const regex =
-        /\.(jpg|jpeg|png|gif|bmp|tiff|tif|webp|svg|ico|heic|heif)$/i;
-      return regex.test(file);
     }
   };
   const handleReplyName = () => {
@@ -291,7 +300,7 @@ export default function MessageBar({ isSmall, isTablet }) {
       {showRecorder && (
         <AudioRecorder showRecorder={displayAudioRecorder}></AudioRecorder>
       )}
-      <div className="absolute bottom-24 right-32" ref={emojiRef}>
+      <div className="absolute bottom-24 right-32 z-10" ref={emojiRef}>
         <Picker
           open={displayEmojiPicker}
           theme="dark"
