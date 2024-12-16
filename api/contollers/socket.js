@@ -37,6 +37,49 @@ const socketSetUp = (server) => {
       console.log("sent");
     }
   };
+  const handleOutGoingVoiceCall = (socket, data) => {
+    const recipientSocketId = socketMap.get(data.to);
+    if (recipientSocketId) {
+      socket.to(recipientSocketId).emit("incoming-voice-call", {
+        from: data.from,
+        roomId: data.roomId,
+        callType: data.callType,
+      });
+      console.log("sent voice call");
+    }
+  };
+  const handleOutGoingVideoCall = (socket, data) => {
+    const recipientSocketId = socketMap.get(data.to);
+    if (recipientSocketId) {
+      socket.to(recipientSocketId).emit("incoming-video-call", {
+        from: data.from,
+        roomId: data.roomId,
+        callType: data.callType,
+      });
+      console.log("sent video call");
+    }
+  };
+  const handleAcceptCall = (socket, data) => {
+    const recipientSocketId = socketMap.get(data.id);
+    if (recipientSocketId) {
+      socket.to(recipientSocketId).emit("accepted-call");
+      console.log("accept call");
+    }
+  };
+  const handleRejectVoiceCall = (socket, data) => {
+    const recipientSocketId = socketMap.get(data.from);
+    if (recipientSocketId) {
+      socket.to(recipientSocketId).emit("rejected-voice-call");
+      console.log("reject voice call");
+    }
+  };
+  const handleRejectVideoCall = (socket, data) => {
+    const recipientSocketId = socketMap.get(data.from);
+    if (recipientSocketId) {
+      socket.to(recipientSocketId).emit("rejected-video-call");
+      console.log("reject video call");
+    }
+  };
   io.on("connection", (socket) => {
     console.log("socket on");
     const userId = socket.handshake.query.userId;
@@ -49,6 +92,15 @@ const socketSetUp = (server) => {
     socket.on("sendMessage", sendMessage);
 
     socket.on("disconnect", () => socketDisconnet(socket));
+    socket.on("outgoing-voice-call", () =>
+      handleOutGoingVoiceCall(socket, data)
+    );
+    socket.on("outgoing-video-call", () =>
+      handleOutGoingVideoCall(socket, data)
+    );
+    socket.on("accept-incoming-call", () => handleAcceptCall(socket, data));
+    socket.on("reject-voice-call", () => handleRejectVoiceCall(socket, data));
+    socket.on("reject-video-call", () => handleRejectVideoCall(socket, data));
   });
 };
 module.exports = socketSetUp;

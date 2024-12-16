@@ -1,16 +1,19 @@
-import React from "react";
+import React, { useEffect } from "react";
 import ChatPage from "./ChatPage";
 import EmptyChat from "../components/EmptyChat/EmptyChat";
 import Chat from "../components/Chat/Chat";
 import Detail from "../components/Detail/Detail";
-import MessageList from "../components/MessageList/MessageList";
 import MessageListContainer from "../components/MessageList/MessageListContainer";
 import { useAppStore } from "../store";
 import { useShallow } from "zustand/shallow";
 import VideoCall from "../components/call/VideoCall";
 import VoiceCall from "../components/call/VoiceCall";
+import { useSocket } from "../use-contexts/socketContext";
+import IncomingVideoCall from "../components/call/IncomingVideoCall";
+import IncomingVoiceCall from "../components/call/IncomingVoiceCall";
 export default function Main() {
   console.log("chat page container");
+  const socket = useSocket();
   const {
     // selectedChatData,
     // setActiveItem,
@@ -32,8 +35,29 @@ export default function Main() {
       incomingVideoCall: state.incomingVideoCall,
     }))
   );
+  useEffect(() => {
+    const setIncomingVoiceCall = useAppStore.getState().setIncomingVoiceCall;
+    const setIncomingVideoCall = useAppStore.getState().setIncomingVideoCall;
+    const endCall = useAppStore.getState().endCall;
+    if (socket) {
+      socket.on("incoming-voice-call", ({ from, roomId, callType }) => {
+        setIncomingVoiceCall({ ...from, roomId, callType });
+      });
+      socket.on("incoming-video-call", ({ from, roomId, callType }) => {
+        setIncomingVideoCall({ ...from, roomId, callType });
+      });
+      socket.on("rejected-voice-call", () => {
+        endCall();
+      });
+      socket.on("rejected-video-call", () => {
+        endCall();
+      });
+    }
+  }, [socket]);
   return (
     <>
+      {incomingVideoCall && <IncomingVideoCall />}
+      {incomingVoiceCall && <IncomingVoiceCall />}
       {videoCall && (
         <div className="flex flex-col w-screen h-screen bg-[#0E0E10]">
           <VideoCall />

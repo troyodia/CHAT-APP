@@ -46,9 +46,9 @@ export default function Container({ data }) {
         </div>
       )}
       {(!callAccepted || data.callType === "voice") && (
-        <div className=" flex items-center justify-center mb-48 ">
+        <div className="w-80 h-80  flex items-center justify-center mb-48 ">
           <img
-            className="max-w-[400px] max-h-[400px] object-contain rounded-xl"
+            className=" w-full h-full  object-cover rounded-xl"
             src={`http://localhost:5000/uploads/profiles/${data.image}`}
             //   src={defaultImage}
             alt=""
