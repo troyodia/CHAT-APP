@@ -3,11 +3,11 @@ import Lottie from "react-lottie";
 import defaultImg from "../../images/default.jpeg";
 import plusIcon from "../../images/icons/plus.png";
 import close from "../../images/icons/close.png";
-import * as animationData from "../../lottie/lottie.json";
 import axiosInstance from "../../utils/axiosInstance";
 import { useAppStore } from "../../store";
 import { useShallow } from "zustand/shallow";
-
+import { lazy, Suspense } from "react";
+const MyLottie = lazy(() => import("./MyLottie"));
 export default function AddNewUserModal() {
   const [search, setSearch] = useState("");
   const [searchedContacts, setSearchContacts] = useState([]);
@@ -16,21 +16,6 @@ export default function AddNewUserModal() {
   const searchContactUrl = "http://localhost:5000/api/v1/contact/searchContact";
   const contactListUrl =
     "http://localhost:5000/api/v1/contactList/createContactList";
-  const defaultOptions = {
-    loop: true,
-    autoplay: true,
-    animationData: animationData,
-    rendererSettings: {
-      preserveAspectRatio: "xMidYMid slice",
-    },
-  };
-  // const {
-  //   setSelectedChatType,
-  //   setSelectedChatData,
-  //   directMessageContactList,
-  //   setDirectMessageContactList,
-  //   setActiveItem,
-  // } = useAppStore();
   const {
     setDisplayDirectMessageModal,
     setSelectedChatType,
@@ -179,12 +164,9 @@ export default function AddNewUserModal() {
             } `}
           >
             <div className=" ">
-              <Lottie
-                options={defaultOptions}
-                height={200}
-                width={200}
-                isClickToPauseDisabled={true}
-              />
+              <Suspense fallback={null}>
+                <MyLottie />
+              </Suspense>
             </div>
             <div className="w-full justify-center text-xl font-semibold flex mb-3">
               <p>Add a new &nbsp;</p>

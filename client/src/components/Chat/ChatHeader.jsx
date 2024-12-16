@@ -9,15 +9,39 @@ import phoneCallIcon from "../../images/icons/telephone.png";
 import videoCallIcon from "../../images/icons/videoCallIcon.png";
 export default function ChatHeader() {
   console.log("child");
-  const { selectedChatData, setActiveItem, closeChat, setToggleSettings } =
-    useAppStore(
-      useShallow((state) => ({
-        selectedChatData: state.selectedChatData,
-        setActiveItem: state.setActiveItem,
-        closeChat: state.closeChat,
-        setToggleSettings: state.setToggleSettings,
-      }))
-    );
+  const {
+    selectedChatData,
+    setActiveItem,
+    closeChat,
+    setToggleSettings,
+    setVoiceCall,
+    setVideoCall,
+  } = useAppStore(
+    useShallow((state) => ({
+      selectedChatData: state.selectedChatData,
+      setActiveItem: state.setActiveItem,
+      closeChat: state.closeChat,
+      setToggleSettings: state.setToggleSettings,
+      setVoiceCall: state.setVoiceCall,
+      setVideoCall: state.setVideoCall,
+    }))
+  );
+  const handleVoiceCall = () => {
+    setVoiceCall({
+      ...selectedChatData,
+      type: "out-going",
+      callType: "voice",
+      roomId: Date.now(),
+    });
+  };
+  const handleVideoCall = () => {
+    setVideoCall({
+      ...selectedChatData,
+      type: "out-going",
+      callType: "video",
+      roomId: Date.now(),
+    });
+  };
   return (
     <div className="flex h-28 w-full items-center">
       <div className="flex items-center">
@@ -52,14 +76,12 @@ export default function ChatHeader() {
         </button>
       </div>
       <div className="mr-6 ml-auto">
-        <button className="w-7">
+        <button className="w-7" onClick={handleVoiceCall}>
           <img src={phoneCallIcon} alt=""></img>
         </button>
       </div>
       <div className="mr-6 pt-1">
-        <button
-          className="w-10" //pt-1
-        >
+        <button className="w-10" onClick={handleVideoCall}>
           <img src={videoCallIcon} alt=""></img>
         </button>
       </div>

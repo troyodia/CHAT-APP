@@ -7,7 +7,7 @@ import { UserProvider, UserState } from "./use-contexts/userContext";
 import SocketProvider from "./use-contexts/socketContext";
 import ChatPage from "./pages/ChatPage";
 import PrivateRoutes from "./utils/PrivateRoutes";
-import ChatPageContainer from "./pages/ChatPageContainer";
+import Main from "./pages/Main";
 function App() {
   console.log("app");
   return (
@@ -30,7 +30,7 @@ function App() {
               path="/chat-page"
               element={
                 <PrivateRoutes>
-                  <ChatPageContainer></ChatPageContainer>
+                  <Main />
                 </PrivateRoutes>
               }
             ></Route>

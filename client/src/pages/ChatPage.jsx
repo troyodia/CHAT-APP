@@ -9,9 +9,7 @@ import { useSocket } from "../use-contexts/socketContext";
 
 export default function ChatPage({ emptyChat, chat, detail, messageList }) {
   console.log("chat parent");
-  // const selectedChatType = useAppStore((state) => state.selectedChatType);
-  // const fetchData = useAppStore((state) => state.fetchData);
-  // const toggleSettings = useAppStore((state) => state.toggleSettings);
+
   const { selectedChatType, fetchData, toggleSettings } = useAppStore(
     useShallow((state) => ({
       selectedChatType: state.selectedChatType,
