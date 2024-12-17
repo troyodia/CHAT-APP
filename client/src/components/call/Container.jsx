@@ -16,6 +16,7 @@ export default function Container({ data }) {
       endCall: state.endCall,
     }))
   );
+  console.log(data);
   const defaultOptions = {
     loop: true,
     autoplay: true,
@@ -24,7 +25,12 @@ export default function Container({ data }) {
       preserveAspectRatio: "xMidYMid slice",
     },
   };
-  console.log(data);
+  const handleEndCall = () => {
+    socket.emit(`reject-${data.callType}-call`, {
+      from: data.id,
+    });
+    endCall();
+  };
   return (
     <div className="text-white flex flex-col justify-center items-center  mt-12">
       <div className="text-6xl mb-4 capitalize font-bold">
@@ -57,7 +63,7 @@ export default function Container({ data }) {
       )}
       <button
         className="w-20 h-20 outline outline-2 flex justify-center items-center rounded-full hover:outline-dashed"
-        onClick={endCall}
+        onClick={handleEndCall}
       >
         <img className="w-12 h-12" src={endCallIcon} alt=""></img>
       </button>

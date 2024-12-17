@@ -92,15 +92,20 @@ const socketSetUp = (server) => {
     socket.on("sendMessage", sendMessage);
 
     socket.on("disconnect", () => socketDisconnet(socket));
-    socket.on("outgoing-voice-call", () =>
+    socket.on("outgoing-voice-call", (data) =>
       handleOutGoingVoiceCall(socket, data)
     );
-    socket.on("outgoing-video-call", () =>
+
+    socket.on("outgoing-video-call", (data) =>
       handleOutGoingVideoCall(socket, data)
     );
-    socket.on("accept-incoming-call", () => handleAcceptCall(socket, data));
-    socket.on("reject-voice-call", () => handleRejectVoiceCall(socket, data));
-    socket.on("reject-video-call", () => handleRejectVideoCall(socket, data));
+    socket.on("accept-incoming-call", (data) => handleAcceptCall(socket, data));
+    socket.on("reject-voice-call", (data) =>
+      handleRejectVoiceCall(socket, data)
+    );
+    socket.on("reject-video-call", (data) =>
+      handleRejectVideoCall(socket, data)
+    );
   });
 };
 module.exports = socketSetUp;

@@ -10,18 +10,21 @@ export default function VoiceCall() {
 
   const { voiceCall } = useAppStore(
     useShallow((state) => ({
-      userInfo: state.userInfo,
+      voiceCall: state.voiceCall,
     }))
   );
+  console.log(voiceCall);
   useEffect(() => {
     const userInfo = useAppStore.getState().userInfo;
-    if (voiceCall && voiceCall.type === "out-going") {
+    console.log(userInfo);
+    if (voiceCall && voiceCall.type === "out-going" && socket) {
       socket.emit("outgoing-voice-call", {
         to: voiceCall.id,
         from: {
           id: userInfo._id,
-          profileImage: userInfo.image,
-          name: userInfo.firstname + " " + userInfo.lastname,
+          image: userInfo.image,
+          firstname: userInfo.firstname,
+          lastname: userInfo.lastname,
         },
         callType: voiceCall.callType,
         roomId: voiceCall.roomId,

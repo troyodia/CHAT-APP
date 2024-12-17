@@ -14,34 +14,27 @@ import IncomingVoiceCall from "../components/call/IncomingVoiceCall";
 export default function Main() {
   console.log("chat page container");
   const socket = useSocket();
-  const {
-    // selectedChatData,
-    // setActiveItem,
-    // closeChat,
-    // setToggleSettings,
-    voiceCall,
-    videoCall,
-    incomingVoiceCall,
-    incomingVideoCall,
-  } = useAppStore(
-    useShallow((state) => ({
-      // selectedChatData: state.selectedChatData,
-      // setActiveItem: state.setActiveItem,
-      // closeChat: state.closeChat,
-      // setToggleSettings: state.setToggleSettings,
-      voiceCall: state.voiceCall,
-      videoCall: state.videoCall,
-      incomingVoiceCall: state.incomingVoiceCall,
-      incomingVideoCall: state.incomingVideoCall,
-    }))
-  );
+  const { voiceCall, videoCall, incomingVoiceCall, incomingVideoCall } =
+    useAppStore(
+      useShallow((state) => ({
+        voiceCall: state.voiceCall,
+        videoCall: state.videoCall,
+        incomingVoiceCall: state.incomingVoiceCall,
+        incomingVideoCall: state.incomingVideoCall,
+      }))
+    );
   useEffect(() => {
     const setIncomingVoiceCall = useAppStore.getState().setIncomingVoiceCall;
     const setIncomingVideoCall = useAppStore.getState().setIncomingVideoCall;
     const endCall = useAppStore.getState().endCall;
     if (socket) {
+      // socket.on("incoming-voice-call", ({ from, roomId, callType }) => {
+      //   setIncomingVoiceCall({ ...from, roomId, callType });
+      //   console.log(from, roomId, callType);
+      // });
       socket.on("incoming-voice-call", ({ from, roomId, callType }) => {
         setIncomingVoiceCall({ ...from, roomId, callType });
+        console.log(from, roomId, callType);
       });
       socket.on("incoming-video-call", ({ from, roomId, callType }) => {
         setIncomingVideoCall({ ...from, roomId, callType });
