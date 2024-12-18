@@ -27,6 +27,7 @@
     "uuid": "^11.0.3",
     "wavesurfer.js": "^7.8.10",
     "web-vitals": "^2.1.4",
+    "zego-express-engine-webrtc": "^2.24.5",
     "zustand": "^5.0.1"
   },
   "scripts": {
