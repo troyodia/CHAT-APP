@@ -3,6 +3,8 @@ const { StatusCodes } = require("http-status-codes");
 const User = require("../models/User");
 const { BadRequestError, UnauthenticatedError } = require("../errors");
 const fs = require("fs");
+const jwt = require("jsonwebtoken");
+const generateToken04 = require("../utils/zegoTokenGenerator.js");
 
 const register = async (req, res) => {
   const user = await User.create({
@@ -128,6 +130,28 @@ const deleteProfileImage = async (req, res) => {
   const updatedUser = await User.findOne({ _id: req.user.userId });
   res.status(StatusCodes.OK).json(updatedUser);
 };
+const generateZegoToken = (req, res) => {
+  const appId = parseInt(process.env.ZEGO_APP_ID);
+  console.log(appId);
+  const serverSecret = process.env.ZEGO_SERVER_SECRET;
+  const userId = req.user.userId;
+  const payload = "";
+  const effectiveTime = 3600;
+  if (appId && serverSecret && userId) {
+    const token = generateToken04(
+      appId,
+      userId,
+      serverSecret,
+      effectiveTime,
+      payload
+    );
+    return res.status(StatusCodes.OK).json({ token });
+  } else {
+    throw new BadRequestError(
+      "zego Token cannot be generated invalid credentials"
+    );
+  }
+};
 module.exports = {
   register,
   login,
@@ -135,4 +159,5 @@ module.exports = {
   createProfile,
   addProfileImage,
   deleteProfileImage,
+  generateZegoToken,
 };

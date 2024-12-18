@@ -95,6 +95,10 @@ export default function ChatHeader() {
           className="w-7"
           onClick={() => {
             setToggleSettings();
+            console.log(
+              process.env.REACT_APP_PUBLIC_ZEGO_APP_ID,
+              process.env.REACT_APP_PUBLIC_ZEGO_SERVER_SECRET
+            );
           }}
         >
           <img src={settings} alt=""></img>
