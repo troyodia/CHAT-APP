@@ -5,7 +5,8 @@
 /node_modules_emoji
 /.pnp
 .pnp.js
-
+# env
+.env
 # testing
 /coverage
 
