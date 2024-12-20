@@ -1,8 +1,7 @@
-import React from "react";
 import { useAppStore } from "../../store";
 import UserList from "./UserList";
 import axiosInstance from "../../utils/axiosInstance";
-import { useCallback, useEffect } from "react";
+import React, { useCallback, useEffect } from "react";
 import { useShallow } from "zustand/shallow";
 function DirectMessageContactList() {
   const contactListUrl =

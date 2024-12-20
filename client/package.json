@@ -17,6 +17,7 @@
     "leva": "^0.9.35",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "react-lottie": "^1.2.10",
     "react-responsive": "^10.0.0",
     "react-router-dom": "^6.26.2",
     "react-scripts": "5.0.1",
@@ -27,7 +28,7 @@
     "uuid": "^11.0.3",
     "wavesurfer.js": "^7.8.10",
     "web-vitals": "^2.1.4",
-    "zego-express-engine-webrtc": "^2.24.5",
+    "zego-express-engine-webrtc": "^3.7.4",
     "zustand": "^5.0.1"
   },
   "scripts": {

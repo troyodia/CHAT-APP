@@ -39,11 +39,6 @@ export default function Container({ data }) {
         });
         if (res && res.data) {
           setToken(res.data.token);
-          // console.log(res.data.token);
-          // console.log(
-          //   process.env.REACT_APP_PUBLIC_ZEGO_APP_ID,
-          //   process.env.REACT_APP_PUBLIC_ZEGO_SERVER_SECRET
-          // );
         }
       } catch (error) {
         console.log(error.response.data.msg);
@@ -64,13 +59,8 @@ export default function Container({ data }) {
     const startCall = async () => {
       import("zego-express-engine-webrtc").then(
         async ({ ZegoExpressEngine }) => {
-          // const zg = new module.ZegoExpressEngine(
-          //   process.env.PUBLIC_ZEGO_APP_ID,
-          //   process.env.PUBLIC_ZEGO_SERVER_SECRET
-          // );
           const zg = new ZegoExpressEngine(
             parseInt(process.env.REACT_APP_PUBLIC_ZEGO_APP_ID),
-            // process.env.REACT_APP_PUBLIC_ZEGO_APP_ID,
             process.env.REACT_APP_PUBLIC_ZEGO_SERVER_SECRET
           );
           setZgVar(zg);
@@ -181,7 +171,7 @@ export default function Container({ data }) {
     endCall();
   };
   return (
-    <div className="text-white flex flex-col justify-center items-center  mt-12">
+    <div className="text-white flex flex-col items-center  pt-12 shrink h-screen">
       <div className="text-6xl mb-4 capitalize font-bold">
         {data.firstname} {data.lastname}
       </div>
@@ -201,7 +191,7 @@ export default function Container({ data }) {
         </div>
       )}
       {(!callAccepted || data.callType === "voice") && (
-        <div className="w-80 h-80  flex items-center justify-center mb-48 ">
+        <div className="w-80 h-80  flex items-center justify-center  ">
           <img
             className=" w-full h-full  object-cover rounded-xl"
             src={`http://localhost:5000/uploads/profiles/${data.image}`}
@@ -214,10 +204,10 @@ export default function Container({ data }) {
         <div className="absolute bottom-5 right-5" id="local-video"></div>
       </div>
       <button
-        className="w-20 h-20 outline outline-2 flex justify-center items-center rounded-full hover:outline-dashed"
+        className="w-16 h-16 outline outline-2 flex justify-center items-center rounded-full hover:outline-dashed mt-auto mb-8 shrink-0"
         onClick={handleEndCall}
       >
-        <img className="w-12 h-12" src={endCallIcon} alt=""></img>
+        <img className="w-10 h-10" src={endCallIcon} alt=""></img>
       </button>
     </div>
   );

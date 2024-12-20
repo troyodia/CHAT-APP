@@ -31,7 +31,7 @@ export default function IncomingVideoCall() {
   return (
     <div
       className="fixed right-10 bottom-10 flex space-x-4 backdrop-blur-lg outline outline-2 
-outline-[#F5DEB3] hover:outline-dashed z-10 items-center py-2 pl-4 pr-8"
+outline-[#F5DEB3] hover:outline-dashed z-10 items-center py-2 pl-4 pr-8 animate-bounce hover:animate-none"
     >
       <div className="flex w-20 h-20">
         <img
