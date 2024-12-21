@@ -168,7 +168,7 @@ function CreateMessage({
                 <div className=" group/texts">
                   <ReplyButton
                     sender={messageSender}
-                    replyContent={messageContent}
+                    replyContent={combinedMessageText}
                     replyFile={undefined}
                     isSender={isSender}
                   />
@@ -183,8 +183,6 @@ function CreateMessage({
                       {combinedMessageText}
                     </p>
                   </div>
-
-                  {/* {renderText(message.contentAndFile.text, isSender)} */}
                 </div>
               </div>
             )}

@@ -7,7 +7,9 @@ export const createMessageSlice = (set, get) => ({
   audioRecording: undefined,
   isFullScreen: false,
   fullScreenParams: undefined,
-
+  audioRecordingMap: new Map(),
+  uploadedFilesMap: new Map(),
+  replyMap: new Map(),
   setUploadedFiles: (uploadedFiles) => set({ uploadedFiles }),
   setReply: (reply) => set({ reply }),
   setIsFile: (isFile) => set({ isFile }),
@@ -16,14 +18,17 @@ export const createMessageSlice = (set, get) => ({
 
   setIsFullScreen: (isFullScreen) => set({ isFullScreen }),
   setFullScreenParams: (fullScreenParams) => set({ fullScreenParams }),
-  removeFiles: (file) => {
-    const uploadedFiles = get().uploadedFiles;
+
+  removeFiles: (file, key) => {
+    const uploadedFilesMap = get().uploadedFilesMap;
+
     set({
-      uploadedFiles: [...uploadedFiles.filter((myFile) => myFile !== file)],
+      uploadedFilesMap: new Map(uploadedFilesMap).set(key, [
+        ...uploadedFilesMap.get(key).filter((myFile) => myFile !== file),
+      ]),
     });
   },
   downloadFile: async (url) => {
-    // setIsDownloading(true);
     set({ isDownloading: true });
     try {
       const res = await axios.get(
@@ -43,7 +48,6 @@ export const createMessageSlice = (set, get) => ({
         document.body.removeChild(tempLink);
         window.URL.revokeObjectURL(tempURL);
         setTimeout(() => {
-          //   setIsDownloading(false);
           set({ isDownloading: false });
         }, 2000);
       }

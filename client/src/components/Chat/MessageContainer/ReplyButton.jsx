@@ -11,17 +11,22 @@ export default function ReplyButton({
   isSender,
 }) {
   console.log("reply button");
-  const setReply = useAppStore((state) => state.setReply, shallow);
+
+  const selectedChatData = useAppStore(
+    (state) => state.selectedChatData,
+    shallow
+  );
   return (
     <button
       className={`w-full group  `}
       onClick={() => {
-        setReply({
-          sender: sender,
-          repliedText: replyContent,
-          repliedFile: replyFile,
-        });
-        // console.log(reply);
+        useAppStore.setState((prev) => ({
+          replyMap: new Map(prev.replyMap).set(selectedChatData.id, {
+            sender: sender,
+            repliedText: replyContent,
+            repliedFile: replyFile,
+          }),
+        }));
       }}
     >
       <img

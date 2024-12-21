@@ -10,12 +10,12 @@ import axiosInstance from "../../utils/axiosInstance";
 import { useAppStore } from "../../store";
 import { useSocket } from "../../use-contexts/socketContext";
 import { useShallow } from "zustand/shallow";
-export default function AudioRecorder({ showRecorder }) {
+export default function AudioRecorder() {
   console.log("audio recorder");
   const [recordedAudio, setRecordedAudio] = useState(null);
 
   const [recordingDuration, setRecordingDuration] = useState(0);
-  const [CurrentPlayBackTime, setCurrentPlayBackTime] = useState(0);
+  const [currentPlayBackTime, setCurrentPlayBackTime] = useState(0);
   const [totalRecordingTime, setTotalRecordingTime] = useState(0);
   const [isRecording, setIsRecording] = useState(true);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -40,7 +40,9 @@ export default function AudioRecorder({ showRecorder }) {
     setUploadedFiles,
     uploadedFiles,
     reply,
+    replyMap,
     setAudioRecording,
+    audioRecordingMap,
   } = useAppStore(
     useShallow((state) => ({
       selectedChatData: state.selectedChatData,
@@ -49,6 +51,8 @@ export default function AudioRecorder({ showRecorder }) {
       uploadedFiles: state.uploadedFiles,
       reply: state.reply,
       setAudioRecording: state.setAudioRecording,
+      audioRecordingMap: state.audioRecordingMap,
+      replyMap: state.replyMap,
     }))
   );
   const socket = useSocket();
@@ -199,12 +203,20 @@ export default function AudioRecorder({ showRecorder }) {
           messageType: "file",
           fileUrl: res.data.filePath,
           contentAndFile: undefined,
-          reply: reply ? reply : undefined,
+          reply: replyMap.get(selectedChatData.id),
           isRecording: true,
         });
-        setAudioRecording(res.data.filePath);
-        setUploadedFiles([]);
-        showRecorder();
+        // setAudioRecording(res.data.filePath);
+        // setUploadedFiles([]);
+        useAppStore.setState((prev) => ({
+          audioRecordingMap: new Map(prev.audioRecordingMap).set(
+            selectedChatData.id,
+            false
+          ),
+        }));
+        useAppStore.setState((prev) => ({
+          replyMap: new Map(prev.replyMap).set(selectedChatData.id, undefined),
+        }));
       }
     } catch (error) {
       console.log(error?.response?.data?.msg);
@@ -213,15 +225,18 @@ export default function AudioRecorder({ showRecorder }) {
 
   return (
     <div className="flex w-full h-[92px] space-x-4 items-center bg-[#F5DEB3]/20  py-4 justify-end pr-8">
-      <button className="w-10 hover:outline hover:outline-1 hover:outline-dashed p-1">
-        <img
-          className="w-full"
-          src={trash}
-          alt=""
-          onClick={() => {
-            showRecorder();
-          }}
-        ></img>
+      <button
+        className="w-10 hover:outline hover:outline-1 hover:outline-dashed p-1"
+        onClick={() => {
+          useAppStore.setState((prev) => ({
+            audioRecordingMap: new Map(prev.audioRecordingMap).set(
+              selectedChatData.id,
+              false
+            ),
+          }));
+        }}
+      >
+        <img className="w-full" src={trash} alt=""></img>
       </button>
       <div className="h-12 rounded-full w-full max-w-80 bg-white/10 flex justify-center items-center text-white text-lg font-bold px-4 border">
         {isRecording ? (
@@ -249,7 +264,7 @@ export default function AudioRecorder({ showRecorder }) {
 
         {recordedAudio && isPlaying && (
           <span className="ml-2">
-            {formatRecordingTime(CurrentPlayBackTime)}
+            {formatRecordingTime(currentPlayBackTime)}
           </span>
         )}
         {recordedAudio && !isPlaying && !isRecording && (

@@ -19,8 +19,7 @@ export default function MessageBar() {
   const emojiRef = useRef(null);
   const fileUploadRef = useRef(null);
   const [displayEmojiPicker, setDisplayEmojiPicker] = useState(false);
-  const [message, setMessage] = useState("");
-  const [showRecorder, setShowRecorder] = useState(false);
+  const [messageMap, setMessageMap] = useState(new Map());
   const isTablet = useMediaQuery({ maxWidth: 1400 });
   const isSmall = useMediaQuery({ maxWidth: 1140 });
 
@@ -28,25 +27,20 @@ export default function MessageBar() {
     selectedChatType,
     selectedChatData,
     userInfo,
-    setUploadedFiles,
-    uploadedFiles,
     removeFiles,
-    reply,
-    setReply,
-    isFile,
-    setIsFile,
+    audioRecordingMap,
+    uploadedFilesMap,
+    replyMap,
   } = useAppStore(
     useShallow((state) => ({
       selectedChatType: state.selectedChatType,
       selectedChatData: state.selectedChatData,
       userInfo: state.userInfo,
       setUploadedFiles: state.setUploadedFiles,
-      uploadedFiles: state.uploadedFiles,
       removeFiles: state.removeFiles,
-      reply: state.reply,
-      setReply: state.setReply,
-      isFile: state.isFile,
-      setIsFile: state.setIsFile,
+      audioRecordingMap: state.audioRecordingMap,
+      uploadedFilesMap: state.uploadedFilesMap,
+      replyMap: state.replyMap,
     }))
   );
   const socket = useSocket();
@@ -55,29 +49,44 @@ export default function MessageBar() {
 
   const handleSendMessage = () => {
     if (selectedChatType === "contact") {
-      if (message && uploadedFiles.length < 1) {
+      if (
+        messageMap.get(selectedChatData.id) !== undefined &&
+        messageMap.get(selectedChatData.id) &&
+        (uploadedFilesMap.get(selectedChatData.id) === undefined ||
+          uploadedFilesMap.get(selectedChatData.id).length < 1)
+      ) {
         socket?.emit("sendMessage", {
           sender: userInfo._id,
           recipient: selectedChatData.id,
-          content: message,
+          content: messageMap.get(selectedChatData.id),
           messageType: "text",
           fileUrl: undefined,
           contentAndFile: undefined,
-          reply: reply ? reply : undefined,
+          reply: replyMap.get(selectedChatData.id),
         });
       }
-      if (!message && uploadedFiles.length > 0) {
+      if (
+        (messageMap.get(selectedChatData.id) === undefined ||
+          !messageMap.get(selectedChatData.id)) &&
+        uploadedFilesMap.get(selectedChatData.id) !== undefined &&
+        uploadedFilesMap.get(selectedChatData.id).length > 0
+      ) {
         socket?.emit("sendMessage", {
           sender: userInfo._id,
           recipient: selectedChatData.id,
           content: undefined,
           messageType: "file",
-          fileUrl: uploadedFiles,
+          fileUrl: uploadedFilesMap.get(selectedChatData.id),
           contentAndFile: undefined,
-          reply: reply ? reply : undefined,
+          reply: replyMap.get(selectedChatData.id),
         });
       }
-      if (message && uploadedFiles.length > 0) {
+      if (
+        messageMap.get(selectedChatData.id) !== undefined &&
+        messageMap.get(selectedChatData.id) &&
+        uploadedFilesMap.get(selectedChatData.id) !== undefined &&
+        uploadedFilesMap.get(selectedChatData.id).length > 0
+      ) {
         socket?.emit("sendMessage", {
           sender: userInfo._id,
           recipient: selectedChatData.id,
@@ -85,15 +94,17 @@ export default function MessageBar() {
           messageType: "combined",
           fileUrl: undefined,
           contentAndFile: {
-            text: message,
-            files: uploadedFiles,
+            text: messageMap.get(selectedChatData.id),
+            files: uploadedFilesMap.get(selectedChatData.id),
           },
-          reply: reply ? reply : undefined,
+          reply: replyMap.get(selectedChatData.id),
         });
       }
     }
-    setReply(undefined);
-    setMessage("");
+    useAppStore.setState((prev) => ({
+      replyMap: new Map(prev.replyMap).set(selectedChatData.id, undefined),
+    }));
+    setMessageMap((map) => new Map(map.set(selectedChatData.id, "")));
   };
   useEffect(() => {
     const handleClickOutside = (e) => {
@@ -108,9 +119,16 @@ export default function MessageBar() {
   }, [emojiRef]);
   const handleEmoji = (emojiData) => {
     let pos = document.getElementById("input").selectionStart;
-
-    setMessage(
-      (prev) => prev.slice(0, pos) + emojiData.emoji + prev.slice(pos)
+    setMessageMap(
+      (map) =>
+        new Map(
+          map.set(
+            selectedChatData.id,
+            map.get(selectedChatData.id).slice(0, pos) +
+              emojiData.emoji +
+              map.get(selectedChatData.id).slice(pos)
+          )
+        )
     );
   };
   const handleFileAttachementClick = (e) => {
@@ -118,7 +136,6 @@ export default function MessageBar() {
 
     if (fileUploadRef.current) {
       fileUploadRef.current.click();
-      setIsFile(true);
     }
   };
   const handleFileUpload = async () => {
@@ -136,70 +153,106 @@ export default function MessageBar() {
       });
       if (res.data && res.status === 200) {
         console.log(res.data.filePath);
-        setUploadedFiles([...uploadedFiles, res.data.filePath]);
+
+        useAppStore.setState((prev) => ({
+          uploadedFilesMap: new Map(prev.uploadedFilesMap).set(
+            selectedChatData.id,
+            [
+              ...(prev.uploadedFilesMap.get(selectedChatData.id) !== undefined
+                ? prev.uploadedFilesMap.get(selectedChatData.id)
+                : []),
+              res.data.filePath,
+            ]
+          ),
+        }));
       }
     } catch (error) {
-      console.log(error?.response?.data?.msg);
+      console.log("file upload error", error?.response?.data?.msg);
     }
   };
   const handleReplyName = () => {
-    if (reply && reply.id === userInfo._id) {
+    if (
+      replyMap.get(selectedChatData.id) !== undefined &&
+      replyMap.get(selectedChatData.id) &&
+      replyMap.get(selectedChatData.id).sender === userInfo._id
+    ) {
       return userInfo.firstname;
     } else {
       return selectedChatData.firstname;
     }
   };
-  const displayAudioRecorder = () => {
-    setShowRecorder(false);
-  };
+
+  // useEffect(() => {
+  //   console.log(uploadedFilesMap);
+  // }, [uploadedFilesMap]);
+  // useEffect(() => {
+  //   console.log(audioRecordingMap);
+  // }, [audioRecordingMap]);
+  // useEffect(() => {
+  //   console.log(messageMap);
+  // }, [messageMap]);
+  // useEffect(() => {
+  //   console.log(replyMap);
+  // }, [replyMap]);
   return (
     <div className="w-full  bg-[#0E0E10] ">
-      {uploadedFiles.length > 0 && isFile && !showRecorder && (
-        <div className=" flex shrink bg-[#0E0E10] w-[600px] gap-x-6 overflow-auto p-3 h-20">
-          {uploadedFiles.map((file) => {
-            return isImage(file) ? (
-              <div className="w-14  relative flex shrink-0 " key={uuidv4()}>
-                <img
-                  className="rounded-lg  w-full object-cover"
-                  src={`http://localhost:5000/uploads/files/${file}`}
-                  alt=""
-                ></img>
-                <button
-                  className="absolute -top-4 -right-4"
-                  onClick={() => {
-                    removeFiles(file);
-                  }}
-                >
-                  <img className=" w-6" src={cancel} alt=""></img>
-                </button>
-              </div>
-            ) : (
-              <div
-                className="relative bg-white/30 w-44 p-1 flex items-center"
-                key={uuidv4()}
-              >
-                <img className="w-7" src={fileImage} alt=""></img>
-
-                <div className="flex flex-col truncate ml-2">
-                  <p className="text-xs truncate">{file}</p>
-                  <p className="text-xs text-gray-300">PDF</p>
+      {uploadedFilesMap.get(selectedChatData.id) !== undefined &&
+        uploadedFilesMap.get(selectedChatData.id).length > 0 &&
+        !audioRecordingMap.get(selectedChatData.id) && (
+          <div className=" flex shrink bg-[#0E0E10] w-[600px] gap-x-6 overflow-auto p-3 h-20">
+            {uploadedFilesMap.get(selectedChatData.id).map((file) => {
+              return isImage(file) ? (
+                <div className="w-14  relative flex shrink-0 " key={uuidv4()}>
+                  <img
+                    className="rounded-lg  w-full object-cover"
+                    src={`http://localhost:5000/uploads/files/${file}`}
+                    alt=""
+                  ></img>
                   <button
                     className="absolute -top-4 -right-4"
                     onClick={() => {
-                      removeFiles(file);
+                      removeFiles(file, selectedChatData.id);
                     }}
                   >
-                    <img className=" w-6 " src={cancel} alt=""></img>
+                    <img className=" w-6" src={cancel} alt=""></img>
                   </button>
                 </div>
-              </div>
-            );
-          })}
-        </div>
-      )}
-      {!showRecorder && (
+              ) : (
+                <div
+                  className="relative bg-white/30 w-44 p-1 flex items-center"
+                  key={uuidv4()}
+                >
+                  <img className="w-7" src={fileImage} alt=""></img>
+
+                  <div className="flex flex-col truncate ml-2">
+                    <p className="text-xs truncate">{file}</p>
+                    <p className="text-xs text-gray-300">PDF</p>
+                    <button
+                      className="absolute -top-4 -right-4"
+                      onClick={() => {
+                        removeFiles(file, selectedChatData.id);
+                      }}
+                    >
+                      <img className=" w-6 " src={cancel} alt=""></img>
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+
+      {(audioRecordingMap.get(selectedChatData.id) === undefined ||
+        !audioRecordingMap.get(selectedChatData.id)) && (
         <div className="flex mt-auto   w-full items-center justify-center  py-4">
-          <div className={`flex mr-auto space-x-3 ml-4 ${reply ? "mt-9" : ""}`}>
+          <div
+            className={`flex mr-auto space-x-3 ml-4 ${
+              replyMap.get(selectedChatData.id) !== undefined &&
+              replyMap.get(selectedChatData.id)
+                ? "mt-9"
+                : ""
+            }`}
+          >
             <form className="">
               <button
                 type="submit"
@@ -220,49 +273,73 @@ export default function MessageBar() {
               ></input>
             </form>
 
-            {!message && uploadedFiles.length < 1 && (
-              <button
-                className={`w-7  hover:outline hover:outline-1 hover:outline-dashed`} //pt-1
-                onClick={() => {
-                  setShowRecorder(true);
-                }}
-              >
-                <img src={microphoneIcon} alt=""></img>
-              </button>
-            )}
-          </div>
-          <div className="flex flex-col w-full ">
-            {reply && (
-              <div className="flex items-center ml-8 text-white text-lg italic bg-white/20 pl-2 py-1 rounded-md">
+            {(messageMap.get(selectedChatData.id) === undefined ||
+              !messageMap.get(selectedChatData.id)) &&
+              (uploadedFilesMap.get(selectedChatData.id) === undefined ||
+                uploadedFilesMap.get(selectedChatData.id).length < 1) && (
                 <button
+                  className={`w-7  hover:outline hover:outline-1 hover:outline-dashed`} //pt-1
                   onClick={() => {
-                    setReply(undefined);
+                    useAppStore.setState((prev) => ({
+                      audioRecordingMap: new Map(prev.audioRecordingMap).set(
+                        selectedChatData.id,
+                        true
+                      ),
+                    }));
                   }}
                 >
-                  <img className="w-6 mr-2" src={cancel} alt=""></img>
+                  <img src={microphoneIcon} alt=""></img>
                 </button>
-                <div>
-                  Replying to{" "}
-                  <span className="text-[#F5DEB3]">{handleReplyName()}</span>
+              )}
+          </div>
+          <div className="flex flex-col w-full ">
+            {replyMap.get(selectedChatData.id) !== undefined &&
+              replyMap.get(selectedChatData.id) && (
+                <div className="flex items-center ml-8 text-white text-lg italic bg-white/20 pl-2 py-1 rounded-md">
+                  <button
+                    onClick={() => {
+                      useAppStore.setState((prev) => ({
+                        replyMap: new Map(prev.replyMap).set(
+                          selectedChatData.id,
+                          undefined
+                        ),
+                      }));
+                    }}
+                  >
+                    <img className="w-6 mr-2" src={cancel} alt=""></img>
+                  </button>
+                  <div>
+                    Replying to{" "}
+                    <span className="text-[#F5DEB3]">{handleReplyName()}</span>
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
 
             <input
               type="text"
-              value={message}
+              value={
+                messageMap.get(selectedChatData.id) !== undefined
+                  ? messageMap.get(selectedChatData.id)
+                  : ""
+              }
               className="ml-8 flex-1 py-4 pl-4 bg-white/5 rounded-md outline-none text-lg 
             focus:outline focus:outline-3 focus:outline-dashed focus:outline-white min-w-2 "
               placeholder="Type a message"
               id="input"
               onChange={(e) => {
-                setMessage(e.target.value);
+                setMessageMap(
+                  (map) => new Map(map.set(selectedChatData.id, e.target.value))
+                );
               }}
             ></input>
           </div>
           <button
-            // className={`mx-7 w-8 ${"pt-14"} pt-1`}
-            className={`mx-7 w-8 flex shrink-0 ${reply ? "mt-9" : ""} `}
+            className={`mx-7 w-8 flex shrink-0 ${
+              replyMap.get(selectedChatData.id) !== undefined &&
+              replyMap.get(selectedChatData.id)
+                ? "mt-9"
+                : ""
+            } `}
             onClick={() => {
               setDisplayEmojiPicker(true);
             }}
@@ -277,24 +354,67 @@ export default function MessageBar() {
                 ? "text-lg px-6 py-3"
                 : "text-xl px-7 py-4"
             } ${
-              message || uploadedFiles.length > 0
+              (messageMap.get(selectedChatData.id) !== undefined &&
+                messageMap.get(selectedChatData.id)) ||
+              (uploadedFilesMap.get(selectedChatData.id) !== undefined &&
+                uploadedFilesMap.get(selectedChatData.id).length > 0)
                 ? "  hover:outline-dashed hover:outline-3 hover:outline-offset-4 hover:outline-cyan-300 bg-[#00eeff]"
                 : "bg-gray-800 cursor-not-allowed"
-            } ${reply ? "mt-9" : ""}
+            } ${
+              replyMap.get(selectedChatData.id) !== undefined &&
+              replyMap.get(selectedChatData.id)
+                ? "mt-9"
+                : ""
+            }
           font-bold `}
             onClick={() => {
-              if (message || uploadedFiles.length > 0) handleSendMessage();
-              setIsFile(false);
-              setUploadedFiles([]);
+              if (
+                (messageMap.get(selectedChatData.id) !== undefined &&
+                  messageMap.get(selectedChatData.id)) ||
+                (uploadedFilesMap.get(selectedChatData.id) !== undefined &&
+                  uploadedFilesMap.get(selectedChatData.id).length > 0)
+              )
+                handleSendMessage();
+              useAppStore.setState((prev) => ({
+                uploadedFilesMap: new Map(prev.uploadedFilesMap).set(
+                  selectedChatData.id,
+                  []
+                ),
+              }));
             }}
           >
             Send
           </button>
         </div>
       )}
-      {showRecorder && (
-        <AudioRecorder showRecorder={displayAudioRecorder}></AudioRecorder>
-      )}
+      {audioRecordingMap.get(selectedChatData.id) !== undefined &&
+        audioRecordingMap.get(selectedChatData.id) && (
+          <div className="">
+            {replyMap.get(selectedChatData.id) !== undefined &&
+              replyMap.get(selectedChatData.id) && (
+                <div className="flex items-center max-w-[250px] text-white text-lg italic bg-white/20 pl-2 py-1 rounded-tr-md">
+                  <button
+                    onClick={() => {
+                      useAppStore.setState((prev) => ({
+                        replyMap: new Map(prev.replyMap).set(
+                          selectedChatData.id,
+                          undefined
+                        ),
+                      }));
+                    }}
+                  >
+                    <img className="w-6 mr-2" src={cancel} alt=""></img>
+                  </button>
+                  <div>
+                    Replying to{" "}
+                    <span className="text-[#F5DEB3]">{handleReplyName()}</span>
+                  </div>
+                </div>
+              )}
+            <AudioRecorder></AudioRecorder>
+          </div>
+        )}
+
       <div className="absolute bottom-24 right-32 z-10" ref={emojiRef}>
         <Picker
           open={displayEmojiPicker}
