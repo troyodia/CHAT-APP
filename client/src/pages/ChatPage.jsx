@@ -6,10 +6,13 @@ import EmptyChat from "../components/EmptyChat/EmptyChat";
 import { useAppStore } from "../store";
 import { shallow, useShallow } from "zustand/shallow";
 import { useSocket } from "../use-contexts/socketContext";
+import axiosInstance from "../utils/axiosInstance";
 
 export default function ChatPage({ emptyChat, chat, detail, messageList }) {
-  console.log("chat parent");
+  const updateMessageReadStatusUrl =
+    "http://localhost:5000/api/v1/messages/updateReadStatus";
 
+  console.log("chat parent");
   const { selectedChatType, fetchData, toggleSettings } = useAppStore(
     useShallow((state) => ({
       selectedChatType: state.selectedChatType,
@@ -35,8 +38,37 @@ export default function ChatPage({ emptyChat, chat, detail, messageList }) {
             message.recipient._id === selectedChatData.id)
         ) {
           addMessage(message);
-          // useAppStore.getState().addMessage(message);
-          // console.log("message received", message);
+          console.log("message received", message);
+        }
+        if (
+          selectedChatType === undefined ||
+          selectedChatData.id !== message.sender._id
+        ) {
+          console.log("me");
+          const updateMessageReadStatus = async () => {
+            try {
+              const res = await axiosInstance.post(
+                updateMessageReadStatusUrl,
+                { isUnread: true, messageId: message._id },
+                { withCredentials: true }
+              );
+              if (res.data && res.status === 200) {
+                console.log(res.data.msg);
+              }
+            } catch (error) {
+              console.log(error.response.data.msg);
+            }
+          };
+          updateMessageReadStatus();
+          useAppStore.setState((prev) => ({
+            messageNotification: new Map(prev.messageNotification).set(
+              message.sender._id,
+              1 +
+                (prev.messageNotification.get(message.sender._id) !== undefined
+                  ? prev.messageNotification.get(message.sender._id)
+                  : 0)
+            ),
+          }));
         }
       };
       socket.on("recieveMessage", handleRecieveMessage);

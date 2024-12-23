@@ -61,6 +61,10 @@ const MessageSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  isUnread: {
+    type: Boolean,
+    default: false,
+  },
   timeStamps: {
     type: Date,
     default: Date.now,

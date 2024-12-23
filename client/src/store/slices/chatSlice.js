@@ -4,7 +4,7 @@ export const createChatSlice = (set, get) => ({
   selectedChatMessages: [],
   directMessageContactList: [],
   toggleSettings: false,
-
+  messageNotification: new Map(),
   setSelectedChatType: (selectedChatType) => set({ selectedChatType }),
   setSelectedChatData: (selectedChatData) => set({ selectedChatData }),
   setSelectedChatMessages: (selectedChatMessages) =>
@@ -42,3 +42,8 @@ export const createChatSlice = (set, get) => ({
     });
   },
 });
+//   {
+//     name: "chat slice",
+//     partialize: (state) => ({ messageNotification: state.messageNotification }),
+//   }
+// );

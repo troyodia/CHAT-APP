@@ -24,6 +24,13 @@ const socketSetUp = (server) => {
 
     const createMessage = await Message.create(message);
 
+    if (recipientSocketId === undefined) {
+      console.log("offline");
+      await Message.updateOne(
+        { _id: createMessage._id },
+        { $set: { isUnread: true } }
+      );
+    }
     const messageData = await Message.findOne({ _id: createMessage._id })
       .populate("sender", "id email firstname lastname image")
       .populate("recipient", "id email firstname lastname image");
@@ -91,7 +98,6 @@ const socketSetUp = (server) => {
     }
     socket.on("sendMessage", sendMessage);
 
-    socket.on("disconnect", () => socketDisconnet(socket));
     socket.on("outgoing-voice-call", (data) =>
       handleOutGoingVoiceCall(socket, data)
     );
@@ -106,6 +112,7 @@ const socketSetUp = (server) => {
     socket.on("reject-video-call", (data) =>
       handleRejectVideoCall(socket, data)
     );
+    socket.on("disconnect", () => socketDisconnet(socket));
   });
 };
 module.exports = socketSetUp;

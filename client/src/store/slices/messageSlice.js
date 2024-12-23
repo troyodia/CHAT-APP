@@ -10,6 +10,7 @@ export const createMessageSlice = (set, get) => ({
   audioRecordingMap: new Map(),
   uploadedFilesMap: new Map(),
   replyMap: new Map(),
+  unreadMessages: [],
   setUploadedFiles: (uploadedFiles) => set({ uploadedFiles }),
   setReply: (reply) => set({ reply }),
   setIsFile: (isFile) => set({ isFile }),
@@ -18,7 +19,10 @@ export const createMessageSlice = (set, get) => ({
 
   setIsFullScreen: (isFullScreen) => set({ isFullScreen }),
   setFullScreenParams: (fullScreenParams) => set({ fullScreenParams }),
-
+  setUnreadMessages: (unreadMessages) =>
+    set((state) => ({
+      unreadMessages: [...unreadMessages],
+    })),
   removeFiles: (file, key) => {
     const uploadedFilesMap = get().uploadedFilesMap;
 

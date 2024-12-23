@@ -67,22 +67,20 @@ export default function MessageContainer({ renderMessages, renderFullScreen }) {
   }, [selectedChatData, selectedChatType]);
 
   return (
-    <>
-      <div
-        className=" flex flex-col w-full h-full  bg-[#0E0E10] overflow-auto scrollbar-hidden scrollbar-hidden::-webkit-scrollbar  pb-8"
-        id="chat-box"
-      >
-        {renderMessages}
-        <div className="" ref={endRef}></div>
-        {isFullScreen && renderFullScreen}
+    <div
+      className=" flex flex-col w-full h-full  bg-[#0E0E10] overflow-auto scrollbar-hidden scrollbar-hidden::-webkit-scrollbar  pb-8"
+      id="chat-box"
+    >
+      {renderMessages}
+      <div className="" ref={endRef}></div>
+      {isFullScreen && renderFullScreen}
 
-        {isDownloading && (
-          <div className="fixed flex justify-center items-center bottom-8 left-1/2 -translate-x-1/2  z-[3000] rounded-full px-5 py-3 bg-black">
-            <img className="rounded-lg w-8" src={rasengan} alt=""></img>
-            <div className="ml-4 text-lg">Downloading...</div>
-          </div>
-        )}
-      </div>
-    </>
+      {isDownloading && (
+        <div className="fixed flex justify-center items-center bottom-8 left-1/2 -translate-x-1/2  z-[3000] rounded-full px-5 py-3 bg-black">
+          <img className="rounded-lg w-8" src={rasengan} alt=""></img>
+          <div className="ml-4 text-lg">Downloading...</div>
+        </div>
+      )}
+    </div>
   );
 }

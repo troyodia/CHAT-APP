@@ -7,12 +7,15 @@ import { toast } from "react-toastify";
 import axiosInstance from "../../utils/axiosInstance";
 import logout from "../../images/icons/logout.png";
 import pen from "../../images/icons/pen.png";
+import { useSocket } from "../../use-contexts/socketContext";
 export default function SideBarFooter() {
   const navigate = useNavigate();
   const location = useLocation();
   const userInfo = useAppStore((state) => state.userInfo, shallow);
   const transitionPage = useMediaQuery({ maxWidth: 940 });
   const logOutUrl = "http://localhost:5000/api/v1/auth/logout";
+  const socket = useSocket();
+
   const loggOutUser = async () => {
     try {
       const res = await axiosInstance(logOutUrl, { withCredentials: true });
@@ -27,6 +30,7 @@ export default function SideBarFooter() {
           progress: undefined,
           theme: "dark",
         });
+        socket.close();
         navigate("/login");
         localStorage.removeItem("isLoggedIn");
       }

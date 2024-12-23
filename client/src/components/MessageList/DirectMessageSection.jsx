@@ -45,16 +45,11 @@ export default function DirectMessageSection() {
           <button
             className="w-6 h-6 flex justify-center items-center rounded-md py-1 bg-white/10 "
             onClick={() => {
-              // if (!addFlagChannel) {
-              //   setAddFlag((prev) => !prev);
-              //   setDisplay((prev) => !prev);
-              // }
               !displayChannelModal && setDisplayDirectMessageModal();
             }}
           >
             <img
               className="w-4"
-              // src={addFlag ? minusIcon : plusIcon}
               src={displayDirectMessageModal ? minusIcon : plusIcon}
               alt=""
             ></img>

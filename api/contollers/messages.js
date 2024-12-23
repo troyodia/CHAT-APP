@@ -21,5 +21,25 @@ const uploadFile = async (req, res) => {
   console.log(req.file, filename);
   res.status(StatusCodes.OK).json({ filePath: filename });
 };
+const updatedMessageReadStatus = async (req, res) => {
+  const { isUnread, messageId } = req.body;
+  // console.log(isUnread, messageId);
+  console.log("message updated ", messageId);
+  await Message.updateOne({ _id: messageId }, { $set: { isUnread: isUnread } });
+  res.status(StatusCodes.OK).json({ msg: "updated read status" });
+};
 
-module.exports = { getMessages, uploadFile };
+const getUnreadMessages = async (req, res) => {
+  const unreadMessages = await Message.find({
+    isUnread: true,
+    recipient: req.user.userId,
+  });
+  // console.log(unreadMessages);
+  res.status(StatusCodes.OK).json({ unreadMessages });
+};
+module.exports = {
+  getMessages,
+  uploadFile,
+  getUnreadMessages,
+  updatedMessageReadStatus,
+};
