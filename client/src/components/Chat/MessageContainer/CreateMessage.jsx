@@ -25,11 +25,19 @@ function CreateMessage({
   combinedMessageFiles,
   combinedMessageText,
 }) {
-  const { selectedChatData, userInfo, selectedChatType } = useAppStore(
+  const {
+    selectedChatData,
+    userInfo,
+    selectedChatType,
+    firstUnreadMessage,
+    setFirstUnreadMessage,
+  } = useAppStore(
     useShallow((state) => ({
       selectedChatData: state.selectedChatData,
       userInfo: state.userInfo,
       selectedChatType: state.selectedChatType,
+      firstUnreadMessage: state.firstUnreadMessage,
+      setFirstUnreadMessage: state.setFirstUnreadMessage,
     }))
   );
   const handleReplyName = (replyId) => {

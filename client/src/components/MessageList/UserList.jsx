@@ -11,8 +11,8 @@ function UserList({ image, firstname, lastname, id }) {
   const getMessagesURL = "http://localhost:5000/api/v1/messages/getMessages";
   const isMobile = useMediaQuery({ maxWidth: 1200 });
   const transitionPage = useMediaQuery({ maxWidth: 940 });
-
-  // const messageCoutUrl = "http://localhost:5000/api/v1/messages/messageCount";
+  const updateMessageReadStatusUrl =
+    "http://localhost:5000/api/v1/messages/updateReadStatus";
   const {
     setSelectedChatType,
     setSelectedChatData,
@@ -34,10 +34,30 @@ function UserList({ image, firstname, lastname, id }) {
     // activeItem === id ? setActiveItem(id) : setActiveItem(id);
     setActiveItem(id);
   };
-  const clearNotifications = () => {
-    useAppStore.setState((prev) => ({
-      messageNotification: new Map(prev.messageNotification).set(id, 0),
-    }));
+  const clearNotifications = async () => {
+    if (messageNotification.has(id)) {
+      console.log(messageNotification);
+      try {
+        const res = await axiosInstance.post(
+          updateMessageReadStatusUrl,
+          {
+            isUnread: false,
+            messageId: undefined,
+            markAllAsRead: true,
+            contactId: id,
+          },
+          { withCredentials: true }
+        );
+        if (res.data && res.status === 200) {
+          console.log(res.data.msg);
+        }
+      } catch (error) {
+        console.log(error.response.data.msg);
+      }
+      useAppStore.setState((prev) => ({
+        messageNotification: new Map(prev.messageNotification).set(id, 0),
+      }));
+    }
   };
   useEffect(() => {
     console.log(messageNotification);
@@ -50,10 +70,12 @@ function UserList({ image, firstname, lastname, id }) {
         console.log("true");
         count = count + 1;
       }
+    });
+    if (count > 0) {
       useAppStore.setState((prev) => ({
         messageNotification: new Map(prev.messageNotification).set(id, count),
       }));
-    });
+    }
   }, [unreadMessages, id]);
 
   return (

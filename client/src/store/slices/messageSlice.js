@@ -11,6 +11,7 @@ export const createMessageSlice = (set, get) => ({
   uploadedFilesMap: new Map(),
   replyMap: new Map(),
   unreadMessages: [],
+  firstUnreadMessage: undefined,
   setUploadedFiles: (uploadedFiles) => set({ uploadedFiles }),
   setReply: (reply) => set({ reply }),
   setIsFile: (isFile) => set({ isFile }),
@@ -23,6 +24,8 @@ export const createMessageSlice = (set, get) => ({
     set((state) => ({
       unreadMessages: [...unreadMessages],
     })),
+  setFirstUnreadMessage: (firstUnreadMessage) => set({ firstUnreadMessage }),
+
   removeFiles: (file, key) => {
     const uploadedFilesMap = get().uploadedFilesMap;
 

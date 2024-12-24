@@ -22,20 +22,36 @@ const uploadFile = async (req, res) => {
   res.status(StatusCodes.OK).json({ filePath: filename });
 };
 const updatedMessageReadStatus = async (req, res) => {
-  const { isUnread, messageId } = req.body;
-  // console.log(isUnread, messageId);
+  const { isUnread, messageId, markAllAsRead, contactId } = req.body;
+
+  if (markAllAsRead && contactId !== undefined) {
+    console.log("all messages marked as read", contactId);
+    await Message.updateMany(
+      { sender: contactId, recipient: req.user.userId, isUnread: true },
+      { $set: { isUnread: isUnread } }
+    );
+    return res.status(StatusCodes.OK).json({ msg: "updated read status" });
+  }
   console.log("message updated ", messageId);
-  await Message.updateOne({ _id: messageId }, { $set: { isUnread: isUnread } });
-  res.status(StatusCodes.OK).json({ msg: "updated read status" });
+  const message = await Message.findByIdAndUpdate(
+    { _id: messageId },
+    { $set: { isUnread: isUnread } },
+    { new: true }
+  );
+  res
+    .status(StatusCodes.OK)
+    .json({ msg: "updated read status", firstUnreadMessage: message._id });
 };
 
 const getUnreadMessages = async (req, res) => {
   const unreadMessages = await Message.find({
     isUnread: true,
     recipient: req.user.userId,
-  });
-  // console.log(unreadMessages);
-  res.status(StatusCodes.OK).json({ unreadMessages });
+  }).sort({ timeStamps: 1 });
+  console.log(unreadMessages, unreadMessages[0]._id);
+  res
+    .status(StatusCodes.OK)
+    .json({ unreadMessages, firstUnreadMessage: unreadMessages[0]._id });
 };
 module.exports = {
   getMessages,

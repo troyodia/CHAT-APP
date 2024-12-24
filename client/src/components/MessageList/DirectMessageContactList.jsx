@@ -36,6 +36,8 @@ function DirectMessageContactList() {
   useEffect(() => {
     const getUnreadMessages = async () => {
       const setUnreadMessages = useAppStore.getState().setUnreadMessages;
+      const setFirstUnreadMessage =
+        useAppStore.getState().setFirstUnreadMessage;
       try {
         const res = await axiosInstance.get(unreadMessagesUrl, {
           withCredentials: true,
@@ -43,6 +45,7 @@ function DirectMessageContactList() {
         if (res.data && res.status === 200) {
           console.log(res.data.unreadMessages);
           setUnreadMessages(res.data.unreadMessages);
+          setFirstUnreadMessage(res.data.firstUnreadMessage);
         }
       } catch (error) {
         console.log(error.response.data.msg);

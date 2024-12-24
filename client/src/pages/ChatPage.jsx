@@ -31,7 +31,10 @@ export default function ChatPage({ emptyChat, chat, detail, messageList }) {
         const addMessage = useAppStore.getState().addMessage;
         const selectedChatType = useAppStore.getState().selectedChatType;
         const selectedChatData = useAppStore.getState().selectedChatData;
-        // console.log(message);
+        const userInfo = useAppStore.getState().userInfo;
+        const firstUnreadMessage = useAppStore.getState().firstUnreadMessage;
+        const setFirstUnreadMessage =
+          useAppStore.getState().setFirstUnreadMessage;
         if (
           selectedChatType !== undefined &&
           (message.sender._id === selectedChatData.id ||
@@ -41,19 +44,28 @@ export default function ChatPage({ emptyChat, chat, detail, messageList }) {
           console.log("message received", message);
         }
         if (
-          selectedChatType === undefined ||
-          selectedChatData.id !== message.sender._id
+          (selectedChatType === undefined ||
+            selectedChatData.id !== message.sender._id) &&
+          userInfo._id !== message.sender._id
         ) {
           console.log("me");
           const updateMessageReadStatus = async () => {
             try {
               const res = await axiosInstance.post(
                 updateMessageReadStatusUrl,
-                { isUnread: true, messageId: message._id },
+                {
+                  isUnread: true,
+                  messageId: message._id,
+                  markAllAsRead: false,
+                  contactId: undefined,
+                },
                 { withCredentials: true }
               );
               if (res.data && res.status === 200) {
                 console.log(res.data.msg);
+                if (firstUnreadMessage === undefined) {
+                  setFirstUnreadMessage(res.data.firstUnreadMessage);
+                }
               }
             } catch (error) {
               console.log(error.response.data.msg);

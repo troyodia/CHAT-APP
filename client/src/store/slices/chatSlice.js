@@ -42,8 +42,3 @@ export const createChatSlice = (set, get) => ({
     });
   },
 });
-//   {
-//     name: "chat slice",
-//     partialize: (state) => ({ messageNotification: state.messageNotification }),
-//   }
-// );
