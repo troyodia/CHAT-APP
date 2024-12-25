@@ -42,6 +42,7 @@ export default function RenderMessages() {
         messageContent={message.content}
         messageId={message._id}
         isRecording={message.isRecording}
+        isUnread={message.isUnread}
         messageFiles={message.fileUrl}
         combinedMessageFiles={message.contentAndFile?.files}
         combinedMessageText={message.contentAndFile?.text}

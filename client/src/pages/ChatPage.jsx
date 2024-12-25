@@ -24,6 +24,23 @@ export default function ChatPage({ emptyChat, chat, detail, messageList }) {
   useEffect(() => {
     fetchData();
   }, [fetchData]);
+
+  const handleSetFirstUnreadMessage = (id, message) => {
+    useAppStore.setState((prev) => ({
+      firstUnreadMessage: new Map(prev.firstUnreadMessage).set(id, message),
+    }));
+  };
+  const handleSetMessageNotifications = (id) => {
+    useAppStore.setState((prev) => ({
+      messageNotification: new Map(prev.messageNotification).set(
+        id,
+        1 +
+          (prev.messageNotification.get(id) !== undefined
+            ? prev.messageNotification.get(id)
+            : 0)
+      ),
+    }));
+  };
   useEffect(() => {
     if (socket) {
       console.log("socket");
@@ -33,8 +50,7 @@ export default function ChatPage({ emptyChat, chat, detail, messageList }) {
         const selectedChatData = useAppStore.getState().selectedChatData;
         const userInfo = useAppStore.getState().userInfo;
         const firstUnreadMessage = useAppStore.getState().firstUnreadMessage;
-        const setFirstUnreadMessage =
-          useAppStore.getState().setFirstUnreadMessage;
+
         if (
           selectedChatType !== undefined &&
           (message.sender._id === selectedChatData.id ||
@@ -63,8 +79,15 @@ export default function ChatPage({ emptyChat, chat, detail, messageList }) {
               );
               if (res.data && res.status === 200) {
                 console.log(res.data.msg);
-                if (firstUnreadMessage === undefined) {
-                  setFirstUnreadMessage(res.data.firstUnreadMessage);
+                if (
+                  firstUnreadMessage.size === 0 ||
+                  firstUnreadMessage.get(message.sender._id) === undefined
+                ) {
+                  console.log(res.data.firstUnreadMessage);
+                  handleSetFirstUnreadMessage(
+                    message.sender._id,
+                    res.data.firstUnreadMessage
+                  );
                 }
               }
             } catch (error) {
@@ -72,15 +95,16 @@ export default function ChatPage({ emptyChat, chat, detail, messageList }) {
             }
           };
           updateMessageReadStatus();
-          useAppStore.setState((prev) => ({
-            messageNotification: new Map(prev.messageNotification).set(
-              message.sender._id,
-              1 +
-                (prev.messageNotification.get(message.sender._id) !== undefined
-                  ? prev.messageNotification.get(message.sender._id)
-                  : 0)
-            ),
-          }));
+          handleSetMessageNotifications(message.sender._id);
+          // useAppStore.setState((prev) => ({
+          //   messageNotification: new Map(prev.messageNotification).set(
+          //     message.sender._id,
+          //     1 +
+          //       (prev.messageNotification.get(message.sender._id) !== undefined
+          //         ? prev.messageNotification.get(message.sender._id)
+          //         : 0)
+          //   ),
+          // }));
         }
       };
       socket.on("recieveMessage", handleRecieveMessage);

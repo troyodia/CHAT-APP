@@ -27,7 +27,7 @@ export default function RenderFileMessage({ file, isSender, id, isRecording }) {
           <img
             className={`${
               isSender ? "border-sky-500 " : "border-white/30"
-            } rounded-3xl max-w-[600px] max-h-[600px] object-contain border border-solid cursor-pointer`}
+            } rounded-3xl max-w-[400px] max-h-[400px] object-contain border border-solid cursor-pointer`}
             src={`http://localhost:5000/uploads/files/${file}`}
             alt=""
             onClick={() => {

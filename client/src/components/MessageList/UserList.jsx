@@ -20,6 +20,7 @@ function UserList({ image, firstname, lastname, id }) {
     setActiveItem,
     messageNotification,
     unreadMessages,
+    firstUnreadMessage,
   } = useAppStore(
     useShallow((state) => ({
       setSelectedChatType: state.setSelectedChatType,
@@ -28,6 +29,7 @@ function UserList({ image, firstname, lastname, id }) {
       setActiveItem: state.setActiveItem,
       messageNotification: state.messageNotification,
       unreadMessages: state.unreadMessages,
+      firstUnreadMessage: state.firstUnreadMessage,
     }))
   );
   const handleDirectMessageClick = (id) => {
@@ -36,7 +38,7 @@ function UserList({ image, firstname, lastname, id }) {
   };
   const clearNotifications = async () => {
     if (messageNotification.has(id)) {
-      console.log(messageNotification);
+      // console.log(messageNotification);
       try {
         const res = await axiosInstance.post(
           updateMessageReadStatusUrl,
@@ -49,7 +51,7 @@ function UserList({ image, firstname, lastname, id }) {
           { withCredentials: true }
         );
         if (res.data && res.status === 200) {
-          console.log(res.data.msg);
+          // console.log(res.data.msg);
         }
       } catch (error) {
         console.log(error.response.data.msg);
@@ -63,11 +65,11 @@ function UserList({ image, firstname, lastname, id }) {
     console.log(messageNotification);
   }, [messageNotification]);
   useEffect(() => {
-    console.log(unreadMessages);
+    // console.log(unreadMessages);
     let count = 0;
     unreadMessages.forEach((message) => {
       if (message.sender === id) {
-        console.log("true");
+        // console.log("true");
         count = count + 1;
       }
     });
@@ -77,7 +79,9 @@ function UserList({ image, firstname, lastname, id }) {
       }));
     }
   }, [unreadMessages, id]);
-
+  useEffect(() => {
+    console.log(firstUnreadMessage);
+  }, [firstUnreadMessage]);
   return (
     <button
       className={`relative flex w-full items-center 
