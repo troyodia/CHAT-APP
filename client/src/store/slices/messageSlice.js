@@ -11,6 +11,7 @@ export const createMessageSlice = (set, get) => ({
   uploadedFilesMap: new Map(),
   replyMap: new Map(),
   unreadMessages: [],
+  lastMessageMap: new Map(),
   firstUnreadMessage: new Map(),
   setUploadedFiles: (uploadedFiles) => set({ uploadedFiles }),
   setReply: (reply) => set({ reply }),

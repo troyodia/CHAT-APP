@@ -68,9 +68,82 @@ const getUnreadMessages = async (req, res) => {
     firstUnreadMessage: firstAgregate,
   });
 };
+const getLastMessage = async (req, res) => {
+  if (!req.body) {
+    throw new BadRequestError("cannot get messages");
+  }
+  const { contactId } = req.body;
+  const { userId } = req.user;
+  const aggregateContactId = new mongoose.Types.ObjectId(contactId);
+  const aggregateUserId = new mongoose.Types.ObjectId(userId);
+  const lastMessage = await Message.aggregate([
+    {
+      $match: {
+        $or: [
+          { sender: aggregateUserId, recipient: aggregateContactId },
+          { sender: aggregateContactId, recipient: aggregateUserId },
+        ],
+      },
+    },
+    { $sort: { timeStamps: 1 } },
+    { $group: { _id: null, messages: { $last: "$$ROOT" } } },
+  ]);
+  console.log(contactId, lastMessage);
+  res.status(StatusCodes.OK).json({ lastMessage });
+  //from mongo worked incase
+  // {
+  //   $match:
+  //     /**
+  //      * query: The query in MQL.
+  //      */
+  //     {
+  //       $or: [
+  //         {
+  //           recipient: ObjectId(
+  //             "673e52eb150905b52ce95403"
+  //           ),
+  //           sender: ObjectId(
+  //             "673e568f150905b52ce954db"
+  //           ),
+  //         },
+  //         {
+  //           recipient: ObjectId(
+  //             "673e568f150905b52ce954db"
+  //           ),
+  //           sender: ObjectId(
+  //             "673e52eb150905b52ce95403"
+  //           ),
+  //         },
+  //       ],
+  //     },
+  // },
+  // {
+  //   $sort:
+  //     /**
+  //      * Provide any number of field/order pairs.
+  //      */
+  //     {
+  //       timeStamps: 1,
+  //     },
+  // },
+  // {
+  //   $group:
+  //     /**
+  //      * _id: The id of the group.
+  //      * fieldN: The first field name.
+  //      */
+  //     {
+  //       _id: null,
+  //       message: {
+  //         $last: "$$ROOT",
+  //       },
+  //     },
+  // },
+};
 module.exports = {
   getMessages,
   uploadFile,
   getUnreadMessages,
   updatedMessageReadStatus,
+  getLastMessage,
 };

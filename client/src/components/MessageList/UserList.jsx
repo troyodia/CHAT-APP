@@ -1,44 +1,52 @@
 import React, { useCallback } from "react";
 import { useEffect, useState } from "react";
 import defaultImg from "../../images/default.jpeg";
+import pictureIcon from "../../images/icons/picture.png";
+import fileIcon from "../../images/icons/file-Icon.png";
 import exclamationIcon from "../../images/icons/exclamationIcon.png";
 import { useMediaQuery } from "react-responsive";
 import { useAppStore } from "../../store";
 import axiosInstance from "../../utils/axiosInstance";
 import { useShallow } from "zustand/shallow";
-
+import { useSocket } from "../../use-contexts/socketContext";
+import { isImage } from "../../utils/isImage";
 function UserList({ image, firstname, lastname, id }) {
   const getMessagesURL = "http://localhost:5000/api/v1/messages/getMessages";
   const isMobile = useMediaQuery({ maxWidth: 1200 });
   const transitionPage = useMediaQuery({ maxWidth: 940 });
   const updateMessageReadStatusUrl =
     "http://localhost:5000/api/v1/messages/updateReadStatus";
+  const getLastMessageUrl =
+    "http://localhost:5000/api/v1/messages/getLastMessage";
+  const socket = useSocket();
   const {
     setSelectedChatType,
     setSelectedChatData,
+    selectedChatMessages,
     activeItem,
     setActiveItem,
     messageNotification,
     unreadMessages,
     firstUnreadMessage,
+    lastMessageMap,
   } = useAppStore(
     useShallow((state) => ({
       setSelectedChatType: state.setSelectedChatType,
       setSelectedChatData: state.setSelectedChatData,
+      selectedChatMessages: state.selectedChatMessages,
       activeItem: state.activeItem,
       setActiveItem: state.setActiveItem,
       messageNotification: state.messageNotification,
       unreadMessages: state.unreadMessages,
       firstUnreadMessage: state.firstUnreadMessage,
+      lastMessageMap: state.lastMessageMap,
     }))
   );
   const handleDirectMessageClick = (id) => {
-    // activeItem === id ? setActiveItem(id) : setActiveItem(id);
     setActiveItem(id);
   };
   const clearNotifications = async () => {
     if (messageNotification.has(id)) {
-      // console.log(messageNotification);
       try {
         const res = await axiosInstance.post(
           updateMessageReadStatusUrl,
@@ -65,11 +73,9 @@ function UserList({ image, firstname, lastname, id }) {
     console.log(messageNotification);
   }, [messageNotification]);
   useEffect(() => {
-    // console.log(unreadMessages);
     let count = 0;
     unreadMessages.forEach((message) => {
       if (message.sender === id) {
-        // console.log("true");
         count = count + 1;
       }
     });
@@ -82,6 +88,66 @@ function UserList({ image, firstname, lastname, id }) {
   useEffect(() => {
     console.log(firstUnreadMessage);
   }, [firstUnreadMessage]);
+  const setLastMessageMap = (contactid, lastMessage) => {
+    useAppStore.setState((prev) => ({
+      lastMessageMap: new Map(prev.lastMessageMap).set(contactid, lastMessage),
+    }));
+  };
+  useEffect(() => {
+    const getLastContactMessage = async () => {
+      try {
+        const res = await axiosInstance.post(
+          getLastMessageUrl,
+          { contactId: id },
+          { withCredentials: true }
+        );
+        if (res.data && res.status === 200) {
+          const {
+            data: {
+              lastMessage: [message],
+            },
+          } = res;
+          console.log(message);
+
+          if (message !== undefined) {
+            const { messages } = message;
+            if (messages.messageType === "text") {
+              setLastMessageMap(id, {
+                type: "text",
+                message: messages.content,
+              });
+            }
+            if (messages.messageType === "file") {
+              setLastMessageMap(id, {
+                type: "file",
+                message: messages.fileUrl[messages.fileUrl.length - 1],
+              });
+            }
+            if (messages.messageType === "combined") {
+              setLastMessageMap(id, {
+                type: "combined",
+                message: messages.contentAndFile.text,
+              });
+            }
+          } else {
+            setLastMessageMap(id, {
+              type: "empty",
+              message: "No messages in chat",
+            });
+          }
+        }
+      } catch (error) {
+        console.log(error);
+        console.log(error?.response?.data?.msg);
+      }
+    };
+    getLastContactMessage();
+  }, [id]);
+
+  useEffect(() => {
+    console.log(lastMessageMap);
+  }, [lastMessageMap]);
+
   return (
     <button
       className={`relative flex w-full items-center 
@@ -109,21 +175,56 @@ function UserList({ image, firstname, lastname, id }) {
           alt=""
         ></img>
       </div>
-      <div className=" flex flex-col ml-4 ">
+      <div
+        className={`flex flex-col ml-4 ${
+          activeItem !== id ? "text-[#F5DEB3]" : "text-white"
+        }`}
+      >
         <p
-          className={`font-semibold capitalize ${
+          className={`font-semibold capitalize text-white flex items-start ${
             transitionPage ? "text-xl" : isMobile ? "text-sm" : "text-lg"
           }`}
         >
           {firstname} {lastname}
         </p>
-        <p
-          className={`items-end flex ${
-            transitionPage ? "text-base" : isMobile ? "text-xs" : "text-sm"
-          }`}
-        >
-          Hello
-        </p>
+        {lastMessageMap &&
+          (lastMessageMap.get(id) !== undefined || null) &&
+          lastMessageMap.get(id).type === "text" && (
+            <p className={`items-end flex text-xs font-semibold`}>
+              {lastMessageMap.get(id).message}
+            </p>
+          )}
+        {lastMessageMap &&
+          (lastMessageMap.get(id) !== undefined || null) &&
+          lastMessageMap.get(id).type === "empty" && (
+            <p className={`items-end flex italic text-xs font-semibold`}>
+              {lastMessageMap.get(id).message}
+            </p>
+          )}
+        {lastMessageMap &&
+          (lastMessageMap.get(id) !== undefined || null) &&
+          lastMessageMap.get(id).type === "combined" && (
+            <p className={`items-end flex text-xs font-semibold`}>
+              {lastMessageMap.get(id).message}
+            </p>
+          )}
+        {lastMessageMap &&
+          (lastMessageMap.get(id) !== undefined || null) &&
+          lastMessageMap.get(id).type === "file" && (
+            <div className="flex space-x-1 items-center font-semibold">
+              {isImage(lastMessageMap.get(id).message) ? (
+                <>
+                  <img className="w-6" src={pictureIcon} alt=""></img>
+                  <span className="text-xs">Image</span>
+                </>
+              ) : (
+                <>
+                  <img className="w-4" src={fileIcon} alt=""></img>
+                  <span className="text-xs">File</span>
+                </>
+              )}
+            </div>
+          )}
       </div>
       {messageNotification &&
         (messageNotification.get(id) !== undefined || null) &&

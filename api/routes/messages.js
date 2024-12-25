@@ -5,6 +5,7 @@ const {
   uploadFile,
   getUnreadMessages,
   updatedMessageReadStatus,
+  getLastMessage,
 } = require("../contollers/messages");
 const { fileUpload, audioFileUpload } = require("../middleware/multer");
 router.route("/getMessages").post(getMessages);
@@ -14,4 +15,5 @@ router
   .post(audioFileUpload.single("audio"), uploadFile);
 router.route("/unreadMessages").get(getUnreadMessages);
 router.route("/updateReadStatus").post(updatedMessageReadStatus);
+router.route("/getLastMessage").post(getLastMessage);
 module.exports = router;

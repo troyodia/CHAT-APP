@@ -11,15 +11,18 @@ import axiosInstance from "../utils/axiosInstance";
 export default function ChatPage({ emptyChat, chat, detail, messageList }) {
   const updateMessageReadStatusUrl =
     "http://localhost:5000/api/v1/messages/updateReadStatus";
-
+  const getLastMessageUrl =
+    "http://localhost:5000/api/v1/messages/getLastMessage";
   console.log("chat parent");
-  const { selectedChatType, fetchData, toggleSettings } = useAppStore(
-    useShallow((state) => ({
-      selectedChatType: state.selectedChatType,
-      fetchData: state.fetchData,
-      toggleSettings: state.toggleSettings,
-    }))
-  );
+  const { selectedChatType, fetchData, toggleSettings, lastMessageMap } =
+    useAppStore(
+      useShallow((state) => ({
+        selectedChatType: state.selectedChatType,
+        fetchData: state.fetchData,
+        toggleSettings: state.toggleSettings,
+        lastMessageMap: state.lastMessageMap,
+      }))
+    );
   const socket = useSocket();
   useEffect(() => {
     fetchData();
@@ -41,6 +44,11 @@ export default function ChatPage({ emptyChat, chat, detail, messageList }) {
       ),
     }));
   };
+  const setLastMessageMap = (contactid, lastMessage) => {
+    useAppStore.setState((prev) => ({
+      lastMessageMap: new Map(prev.lastMessageMap).set(contactid, lastMessage),
+    }));
+  };
   useEffect(() => {
     if (socket) {
       console.log("socket");
@@ -50,6 +58,11 @@ export default function ChatPage({ emptyChat, chat, detail, messageList }) {
         const selectedChatData = useAppStore.getState().selectedChatData;
         const userInfo = useAppStore.getState().userInfo;
         const firstUnreadMessage = useAppStore.getState().firstUnreadMessage;
+
+        const contactId =
+          message.sender._id === userInfo._id
+            ? message.recipient._id
+            : message.sender._id;
 
         if (
           selectedChatType !== undefined &&
@@ -97,6 +110,54 @@ export default function ChatPage({ emptyChat, chat, detail, messageList }) {
           updateMessageReadStatus();
           handleSetMessageNotifications(message.sender._id);
         }
+        const getLastContactMessage = async () => {
+          try {
+            const res = await axiosInstance.post(
+              getLastMessageUrl,
+              { contactId: contactId },
+              { withCredentials: true }
+            );
+            if (res.data && res.status === 200) {
+              const {
+                data: {
+                  lastMessage: [message],
+                },
+              } = res;
+              console.log(message);
+
+              if (message !== undefined) {
+                const { messages } = message;
+                if (messages.messageType === "text") {
+                  setLastMessageMap(contactId, {
+                    type: "text",
+                    message: messages.content,
+                  });
+                }
+                if (messages.messageType === "file") {
+                  setLastMessageMap(contactId, {
+                    type: "file",
+                    message: messages.fileUrl[messages.fileUrl.length - 1],
+                  });
+                }
+                if (messages.messageType === "combined") {
+                  setLastMessageMap(contactId, {
+                    type: "combined",
+                    message: messages.contentAndFile.text,
+                  });
+                }
+              } else {
+                setLastMessageMap(contactId, {
+                  type: "empty",
+                  message: "No messages in chat",
+                });
+              }
+            }
+          } catch (error) {
+            console.log(error);
+            console.log(error?.response?.data?.msg);
+          }
+        };
+        getLastContactMessage();
       };
       socket.on("recieveMessage", handleRecieveMessage);
       return () => {
@@ -104,9 +165,9 @@ export default function ChatPage({ emptyChat, chat, detail, messageList }) {
       };
     }
   }, [socket]);
-  useEffect(() => {
-    console.log(selectedChatType);
-  }, []);
+  // useEffect(() => {
+  //   console.log(selectedChatType);
+  // }, []);
   return (
     <div className="flex h-screen items-center justify-center bg-black">
       <div className=" w-full h-screen flex bg-black/30 text-white">
