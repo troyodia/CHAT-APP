@@ -21,7 +21,6 @@ export default function LoginScreen() {
   const location = useLocation();
   const urlRegsiter = "http://localhost:5000/api/v1/auth/register";
   const urlLogin = "http://localhost:5000/api/v1/auth/login";
-  const { userId } = UserState();
   // console.log(userId);
   const signUpOrLoginUser = async (url) => {
     try {

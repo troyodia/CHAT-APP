@@ -96,15 +96,6 @@ export default function ChatPage({ emptyChat, chat, detail, messageList }) {
           };
           updateMessageReadStatus();
           handleSetMessageNotifications(message.sender._id);
-          // useAppStore.setState((prev) => ({
-          //   messageNotification: new Map(prev.messageNotification).set(
-          //     message.sender._id,
-          //     1 +
-          //       (prev.messageNotification.get(message.sender._id) !== undefined
-          //         ? prev.messageNotification.get(message.sender._id)
-          //         : 0)
-          //   ),
-          // }));
         }
       };
       socket.on("recieveMessage", handleRecieveMessage);
@@ -113,12 +104,15 @@ export default function ChatPage({ emptyChat, chat, detail, messageList }) {
       };
     }
   }, [socket]);
+  useEffect(() => {
+    console.log(selectedChatType);
+  }, []);
   return (
     <div className="flex h-screen items-center justify-center bg-black">
       <div className=" w-full h-screen flex bg-black/30 text-white">
         {messageList}
-        {!selectedChatType && emptyChat}
-        {selectedChatType && chat}
+        {selectedChatType === undefined && emptyChat}
+        {selectedChatType !== undefined && chat}
         {toggleSettings && detail}
       </div>
     </div>

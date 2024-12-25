@@ -15,7 +15,8 @@ export default function SideBarFooter() {
   const transitionPage = useMediaQuery({ maxWidth: 940 });
   const logOutUrl = "http://localhost:5000/api/v1/auth/logout";
   const socket = useSocket();
-
+  const closeChat = useAppStore((state) => state.closeChat, shallow);
+  const setActiveItem = useAppStore((state) => state.setActiveItem, shallow);
   const loggOutUser = async () => {
     try {
       const res = await axiosInstance(logOutUrl, { withCredentials: true });
@@ -32,6 +33,8 @@ export default function SideBarFooter() {
         });
         socket.close();
         navigate("/login");
+        closeChat();
+        setActiveItem(undefined);
         localStorage.removeItem("isLoggedIn");
       }
     } catch (error) {
