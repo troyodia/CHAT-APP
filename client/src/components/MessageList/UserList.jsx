@@ -177,11 +177,13 @@ function UserList({ image, firstname, lastname, id }) {
       </div>
       <div
         className={`flex flex-col ml-4 ${
-          activeItem !== id ? "text-[#F5DEB3]" : "text-white"
+          activeItem !== id ? "text-[#F5DEB3]" : "text-black"
         }`}
       >
         <p
-          className={`font-semibold capitalize text-white flex items-start ${
+          className={`font-semibold capitalize ${
+            activeItem !== id ? "text-white" : "text-[#FFD700]"
+          } flex items-start ${
             transitionPage ? "text-xl" : isMobile ? "text-sm" : "text-lg"
           }`}
         >

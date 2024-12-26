@@ -39,6 +39,10 @@ const UserSchema = mongoose.Schema(
       required: false,
     },
     contactList: [mongoose.Types.ObjectId],
+    onlineStatus: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true }
 );

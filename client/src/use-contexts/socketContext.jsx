@@ -16,7 +16,9 @@ export default function SocketProvider({ children }) {
   console.log("render");
   useEffect(() => {
     if (userInfo) {
-      console.log(userInfo);
+      const directMessageContactList =
+        useAppStore.getState().directMessageContactList;
+      console.log(userInfo, directMessageContactList);
       const newSocket = io("http://localhost:5000", {
         withCredentials: true,
         query: {
@@ -25,6 +27,7 @@ export default function SocketProvider({ children }) {
       });
       setSocket(newSocket);
       newSocket.on("connect", () => console.log("connected to socket server"));
+      newSocket.emit("coming-online", directMessageContactList);
 
       // const handleRecieveMessage = (message) => {
       //   const addMessage = useAppStore.getState().addMessage;

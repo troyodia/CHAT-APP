@@ -28,23 +28,26 @@ export default function Main() {
     const setIncomingVideoCall = useAppStore.getState().setIncomingVideoCall;
     const endCall = useAppStore.getState().endCall;
     if (socket) {
-      // socket.on("incoming-voice-call", ({ from, roomId, callType }) => {
-      //   setIncomingVoiceCall({ ...from, roomId, callType });
-      //   console.log(from, roomId, callType);
-      // });
-      socket.on("incoming-voice-call", ({ from, roomId, callType }) => {
+      const incomingVoiceFunc = ({ from, roomId, callType }) => {
         setIncomingVoiceCall({ ...from, roomId, callType });
         console.log(from, roomId, callType);
-      });
-      socket.on("incoming-video-call", ({ from, roomId, callType }) => {
+      };
+      const incomingVideoFunc = ({ from, roomId, callType }) => {
         setIncomingVideoCall({ ...from, roomId, callType });
-      });
-      socket.on("rejected-voice-call", () => {
+      };
+      const rejectCallFunc = () => {
         endCall();
-      });
-      socket.on("rejected-video-call", () => {
-        endCall();
-      });
+      };
+      socket.on("incoming-voice-call", incomingVoiceFunc);
+      socket.on("incoming-video-call", incomingVideoFunc);
+      socket.on("rejected-voice-call", rejectCallFunc);
+      socket.on("rejected-video-call", rejectCallFunc);
+      return () => {
+        socket.off("incoming-voice-call", incomingVoiceFunc);
+        socket.off("incoming-video-call", incomingVideoFunc);
+        socket.off("rejected-voice-call", rejectCallFunc);
+        socket.off("rejected-video-call", rejectCallFunc);
+      };
     }
   }, [socket]);
   return (

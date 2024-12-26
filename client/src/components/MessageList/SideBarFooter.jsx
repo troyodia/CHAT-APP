@@ -1,6 +1,6 @@
 import React from "react";
 import { useAppStore } from "../../store";
-import { shallow } from "zustand/shallow";
+import { shallow, useShallow } from "zustand/shallow";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useMediaQuery } from "react-responsive";
 import { toast } from "react-toastify";
@@ -17,6 +17,9 @@ export default function SideBarFooter() {
   const socket = useSocket();
   const closeChat = useAppStore((state) => state.closeChat, shallow);
   const setActiveItem = useAppStore((state) => state.setActiveItem, shallow);
+  const directMessageContactList = useAppStore(
+    (state) => state.directMessageContactList
+  );
   const loggOutUser = async () => {
     try {
       const res = await axiosInstance(logOutUrl, { withCredentials: true });
@@ -31,6 +34,7 @@ export default function SideBarFooter() {
           progress: undefined,
           theme: "dark",
         });
+        socket.emit("going-offline", directMessageContactList);
         socket.close();
         navigate("/login");
         closeChat();

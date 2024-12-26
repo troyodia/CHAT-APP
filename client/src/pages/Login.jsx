@@ -9,6 +9,8 @@ import regsiterImage from "../images/signupimage.png";
 import eyeOPen from "../images/icons/eyeopen.png";
 import eyeClose from "../images/icons/eyeclosed.png";
 import { useAppStore } from "../store";
+import { shallow } from "zustand/shallow";
+import { useSocket } from "../use-contexts/socketContext";
 export default function LoginScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -16,12 +18,11 @@ export default function LoginScreen() {
   const [toggle, setToggle] = useState(false);
   const [see, setSee] = useState(false);
   const [seeConfirm, setSeeConfirm] = useState(false);
-
   const naviagate = useNavigate();
   const location = useLocation();
   const urlRegsiter = "http://localhost:5000/api/v1/auth/register";
   const urlLogin = "http://localhost:5000/api/v1/auth/login";
-  // console.log(userId);
+  const socket = useSocket();
   const signUpOrLoginUser = async (url) => {
     try {
       const res = await axios.post(
@@ -48,6 +49,7 @@ export default function LoginScreen() {
         naviagate(url.includes("login") ? "/chat-page" : "/profile", {
           state: { previousUrl: location.pathname },
         });
+        console.log(res.data);
         localStorage.setItem("isLoggedIn", "loggedIn");
       }
     } catch (error) {

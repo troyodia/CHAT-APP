@@ -18,6 +18,26 @@ const socketSetUp = (server) => {
       }
     }
   };
+  const handleGoingOffline = (socket, data) => {
+    console.log("going-offline", data);
+    data.forEach((contact) => {
+      if (socketMap.has(contact._id)) {
+        const recipientId = socketMap.get(contact._id);
+        console.log("in the map", contact._id);
+        socket.to(recipientId).emit("contact-offline", true);
+      }
+    });
+  };
+  const handleComingOnline = (socket, data) => {
+    console.log("coming online", data);
+    data.forEach((contact) => {
+      if (socketMap.has(contact._id)) {
+        const recipientId = socketMap.get(contact._id);
+        console.log("in the map", contact._id);
+        socket.to(recipientId).emit("contact-online", true);
+      }
+    });
+  };
   const sendMessage = async (message) => {
     const senderSocketId = socketMap.get(message.sender);
     const recipientSocketId = socketMap.get(message.recipient);
@@ -112,6 +132,9 @@ const socketSetUp = (server) => {
     socket.on("reject-video-call", (data) =>
       handleRejectVideoCall(socket, data)
     );
+    socket.on("going-offline", (data) => handleGoingOffline(socket, data));
+    socket.on("coming-online", (data) => handleComingOnline(socket, data));
+
     socket.on("disconnect", () => socketDisconnet(socket));
   });
 };

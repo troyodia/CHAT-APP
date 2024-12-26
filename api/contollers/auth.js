@@ -9,6 +9,7 @@ const generateToken04 = require("../utils/zegoTokenGenerator.js");
 const register = async (req, res) => {
   const user = await User.create({
     ...req.body,
+    onlineStatus: true,
   });
   const accessToken = user.generateToken(
     process.env.ACCESS_SECRET,
@@ -33,7 +34,6 @@ const register = async (req, res) => {
   console.log(user);
   res.status(StatusCodes.OK).json({ user });
 };
-
 const login = async (req, res) => {
   const { email, password } = req.body;
   if (!email || !password) {
@@ -49,6 +49,12 @@ const login = async (req, res) => {
   if (!isMatch) {
     throw new UnauthenticatedError("password does not exist");
   }
+  const onlinestatus = await User.findOneAndUpdate(
+    { email },
+    { $set: { onlineStatus: true } },
+    { new: true }
+  ).select("onlineStatus");
+  console.log("online status login", onlinestatus);
 
   const accessToken = user.generateToken(
     process.env.ACCESS_SECRET,
@@ -75,12 +81,19 @@ const login = async (req, res) => {
       email: user.email,
       userId: user._id,
     },
+    onlinestatus,
   });
 };
 const logout = async (req, res) => {
   res.clearCookie("REFRESH_TOKEN");
   res.clearCookie("ACCESS_TOKEN");
-  res.status(StatusCodes.OK).json({ msg: "logged out" });
+  const onlineStatus = await User.findOneAndUpdate(
+    { _id: req.user.userId },
+    { $set: { onlineStatus: false } },
+    { new: true }
+  ).select("onlineStatus");
+  console.log("online status log out", onlineStatus);
+  res.status(StatusCodes.OK).json({ msg: "logged out", onlineStatus });
 };
 const createProfile = async (req, res) => {
   const { email, firstname, lastname } = req.body;
@@ -152,6 +165,17 @@ const generateZegoToken = (req, res) => {
     );
   }
 };
+const getOnlinestatus = async (req, res) => {
+  if (!req.body) {
+    throw new BadRequestError("cannot set user online or offline");
+  }
+  const { contactId } = req.body;
+  const contactOnlineStatus = await User.findOne({ _id: contactId }).select(
+    "onlineStatus"
+  );
+  console.log(contactOnlineStatus);
+  res.status(StatusCodes.OK).json({ contactOnlineStatus });
+};
 module.exports = {
   register,
   login,
@@ -160,4 +184,5 @@ module.exports = {
   addProfileImage,
   deleteProfileImage,
   generateZegoToken,
+  getOnlinestatus,
 };
