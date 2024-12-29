@@ -20,7 +20,7 @@ export default function RenderMessages() {
     }))
   );
 
-  return selectedChatMessages.map((message) => {
+  return selectedChatMessages.map((message, index) => {
     console.log("going through ");
     const isSender = message.sender === userInfo._id;
 
@@ -30,6 +30,7 @@ export default function RenderMessages() {
     return (
       <CreateMessage
         key={message._id}
+        index={index}
         showDate={showDate}
         timeStamps={message.timeStamps}
         messageSender={message.sender}
@@ -38,6 +39,7 @@ export default function RenderMessages() {
         replySender={message.reply?.sender}
         repliedText={message.reply?.repliedText}
         repliedFile={message.reply?.repliedFile}
+        repliedMessageRef={message.reply?.messageRef}
         messageType={message.messageType}
         messageContent={message.content}
         messageId={message._id}

@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { useAppStore } from "../../../store";
 import { useShallow } from "zustand/shallow";
 import RenderFileMessage from "./RenderFileMessage";
@@ -10,6 +10,7 @@ import dayjs from "dayjs";
 import { v4 as uuidv4 } from "uuid";
 import { isImage } from "../../../utils/isImage";
 function CreateMessage({
+  index,
   showDate,
   timeStamps,
   messageSender,
@@ -18,6 +19,7 @@ function CreateMessage({
   replySender,
   repliedText,
   repliedFile,
+  repliedMessageRef,
   messageType,
   messageContent,
   messageId,
@@ -27,15 +29,21 @@ function CreateMessage({
   combinedMessageFiles,
   combinedMessageText,
 }) {
-  const { selectedChatData, userInfo, selectedChatType, firstUnreadMessage } =
-    useAppStore(
-      useShallow((state) => ({
-        selectedChatData: state.selectedChatData,
-        userInfo: state.userInfo,
-        selectedChatType: state.selectedChatType,
-        firstUnreadMessage: state.firstUnreadMessage,
-      }))
-    );
+  const {
+    selectedChatData,
+    userInfo,
+    selectedChatType,
+    firstUnreadMessage,
+    scrollHighlight,
+  } = useAppStore(
+    useShallow((state) => ({
+      selectedChatData: state.selectedChatData,
+      userInfo: state.userInfo,
+      selectedChatType: state.selectedChatType,
+      firstUnreadMessage: state.firstUnreadMessage,
+      scrollHighlight: state.scrollHighlight,
+    }))
+  );
   const handleReplyName = (replyId) => {
     if (replyId === userInfo._id) {
       return userInfo.firstname;
@@ -50,6 +58,7 @@ function CreateMessage({
       firstUnreadMessage: newMap,
     }));
   };
+  console.log(firstUnreadMessage.get(messageSender));
   return (
     <div>
       <div>
@@ -71,19 +80,18 @@ function CreateMessage({
               className="flex hover:outline-2 hover:outline-dotted p-2 w-full max-w-fit space-x-0.5 items-center"
               onClick={() => handleClearFirstUnreadMessage(messageSender)}
             >
-              <span className="font-semibold">Mark As Read</span>
+              <span className="font-semibold">New Messages Mark As Read</span>
               <img className="w-6" src={tickIcon} alt=""></img>
             </button>
             <div className="w-full h-0.5 bg-white"></div>
           </div>
         )}
       <div
+        id={messageId}
         className={`${
-          firstUnreadMessage &&
-          firstUnreadMessage.get(messageSender) &&
-          firstUnreadMessage.get(messageSender) !== undefined &&
-          isUnread
-            ? "bg-sky-600"
+          scrollHighlight?.get(messageId) !== undefined &&
+          scrollHighlight?.get(messageId)
+            ? "animate-highlight "
             : ""
         }`}
       >
@@ -92,7 +100,7 @@ function CreateMessage({
         >
           {selectedChatType === "contact" && (
             <div
-              className={`${
+              className={` ${
                 isSender
                   ? " ml-auto mr-4 text-left items-end"
                   : "ml-4  items-start"
@@ -100,7 +108,33 @@ function CreateMessage({
      `}
             >
               {messageReply && (
-                <button className="flex border rounded-lg p-2 items-center space-x-4 mt-2 ">
+                <button
+                  className="flex border rounded-lg p-2 items-center space-x-4 mt-2"
+                  onClick={() => {
+                    console.log(repliedMessageRef);
+                    const element = document.getElementById(repliedMessageRef);
+                    element.scrollIntoView({
+                      behavior: "smooth",
+                      block: "center",
+                      inline: "center",
+                    });
+
+                    useAppStore.setState((prev) => ({
+                      scrollHighlight: new Map(prev.scrollHighlight).set(
+                        repliedMessageRef,
+                        true
+                      ),
+                    }));
+                    const timer = setTimeout(() => {
+                      useAppStore.setState((prev) => ({
+                        scrollHighlight: new Map(prev.scrollHighlight).set(
+                          repliedMessageRef,
+                          false
+                        ),
+                      }));
+                    }, 1500);
+                  }}
+                >
                   <div className="flex">
                     <img className="w-7" src={repliedIconFlip} alt=""></img>
                     <p className="italic font-bold ">
@@ -138,6 +172,7 @@ function CreateMessage({
                     replyContent={messageContent}
                     replyFile={undefined}
                     isSender={isSender}
+                    messageRefId={messageId}
                   />
                   <div
                     className={`${
@@ -160,6 +195,7 @@ function CreateMessage({
                         replyContent={undefined}
                         replyFile={file}
                         isSender={isSender}
+                        messageRefId={messageId}
                       />
 
                       <RenderFileMessage
@@ -186,6 +222,7 @@ function CreateMessage({
                           replyContent={undefined}
                           replyFile={file}
                           isSender={isSender}
+                          messageRefId={messageId}
                         />
 
                         <RenderFileMessage
@@ -203,6 +240,7 @@ function CreateMessage({
                       replyContent={combinedMessageText}
                       replyFile={undefined}
                       isSender={isSender}
+                      messageRefId={messageId}
                     />
                     <div
                       className={`${

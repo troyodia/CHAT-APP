@@ -56,6 +56,9 @@ const MessageSchema = new mongoose.Schema({
     repliedFile: {
       type: String,
     },
+    messageRef: {
+      type: String,
+    },
   },
   isRecording: {
     type: Boolean,

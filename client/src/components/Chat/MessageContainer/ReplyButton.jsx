@@ -9,6 +9,7 @@ export default function ReplyButton({
   replyContent,
   replyFile,
   isSender,
+  messageRefId,
 }) {
   console.log("reply button");
 
@@ -25,6 +26,7 @@ export default function ReplyButton({
             sender: sender,
             repliedText: replyContent,
             repliedFile: replyFile,
+            messageRef: messageRefId,
           }),
         }));
       }}

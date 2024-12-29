@@ -7,7 +7,7 @@ import endCallIcon from "../../images/icons/endCallGold.png";
 import Lottie from "react-lottie";
 import * as animationData from "../../lottie/callingLottie.json";
 import axiosInstance from "../../utils/axiosInstance";
-
+import { ZegoExpressEngine } from "zego-express-engine-webrtc";
 export default function Container({ data }) {
   const [callAccepted, setCallAccepted] = useState(false);
   const [token, setToken] = useState(undefined);
@@ -27,7 +27,8 @@ export default function Container({ data }) {
       const tiemOutId = setTimeout(() => {
         setCallAccepted(true);
       }, 1000);
-      return () => clearTimeout(tiemOutId);
+
+      // return () => clearTimeout(tiemOutId);
     }
   }, [data, socket]);
 
@@ -57,87 +58,88 @@ export default function Container({ data }) {
       process.env.REACT_APP_PUBLIC_ZEGO_SERVER_SECRET
     );
     const startCall = async () => {
-      import("zego-express-engine-webrtc").then(
-        async ({ ZegoExpressEngine }) => {
-          const zg = new ZegoExpressEngine(
-            parseInt(process.env.REACT_APP_PUBLIC_ZEGO_APP_ID),
-            process.env.REACT_APP_PUBLIC_ZEGO_SERVER_SECRET
-          );
-          setZgVar(zg);
+      // import("zego-express-engine-webrtc").then(
+      // async ({ ZegoExpressEngine }) => {
+      const zg = new ZegoExpressEngine(
+        parseInt(process.env.REACT_APP_PUBLIC_ZEGO_APP_ID),
+        process.env.REACT_APP_PUBLIC_ZEGO_SERVER_SECRET
+      );
+      setZgVar(zg);
 
-          zg.on(
-            "roomStreamUpdate",
-            async (roomID, updateType, streamList, extendedData) => {
-              if (updateType === "ADD") {
-                const remoteVideo = document.getElementById("remote-video");
-                const callElement = document.createElement(
-                  data.callType === "video" ? "video" : "audio"
-                );
-                callElement.id = streamList[0].streamID;
-                callElement.playsInline = true;
-                callElement.autoplay = true;
-                callElement.muted = false;
+      zg.on(
+        "roomStreamUpdate",
+        async (roomID, updateType, streamList, extendedData) => {
+          if (updateType === "ADD") {
+            const remoteVideo = document.getElementById("remote-video");
+            const callElement = document.createElement(
+              data.callType === "video" ? "video" : "audio"
+            );
+            callElement.id = streamList[0].streamID;
+            callElement.playsInline = true;
+            callElement.autoplay = true;
+            callElement.muted = false;
 
-                if (remoteVideo) remoteVideo.appendChild(callElement);
-                zg.startPlayingStream(streamList[0].streamID, {
-                  audio: true,
-                  video: true,
-                }).then((stream) => {
-                  if (callElement) callElement.srcObject = stream;
-                });
-              } else if (
-                updateType === "DELETE" &&
-                zg &&
-                localStream &&
-                streamList[0].streamID
-              ) {
-                zg.destroyStream(localStream);
-                zg.stopPublishingStream(streamList[0].streamID);
-                zg.logoutRoom(data.roomId.toString());
-                endCall();
-              }
-            }
-          );
-
-          await zg.loginRoom(
-            data.roomId.toString(),
-            token,
-            {
-              userID: userInfo._id.toString(),
-              userName: userInfo.firstname + " " + userInfo.lastname,
-            },
-            { userUpdate: true }
-          );
-          const localStreams = await zg.createStream({
-            camera: {
+            if (remoteVideo) remoteVideo.appendChild(callElement);
+            zg.startPlayingStream(streamList[0].streamID, {
               audio: true,
-              video: data.callType === "video" ? true : false,
-            },
-          });
-
-          const localVideo = document.getElementById("local-video");
-          const localCallElement = document.createElement(
-            data.callType === "video" ? "video" : "audio"
-          );
-          localCallElement.id = "video-local-zego";
-          localCallElement.className = "w-32 h-28";
-          localCallElement.muted = false;
-          localCallElement.autoplay = true;
-          localCallElement.playsInline = true;
-          if (localVideo) {
-            localVideo.appendChild(localCallElement);
+              video: true,
+            }).then((stream) => {
+              // if (callElement)
+              callElement.srcObject = stream;
+            });
+          } else if (
+            updateType === "DELETE" &&
+            zg &&
+            localStream &&
+            streamList[0].streamID
+          ) {
+            zg.destroyStream(localStream);
+            zg.stopPublishingStream(streamList[0].streamID);
+            zg.logoutRoom(data.roomId.toString());
+            endCall();
           }
-          const td = document.getElementById("video-local-zego");
-          if (td) td.srcObject = localStreams;
-
-          const streamID = "123" + Date.now();
-          setPublishStream(streamID);
-          setLocalStream(localStreams);
-          zg.startPublishingStream(streamID, localStreams);
         }
       );
+
+      await zg.loginRoom(
+        data.roomId.toString(),
+        token,
+        {
+          userID: userInfo._id.toString(),
+          userName: userInfo.firstname + " " + userInfo.lastname,
+        },
+        { userUpdate: true }
+      );
+      const localStreams = await zg.createStream({
+        camera: {
+          audio: true,
+          video: data.callType === "video" ? true : false,
+        },
+      });
+
+      const localVideo = document.getElementById("local-video");
+      const localCallElement = document.createElement(
+        data.callType === "video" ? "video" : "audio"
+      );
+      localCallElement.id = "video-local-zego";
+      localCallElement.className = "w-32 h-28";
+      localCallElement.muted = false;
+      localCallElement.autoplay = true;
+      localCallElement.playsInline = true;
+      if (localVideo) {
+        localVideo.appendChild(localCallElement);
+      }
+      const td = document.getElementById("video-local-zego");
+      if (td) td.srcObject = localStreams;
+
+      const streamID = "123" + Date.now();
+      setPublishStream(streamID);
+      setLocalStream(localStreams);
+      zg.startPublishingStream(streamID, localStreams);
+      // }
+      // );
     };
-    if (token && data) {
+    if (token) {
       // console.log(token);
       startCall();
     }

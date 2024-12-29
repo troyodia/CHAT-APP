@@ -14,20 +14,28 @@ export default function ChatPage({ emptyChat, chat, detail, messageList }) {
   const getLastMessageUrl =
     "http://localhost:5000/api/v1/messages/getLastMessage";
   console.log("chat parent");
-  const { selectedChatType, fetchData, toggleSettings, lastMessageMap } =
-    useAppStore(
-      useShallow((state) => ({
-        selectedChatType: state.selectedChatType,
-        fetchData: state.fetchData,
-        toggleSettings: state.toggleSettings,
-        lastMessageMap: state.lastMessageMap,
-      }))
-    );
+  const {
+    selectedChatType,
+    fetchData,
+    toggleSettings,
+    lastMessageMap,
+    replyMap,
+  } = useAppStore(
+    useShallow((state) => ({
+      selectedChatType: state.selectedChatType,
+      fetchData: state.fetchData,
+      toggleSettings: state.toggleSettings,
+      lastMessageMap: state.lastMessageMap,
+      replyMap: state.replyMap,
+    }))
+  );
   const socket = useSocket();
   useEffect(() => {
     fetchData();
   }, [fetchData]);
-
+  useEffect(() => {
+    console.log(replyMap);
+  }, [replyMap]);
   const handleSetFirstUnreadMessage = (id, message) => {
     useAppStore.setState((prev) => ({
       firstUnreadMessage: new Map(prev.firstUnreadMessage).set(id, message),

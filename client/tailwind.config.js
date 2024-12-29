@@ -19,9 +19,14 @@ module.exports = {
             opacity: "1",
           },
         },
+        highlight: {
+          "0%": { backgroundColor: "#6e6e74" },
+          "100%": { backgroundColor: "transparent" },
+        },
       },
       animation: {
         pulsing: "pulsing 2s cubic-bezier(0.4, 0, 0.6, 1) infinite",
+        highlight: "highlight 2s ease-in-out",
       },
     },
   },
