@@ -11,12 +11,14 @@ function DirectMessageContactList() {
   const unreadMessagesUrl =
     "http://localhost:5000/api/v1/messages/unreadMessages";
 
-  const { directMessageContactList } = useAppStore(
-    useShallow((state) => ({
-      directMessageContactList: state.directMessageContactList,
-    }))
-  );
-
+  const { directMessageContactList, dmSearch, dmListSearchResultsArr } =
+    useAppStore(
+      useShallow((state) => ({
+        directMessageContactList: state.directMessageContactList,
+        dmSearch: state.dmSearch,
+        dmListSearchResultsArr: state.dmListSearchResultsArr,
+      }))
+    );
   const getContactList = useCallback(async () => {
     const { setDirectMessageContactList } = useAppStore.getState();
     try {
@@ -24,7 +26,6 @@ function DirectMessageContactList() {
         withCredentials: true,
       });
       if (res.data && res.status === 200) {
-        // setDirectMessageContactList(res.data);
         const messageList = res.data;
         const setUnreadMessages = useAppStore.getState().setUnreadMessages;
         let tempDate = "2011-01-01";
@@ -79,67 +80,59 @@ function DirectMessageContactList() {
   useEffect(() => {
     getContactList();
   }, [getContactList]);
-
-  // useEffect(() => {
-  //   const getUnreadMessages = async () => {
-  //     const setUnreadMessages = useAppStore.getState().setUnreadMessages;
-  //     let tempDate = "2011-01-01";
-  //     let lastMsg = "";
-  //     try {
-  //       const res = await axiosInstance.get(unreadMessagesUrl, {
-  //         withCredentials: true,
-  //       });
-  //       if (res?.data?.unreadMessages?.length > 0 && res.status === 200) {
-  //         setUnreadMessages(res.data.unreadMessages);
-  //         const unreadMessagesTemp = [...res.data.unreadMessages];
-  //         if (directMessageContactList.length > 1) {
-  //           let alteredMessageList = [...directMessageContactList];
-  //           console.log(alteredMessageList);
-  //           unreadMessagesTemp.forEach((msg, index) => {
-  //             if (dayjs(msg.timeStamps).isAfter(dayjs(tempDate))) {
-  //               tempDate = msg.timeStamps;
-  //               const locationIndex = alteredMessageList.findIndex(
-  //                 (dm) => dm._id === msg.sender
-  //               );
-  //               alteredMessageList.splice(locationIndex, 1);
-  //               alteredMessageList.unshift(alteredMessageList[locationIndex]);
-  //             }
-  //             // console.log(alteredMessageList);
-  //             lastMsg = msg.sender;
-  //           });
-  //         }
-
-  //         res.data.firstUnreadMessage.map((message) => {
-  //           useAppStore.setState((prev) => ({
-  //             firstUnreadMessage: new Map(prev.firstUnreadMessage).set(
-  //               message.sender,
-  //               message._id
-  //             ),
-  //           }));
-  //         });
-  //       }
-  //     } catch (error) {
-  //       console.log(error);
-  //       console.log(error?.response?.data?.msg);
-  //     }
-  //   };
-  //   getUnreadMessages();
-  // }, [directMessageContactList]);
+  useEffect(() => {
+    const directMessageContactList =
+      useAppStore.getState().directMessageContactList;
+    const setDMListSearchResultsArr =
+      useAppStore.getState().setDMListSearchResultsArr;
+    console.log(dmSearch);
+    const regex = /[`~!#$%^&*()_|+\-=?;:'",.<>\{\}\[\]\\\/]/gi;
+    const searchTerm = dmSearch.replace(regex, "");
+    const searchRegex = new RegExp(searchTerm, "i");
+    const searchedContactArr = directMessageContactList.filter((contact) => {
+      return (
+        searchRegex.test(contact.firstname) ||
+        searchRegex.test(contact.lastname)
+      );
+    });
+    setDMListSearchResultsArr(searchedContactArr);
+  }, [dmSearch]);
   return (
     <div className="w-full bg-[#0E0E10] rounded-lg space-y-2 max-h-56 overflow-auto scrollbar-hidden scrollbar-hidden::-webkit-scrollbar">
-      {directMessageContactList.length > 0
-        ? directMessageContactList.map((item) => {
-            return (
-              <UserList
-                image={item?.image}
-                firstname={item?.firstname}
-                lastname={item?.lastname}
-                id={item?._id}
-                key={item?._id}
-              ></UserList>
-            );
-          })
-        : ""}
+      {directMessageContactList.length > 0 &&
+        dmListSearchResultsArr.length < 1 &&
+        dmSearch === "" &&
+        directMessageContactList.map((item) => {
+          return (
+            <UserList
+              image={item?.image}
+              firstname={item?.firstname}
+              lastname={item?.lastname}
+              id={item?._id}
+              key={item?._id}
+            ></UserList>
+          );
+        })}
+      {directMessageContactList.length > 0 &&
+        dmListSearchResultsArr.length > 0 &&
+        dmListSearchResultsArr.map((item) => {
+          return (
+            <UserList
+              image={item?.image}
+              firstname={item?.firstname}
+              lastname={item?.lastname}
+              id={item?._id}
+              key={item?._id}
+            ></UserList>
+          );
+        })}
+      {directMessageContactList.length > 0 &&
+        dmListSearchResultsArr.length < 1 &&
+        dmSearch !== "" && (
+          <div className="flex justify-center font-semibold text-[#FFD700] py-1">
+            No Contacts Match Search
+          </div>
+        )}
     </div>
   );
 }

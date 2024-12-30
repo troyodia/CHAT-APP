@@ -181,19 +181,6 @@ export default function MessageBar() {
       return selectedChatData.firstname;
     }
   };
-
-  // useEffect(() => {
-  //   console.log(uploadedFilesMap);
-  // }, [uploadedFilesMap]);
-  // useEffect(() => {
-  //   console.log(audioRecordingMap);
-  // }, [audioRecordingMap]);
-  // useEffect(() => {
-  //   console.log(messageMap);
-  // }, [messageMap]);
-  // useEffect(() => {
-  //   console.log(replyMap);
-  // }, [replyMap]);
   return (
     <div className="w-full  bg-[#0E0E10] ">
       {uploadedFilesMap.get(selectedChatData.id) !== undefined &&

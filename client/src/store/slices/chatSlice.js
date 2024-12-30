@@ -2,19 +2,18 @@ export const createChatSlice = (set, get) => ({
   selectedChatType: undefined,
   selectedChatData: undefined,
   selectedChatMessages: [],
-  directMessageContactList: [],
   toggleSettings: false,
-  messageNotification: new Map(),
   isOnline: false,
+
   setSelectedChatType: (selectedChatType) => set({ selectedChatType }),
   setSelectedChatData: (selectedChatData) => set({ selectedChatData }),
   setSelectedChatMessages: (selectedChatMessages) =>
     set({ selectedChatMessages }),
-  setDirectMessageContactList: (directMessageContactList) =>
-    set({ directMessageContactList }),
+
   setToggleSettings: () =>
     set((state) => ({ toggleSettings: !state.toggleSettings })),
   setIsOnline: (isOnline) => set({ isOnline }),
+
   closeChat: () =>
     set({
       selectedChatType: undefined,

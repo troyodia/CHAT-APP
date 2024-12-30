@@ -11,14 +11,18 @@ import { useShallow } from "zustand/shallow";
 export default function DirectMessageSection() {
   const [showSearch, setShowSearch] = useState(false);
   const {
-    displayChannelModal,
     displayDirectMessageModal,
     setDisplayDirectMessageModal,
+    dmSearch,
+    setDMSearch,
+    setDMListSearchResultsArr,
   } = useAppStore(
     useShallow((state) => ({
-      displayChannelModal: state.displayChannelModal,
       displayDirectMessageModal: state.displayDirectMessageModal,
       setDisplayDirectMessageModal: state.setDisplayDirectMessageModal,
+      dmSearch: state.dmSearch,
+      setDMSearch: state.setDMSearch,
+      setDMListSearchResultsArr: state.setDMListSearchResultsArr,
     }))
   );
   const isMobile = useMediaQuery({ maxWidth: 1200 });
@@ -38,6 +42,10 @@ export default function DirectMessageSection() {
             className="w-6 h-6 flex justify-center items-center rounded-md bg-white/10"
             onClick={() => {
               setShowSearch((prev) => !prev);
+              if (showSearch) {
+                setDMSearch("");
+                setDMListSearchResultsArr([]);
+              }
             }}
           >
             <img className="w-5" src={searchIcon} alt=""></img>
@@ -45,7 +53,7 @@ export default function DirectMessageSection() {
           <button
             className="w-6 h-6 flex justify-center items-center rounded-md py-1 bg-white/10 "
             onClick={() => {
-              !displayChannelModal && setDisplayDirectMessageModal();
+              setDisplayDirectMessageModal();
             }}
           >
             <img
@@ -62,6 +70,10 @@ export default function DirectMessageSection() {
             className=" rounded-md flex-1 py-2 pl-5 bg-white/10 outline-none 
     border border-transparent focus:border focus:border-solid  focus:border-white/30"
             placeholder="Search"
+            value={dmSearch}
+            onChange={(e) => {
+              setDMSearch(e.target.value);
+            }}
           ></input>
         </div>
       ) : (
