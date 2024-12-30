@@ -87,7 +87,7 @@ export default function ChatHeader() {
       }
     };
     getOnlinestatus();
-  }, []);
+  }, [selectedChatData]);
   return (
     <div className="flex h-28 w-full items-center">
       <div className="flex items-center">

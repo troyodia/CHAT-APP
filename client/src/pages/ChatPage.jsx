@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Chat from "../components/Chat/Chat";
 import Detail from "../components/Detail/Detail";
 import MessageList from "../components/MessageList/MessageList";
@@ -19,6 +19,8 @@ export default function ChatPage({ emptyChat, chat, detail, messageList }) {
     fetchData,
     toggleSettings,
     lastMessageMap,
+    directMessageContactList,
+    setDirectMessageContactList,
     replyMap,
   } = useAppStore(
     useShallow((state) => ({
@@ -26,6 +28,8 @@ export default function ChatPage({ emptyChat, chat, detail, messageList }) {
       fetchData: state.fetchData,
       toggleSettings: state.toggleSettings,
       lastMessageMap: state.lastMessageMap,
+      directMessageContactList: state.directMessageContactList,
+      setDirectMessageContactList: state.setDirectMessageContactList,
       replyMap: state.replyMap,
     }))
   );
@@ -52,6 +56,21 @@ export default function ChatPage({ emptyChat, chat, detail, messageList }) {
       ),
     }));
   };
+  const handleNotificaficationPos = useCallback(
+    (id) => {
+      let alteredMessageList = [...directMessageContactList];
+      const locationIndex = alteredMessageList.findIndex((dm) => dm._id === id);
+      alteredMessageList.unshift(
+        alteredMessageList.splice(locationIndex, 1)[0]
+      );
+      setDirectMessageContactList(alteredMessageList);
+      console.log(alteredMessageList);
+    },
+    [directMessageContactList, setDirectMessageContactList]
+  );
+  useEffect(() => {
+    console.log(directMessageContactList);
+  }, [directMessageContactList]);
   const setLastMessageMap = (contactid, lastMessage) => {
     useAppStore.setState((prev) => ({
       lastMessageMap: new Map(prev.lastMessageMap).set(contactid, lastMessage),
@@ -66,7 +85,8 @@ export default function ChatPage({ emptyChat, chat, detail, messageList }) {
         const selectedChatData = useAppStore.getState().selectedChatData;
         const userInfo = useAppStore.getState().userInfo;
         const firstUnreadMessage = useAppStore.getState().firstUnreadMessage;
-
+        const directMessageContactList =
+          useAppStore.getState().directMessageContactList;
         const contactId =
           message.sender._id === userInfo._id
             ? message.recipient._id
@@ -85,38 +105,44 @@ export default function ChatPage({ emptyChat, chat, detail, messageList }) {
             selectedChatData.id !== message.sender._id) &&
           userInfo._id !== message.sender._id
         ) {
-          console.log("me");
-          const updateMessageReadStatus = async () => {
-            try {
-              const res = await axiosInstance.post(
-                updateMessageReadStatusUrl,
-                {
-                  isUnread: true,
-                  messageId: message._id,
-                  markAllAsRead: false,
-                  contactId: undefined,
-                },
-                { withCredentials: true }
-              );
-              if (res.data && res.status === 200) {
-                console.log(res.data.msg);
-                if (
-                  firstUnreadMessage.size === 0 ||
-                  firstUnreadMessage.get(message.sender._id) === undefined
-                ) {
-                  console.log(res.data.firstUnreadMessage);
-                  handleSetFirstUnreadMessage(
-                    message.sender._id,
-                    res.data.firstUnreadMessage
-                  );
+          const isContact = directMessageContactList.find(
+            (e) => e._id === message.sender._id
+          );
+          if (isContact !== undefined) {
+            console.log(isContact);
+            const updateMessageReadStatus = async () => {
+              try {
+                const res = await axiosInstance.post(
+                  updateMessageReadStatusUrl,
+                  {
+                    isUnread: true,
+                    messageId: message._id,
+                    markAllAsRead: false,
+                    contactId: undefined,
+                  },
+                  { withCredentials: true }
+                );
+                if (res.data && res.status === 200) {
+                  console.log(res.data.msg);
+                  if (
+                    firstUnreadMessage.size === 0 ||
+                    firstUnreadMessage.get(message.sender._id) === undefined
+                  ) {
+                    console.log(res.data.firstUnreadMessage);
+                    handleSetFirstUnreadMessage(
+                      message.sender._id,
+                      res.data.firstUnreadMessage
+                    );
+                  }
                 }
+              } catch (error) {
+                console.log(error.response.data.msg);
               }
-            } catch (error) {
-              console.log(error.response.data.msg);
-            }
-          };
-          updateMessageReadStatus();
-          handleSetMessageNotifications(message.sender._id);
+            };
+            updateMessageReadStatus();
+            handleNotificaficationPos(message.sender._id);
+            handleSetMessageNotifications(message.sender._id);
+          }
         }
         const getLastContactMessage = async () => {
           try {
@@ -172,7 +198,7 @@ export default function ChatPage({ emptyChat, chat, detail, messageList }) {
         socket.off("recieveMessage", handleRecieveMessage);
       };
     }
-  }, [socket]);
+  }, [socket, handleNotificaficationPos]);
   // useEffect(() => {
   //   console.log(selectedChatType);
   // }, []);

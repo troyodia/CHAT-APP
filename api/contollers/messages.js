@@ -49,7 +49,7 @@ const getUnreadMessages = async (req, res) => {
     isUnread: true,
     recipient: req.user.userId,
   }).sort({ timeStamps: 1 });
-
+  console.log(unreadMessages);
   const firstAgregate = await Message.aggregate([
     {
       $match: {
@@ -62,7 +62,7 @@ const getUnreadMessages = async (req, res) => {
     { $project: { _id: "$messages._id", sender: "$messages.sender" } },
   ]);
 
-  console.log("aggregate", firstAgregate);
+  // console.log("aggregate", firstAgregate);
   res.status(StatusCodes.OK).json({
     unreadMessages,
     firstUnreadMessage: firstAgregate,

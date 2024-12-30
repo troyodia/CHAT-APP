@@ -29,6 +29,7 @@ function UserList({ image, firstname, lastname, id }) {
     unreadMessages,
     firstUnreadMessage,
     lastMessageMap,
+    setUnreadMessages,
   } = useAppStore(
     useShallow((state) => ({
       setSelectedChatType: state.setSelectedChatType,
@@ -40,6 +41,7 @@ function UserList({ image, firstname, lastname, id }) {
       unreadMessages: state.unreadMessages,
       firstUnreadMessage: state.firstUnreadMessage,
       lastMessageMap: state.lastMessageMap,
+      setUnreadMessages: state.setUnreadMessages,
     }))
   );
   const handleDirectMessageClick = (id) => {
@@ -60,13 +62,14 @@ function UserList({ image, firstname, lastname, id }) {
         );
         if (res.data && res.status === 200) {
           // console.log(res.data.msg);
+          useAppStore.setState((prev) => ({
+            messageNotification: new Map(prev.messageNotification).set(id, 0),
+          }));
+          setUnreadMessages([]);
         }
       } catch (error) {
         console.log(error.response.data.msg);
       }
-      useAppStore.setState((prev) => ({
-        messageNotification: new Map(prev.messageNotification).set(id, 0),
-      }));
     }
   };
   useEffect(() => {

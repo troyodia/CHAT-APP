@@ -58,7 +58,7 @@ function CreateMessage({
       firstUnreadMessage: newMap,
     }));
   };
-  console.log(firstUnreadMessage.get(messageSender));
+  // console.log(firstUnreadMessage.get(messageSender));
   return (
     <div>
       <div>
