@@ -19,7 +19,7 @@ export default function MessageBar() {
   const emojiRef = useRef(null);
   const fileUploadRef = useRef(null);
   const [displayEmojiPicker, setDisplayEmojiPicker] = useState(false);
-  const [messageMap, setMessageMap] = useState(new Map());
+  // const [messageMap, setMessageMap] = useState(new Map());
   const isTablet = useMediaQuery({ maxWidth: 1400 });
   const isSmall = useMediaQuery({ maxWidth: 1140 });
 
@@ -32,7 +32,9 @@ export default function MessageBar() {
     uploadedFilesMap,
     replyMap,
     blockedContacts,
+    messageMap,
     disableMessageBar,
+    setDisableReplyButton,
   } = useAppStore(
     useShallow((state) => ({
       selectedChatType: state.selectedChatType,
@@ -44,12 +46,16 @@ export default function MessageBar() {
       uploadedFilesMap: state.uploadedFilesMap,
       replyMap: state.replyMap,
       blockedContacts: state.blockedContacts,
+      messageMap: state.messageMap,
       disableMessageBar: state.disableMessageBar,
+      setDisableReplyButton: state.setDisableReplyButton,
     }))
   );
   const socket = useSocket();
-
+  const [userBlocked, setUserBlocked] = useState(false);
   const url = "http://localhost:5000/api/v1/messages/uploadFile";
+  const checkifBlockedUrl =
+    "http://localhost:5000/api/v1/contact/checkifBlocked";
 
   const handleSendMessage = () => {
     if (selectedChatType === "contact") {
@@ -108,7 +114,9 @@ export default function MessageBar() {
     useAppStore.setState((prev) => ({
       replyMap: new Map(prev.replyMap).set(selectedChatData.id, undefined),
     }));
-    setMessageMap((map) => new Map(map.set(selectedChatData.id, "")));
+    useAppStore.setState((prev) => ({
+      messageMap: new Map(prev.messageMap).set(selectedChatData.id, ""),
+    }));
   };
   useEffect(() => {
     const handleClickOutside = (e) => {
@@ -123,17 +131,25 @@ export default function MessageBar() {
   }, [emojiRef]);
   const handleEmoji = (emojiData) => {
     let pos = document.getElementById("input").selectionStart;
-    setMessageMap(
-      (map) =>
-        new Map(
-          map.set(
-            selectedChatData.id,
-            map.get(selectedChatData.id).slice(0, pos) +
-              emojiData.emoji +
-              map.get(selectedChatData.id).slice(pos)
-          )
-        )
-    );
+    useAppStore.setState((prev) => ({
+      messageMap: new Map(prev.messageMap).set(
+        selectedChatData.id,
+        prev.messageMap.get(selectedChatData.id).slice(0, pos) +
+          emojiData.emoji +
+          prev.messageMap.get(selectedChatData.id).slice(pos)
+      ),
+    }));
+    // setMessageMap(
+    //   (map) =>
+    //     new Map(
+    //       map.set(
+    //         selectedChatData.id,
+    //         map.get(selectedChatData.id).slice(0, pos) +
+    //           emojiData.emoji +
+    //           map.get(selectedChatData.id).slice(pos)
+    //       )
+    //     )
+    // );
   };
   const handleFileAttachementClick = (e) => {
     e.preventDefault();
@@ -185,6 +201,57 @@ export default function MessageBar() {
       return selectedChatData.firstname;
     }
   };
+  useEffect(() => {
+    const handleCheckedifBlocked = async () => {
+      try {
+        const res = await axiosInstance.post(
+          checkifBlockedUrl,
+          { contact: selectedChatData.id },
+          {
+            withCredentials: true,
+          }
+        );
+        if (res.data && res.status === 200) {
+          setUserBlocked(res.data.isBlocked);
+          setDisableReplyButton(res.data.isBlocked);
+        }
+      } catch (error) {
+        console.log(error?.response?.data?.msg);
+      }
+    };
+    if (selectedChatData) {
+      handleCheckedifBlocked();
+    }
+  }, [selectedChatData, setDisableReplyButton]);
+  useEffect(() => {
+    if (socket && selectedChatData) {
+      const handleBlockedStatus = (data) => {
+        setUserBlocked(data);
+        useAppStore.setState((prev) => ({
+          uploadedFilesMap: new Map(prev.uploadedFilesMap).set(
+            selectedChatData.id,
+            []
+          ),
+        }));
+        useAppStore.setState((prev) => ({
+          replyMap: new Map(prev.replyMap).set(selectedChatData.id, undefined),
+        }));
+        useAppStore.setState((prev) => ({
+          messageMap: new Map(prev.messageMap).set(selectedChatData.id, ""),
+        }));
+        useAppStore.setState((prev) => ({
+          audioRecordingMap: new Map(prev.audioRecordingMap).set(
+            selectedChatData.id,
+            false
+          ),
+        }));
+      };
+      socket.on("update-block-status", handleBlockedStatus);
+      return () => {
+        socket.off("update-block-status", handleBlockedStatus);
+      };
+    }
+  }, [socket, selectedChatData]);
   return (
     <div className="w-full  bg-[#0E0E10] ">
       {uploadedFilesMap.get(selectedChatData.id) !== undefined &&
@@ -248,7 +315,8 @@ export default function MessageBar() {
               <button
                 type="submit"
                 className={`w-8 ${
-                  blockedContacts.includes(selectedChatData.id) &&
+                  (blockedContacts.includes(selectedChatData.id) ||
+                    userBlocked) &&
                   "cursor-not-allowed"
                 }`}
                 onClick={handleFileAttachementClick}
@@ -273,7 +341,8 @@ export default function MessageBar() {
                 uploadedFilesMap.get(selectedChatData.id).length < 1) && (
                 <button
                   className={`w-7  hover:outline hover:outline-1 hover:outline-dashed ${
-                    blockedContacts.includes(selectedChatData.id) &&
+                    (blockedContacts.includes(selectedChatData.id) ||
+                      userBlocked) &&
                     "cursor-not-allowed"
                   }`} //pt-1
                   onClick={() => {
@@ -289,10 +358,10 @@ export default function MessageBar() {
                 </button>
               )}
           </div>
-          <div className="flex flex-col w-full ">
+          <div className="flex flex-col w-full">
             {replyMap.get(selectedChatData.id) !== undefined &&
               replyMap.get(selectedChatData.id) && (
-                <div className="flex items-center ml-8 text-white text-lg italic bg-white/20 pl-2 py-1 rounded-md">
+                <div className="flex items-center ml-6 text-white text-lg italic bg-white/20 pl-2 py-1 rounded-md">
                   <button
                     onClick={() => {
                       useAppStore.setState((prev) => ({
@@ -321,34 +390,53 @@ export default function MessageBar() {
                 }
                 className={` w-full py-4 pl-4 bg-white/5 rounded-md outline-none text-lg 
             focus:outline focus:outline-3 focus:outline-dashed focus:outline-white min-w-2 ${
-              blockedContacts.includes(selectedChatData.id) &&
+              (blockedContacts.includes(selectedChatData.id) || userBlocked) &&
               "cursor-not-allowed"
             }`}
                 placeholder="Type a message"
                 id="input"
                 onChange={(e) => {
-                  setMessageMap(
-                    (map) =>
-                      new Map(map.set(selectedChatData.id, e.target.value))
-                  );
+                  useAppStore.setState((prev) => ({
+                    messageMap: new Map(prev.messageMap).set(
+                      selectedChatData.id,
+                      e.target.value
+                    ),
+                  }));
+                  // setMessageMap(
+                  //   (map) =>
+                  //     new Map(map.set(selectedChatData.id, e.target.value))
+                  // );
                 }}
                 disabled={
-                  blockedContacts &&
-                  blockedContacts.includes(selectedChatData.id)
+                  (blockedContacts &&
+                    blockedContacts.includes(selectedChatData.id)) ||
+                  userBlocked
                 }
               ></input>
-              {blockedContacts.includes(selectedChatData.id) && (
+              {(blockedContacts.includes(selectedChatData.id) ||
+                userBlocked) && (
                 <span
                   className="justify-center text-center p-2 -top-14 left-1/2 -translate-x-1/2  
         text-sm text-black bg-white hidden group-hover:flex group-hover:justify-center absolute rounded-lg"
                 >
-                  <span>
-                    Cannot message a blocked contact, unblock{" "}
-                    <span className=" capitalize font-semibold">
-                      {selectedChatData.firstname}
-                    </span>{" "}
-                    to send them a message
-                  </span>
+                  {userBlocked &&
+                  !blockedContacts.includes(selectedChatData.id) ? (
+                    <span>
+                      Cannot send any messages, you have been{" "}
+                      <span className="font-semibold">Blocked</span> by{" "}
+                      <span className=" capitalize font-semibold">
+                        {selectedChatData.firstname}
+                      </span>{" "}
+                    </span>
+                  ) : (
+                    <span>
+                      Cannot message a blocked contact, unblock{" "}
+                      <span className=" capitalize font-semibold">
+                        {selectedChatData.firstname}
+                      </span>{" "}
+                      to send them a message
+                    </span>
+                  )}
                 </span>
               )}
             </div>
@@ -360,7 +448,7 @@ export default function MessageBar() {
                 ? "mt-9"
                 : ""
             } ${
-              blockedContacts.includes(selectedChatData.id) &&
+              (blockedContacts.includes(selectedChatData.id) || userBlocked) &&
               "cursor-not-allowed"
             }`}
             onClick={() => {

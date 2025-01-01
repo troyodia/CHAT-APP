@@ -53,4 +53,22 @@ const unBlockContact = async (req, res) => {
   ).select("blockedContacts");
   res.status(StatusCodes.OK).json({ blockedContactsArr });
 };
-module.exports = { searchContact, blockContact, unBlockContact };
+const checkifBlocked = async (req, res) => {
+  const { contact } = req.body;
+  if (!contact) {
+    throw new BadRequestError("contact term required");
+  }
+  const blockedContactsArr = await User.find({ _id: contact }).select(
+    "blockedContacts"
+  );
+  const isBlocked = blockedContactsArr[0].blockedContacts.includes(
+    req.user.userId
+  );
+  res.status(StatusCodes.OK).json({ isBlocked });
+};
+module.exports = {
+  searchContact,
+  blockContact,
+  unBlockContact,
+  checkifBlocked,
+};

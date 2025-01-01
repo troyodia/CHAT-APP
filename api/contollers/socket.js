@@ -107,6 +107,12 @@ const socketSetUp = (server) => {
       console.log("reject video call");
     }
   };
+  const handleUserBlockStatus = (socket, data) => {
+    const recipientSocketId = socketMap.get(data.contact);
+    if (recipientSocketId) {
+      socket.to(recipientSocketId).emit("update-block-status", data.status);
+    }
+  };
   io.on("connection", (socket) => {
     console.log("socket on");
     const userId = socket.handshake.query.userId;
@@ -135,6 +141,9 @@ const socketSetUp = (server) => {
     socket.on("going-offline", (data) => handleGoingOffline(socket, data));
     socket.on("coming-online", (data) => handleComingOnline(socket, data));
 
+    socket.on("user-block-status", (data) =>
+      handleUserBlockStatus(socket, data)
+    );
     socket.on("disconnect", () => socketDisconnet(socket));
   });
 };

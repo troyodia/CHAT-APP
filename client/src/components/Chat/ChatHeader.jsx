@@ -28,6 +28,7 @@ export default function ChatHeader() {
     setDisabledMessageBar,
     blockedContacts,
     setBlockedContacts,
+    setDisableReplyButton,
   } = useAppStore(
     useShallow((state) => ({
       selectedChatData: state.selectedChatData,
@@ -41,12 +42,18 @@ export default function ChatHeader() {
       setDisabledMessageBar: state.setDisabledMessageBar,
       blockedContacts: state.blockedContacts,
       setBlockedContacts: state.setBlockedContacts,
+      setDisableReplyButton: state.setDisableReplyButton,
     }))
   );
 
   const blockUserUrl = "http://localhost:5000/api/v1/contact/blockContact";
   const unblockUserUrl = "http://localhost:5000/api/v1/contact/unblockContact";
-
+  const blockUserSocket = (data) => {
+    socket.emit("user-block-status", {
+      contact: selectedChatData.id,
+      status: data.includes(selectedChatData.id),
+    });
+  };
   const handleBlockUser = async () => {
     try {
       const res = await axiosInstance.post(
@@ -58,6 +65,26 @@ export default function ChatHeader() {
         console.log(res.data.blockedContactsArr);
         const { blockedContacts } = res.data.blockedContactsArr;
         setBlockedContacts(blockedContacts);
+        blockUserSocket(blockedContacts);
+        setDisableReplyButton(true);
+        useAppStore.setState((prev) => ({
+          uploadedFilesMap: new Map(prev.uploadedFilesMap).set(
+            selectedChatData.id,
+            []
+          ),
+        }));
+        useAppStore.setState((prev) => ({
+          replyMap: new Map(prev.replyMap).set(selectedChatData.id, undefined),
+        }));
+        useAppStore.setState((prev) => ({
+          messageMap: new Map(prev.messageMap).set(selectedChatData.id, ""),
+        }));
+        useAppStore.setState((prev) => ({
+          audioRecordingMap: new Map(prev.audioRecordingMap).set(
+            selectedChatData.id,
+            false
+          ),
+        }));
       }
     } catch (error) {
       console.log(error?.response?.data?.msg);
@@ -72,8 +99,11 @@ export default function ChatHeader() {
       );
       if (res.data && res.status === 200) {
         console.log(res.data.blockedContactsArr);
-        const { blockedContacts } = res.data.blockedContactsArr;
-        setBlockedContacts(blockedContacts);
+        const { blockedContacts: userBlockedContacts } =
+          res.data.blockedContactsArr;
+        setBlockedContacts(userBlockedContacts);
+        blockUserSocket(userBlockedContacts);
+        setDisableReplyButton(false);
       }
     } catch (error) {
       console.log(error?.response?.data?.msg);

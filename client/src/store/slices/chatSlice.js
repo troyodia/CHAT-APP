@@ -6,6 +6,7 @@ export const createChatSlice = (set, get) => ({
   isOnline: false,
   disableMessageBar: false,
   blockedContacts: [],
+  disableReplyButton: false,
   setSelectedChatType: (selectedChatType) => set({ selectedChatType }),
   setSelectedChatData: (selectedChatData) => set({ selectedChatData }),
   setSelectedChatMessages: (selectedChatMessages) =>
@@ -17,6 +18,7 @@ export const createChatSlice = (set, get) => ({
   setDisabledMessageBar: () =>
     set((state) => ({ disableMessageBar: !state.disableMessageBar })),
   setBlockedContacts: (blockedContacts) => set({ blockedContacts }),
+  setDisableReplyButton: (disableReplyButton) => set({ disableReplyButton }),
   closeChat: () =>
     set({
       selectedChatType: undefined,
