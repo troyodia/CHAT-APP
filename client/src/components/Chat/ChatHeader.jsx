@@ -20,6 +20,7 @@ export default function ChatHeader() {
     selectedChatData,
     setActiveItem,
     closeChat,
+    toggleSettings,
     setToggleSettings,
     setVoiceCall,
     setVideoCall,
@@ -34,6 +35,7 @@ export default function ChatHeader() {
       selectedChatData: state.selectedChatData,
       setActiveItem: state.setActiveItem,
       closeChat: state.closeChat,
+      toggleSettings: state.toggleSettings,
       setToggleSettings: state.setToggleSettings,
       setVoiceCall: state.setVoiceCall,
       setVideoCall: state.setVideoCall,
@@ -199,6 +201,8 @@ export default function ChatHeader() {
           onClick={() => {
             closeChat();
             setActiveItem(undefined);
+
+            setToggleSettings(false);
           }}
         >
           <img src={cancel} alt=""></img>
@@ -245,7 +249,9 @@ export default function ChatHeader() {
         <button
           className="w-7"
           onClick={() => {
-            setToggleSettings();
+            useAppStore.setState((prev) => ({
+              toggleSettings: !prev.toggleSettings,
+            }));
           }}
         >
           <img src={settings} alt=""></img>
