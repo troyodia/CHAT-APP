@@ -20,7 +20,10 @@ export default function ReplyButton({
   );
   const blockedContacts = useAppStore((state) => state.blockedContacts);
   // const [disableReplyButton, setDisableReplyButton] = useState(false);
-  const disableReplyButton = useAppStore((state) => state.disableReplyButton);
+  const disableReplyButton = useAppStore(
+    (state) => state.disableReplyButton,
+    shallow
+  );
 
   const socket = useSocket();
 

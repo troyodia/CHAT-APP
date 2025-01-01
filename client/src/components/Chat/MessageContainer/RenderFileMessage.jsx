@@ -55,21 +55,21 @@ export default function RenderFileMessage({ file, isSender, id, isRecording }) {
       )}
       {!isImage(file) && !isRecording && (
         <div
-          className={`flex items-center justify-between border border-solid rounded-md p-6 w-[350px] bg-white/10 mb-2 ${
+          className={`flex items-center justify-between border border-solid rounded-md px-6 py-2 w-[350px] bg-white/10 mb-2 ${
             isSender ? "border-sky-500 " : "border-white/30"
           }`}
         >
-          <div className="flex items-center justify-center w-14 h-14 rounded-full bg-black/60">
-            <img className="w-8" src={fileImage} alt=""></img>
+          <div className="flex items-center justify-center w-10 h-10 rounded-full bg-black/60">
+            <img className="w-6" src={fileImage} alt=""></img>
           </div>
           <div className=" w-[150px] text-lg text-[#F5DEB3] break-all">
             {file}
           </div>
           <button
-            className="flex items-center justify-center w-14 h-14 rounded-full bg-black/60"
+            className="flex items-center justify-center w-10 h-10 rounded-full bg-black/60"
             onClick={() => downloadFile(file)}
           >
-            <img className="w-12" src={downloadIcon} alt=""></img>
+            <img className="w-8" src={downloadIcon} alt=""></img>
           </button>
         </div>
       )}

@@ -18,7 +18,8 @@ export default function SideBarFooter() {
   const closeChat = useAppStore((state) => state.closeChat, shallow);
   const setActiveItem = useAppStore((state) => state.setActiveItem, shallow);
   const directMessageContactList = useAppStore(
-    (state) => state.directMessageContactList
+    (state) => state.directMessageContactList,
+    shallow
   );
   const loggOutUser = async () => {
     try {

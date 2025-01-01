@@ -11,9 +11,7 @@ export const createChatSlice = (set, get) => ({
   setSelectedChatData: (selectedChatData) => set({ selectedChatData }),
   setSelectedChatMessages: (selectedChatMessages) =>
     set({ selectedChatMessages }),
-
-  setToggleSettings: () =>
-    set((state) => ({ toggleSettings: !state.toggleSettings })),
+  setToggleSettings: (toggleSettings) => set({ toggleSettings }),
   setIsOnline: (isOnline) => set({ isOnline }),
   setDisabledMessageBar: () =>
     set((state) => ({ disableMessageBar: !state.disableMessageBar })),

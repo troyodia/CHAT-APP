@@ -1,0 +1,8 @@
+MONGO_URI = mongodb+srv://troy:Prowrestling1@cluster0.npvco.mongodb.net/CHAT-APP?retryWrites=true&w=majority&appName=Cluster0
+
+ACCESS_SECRET = ebc57166addd3ae7c1129cf65b48f14bf07b6c7f0a00b8fc900d94fa23066afc
+REFRESH_SECRET = 2643c7c98547dffd5ca30a343080a0824265f5eac42d3265137e187f25c7aa07
+ACCESS_LIFETIME = 30s
+REFRESH_LIFETIME = 1d
+ZEGO_APP_ID = 1742751248
+ZEGO_SERVER_SECRET = 803f5468ed66f975a257dc0ce194c3e1

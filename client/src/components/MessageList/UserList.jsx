@@ -149,10 +149,6 @@ function UserList({ image, firstname, lastname, id }) {
     getLastContactMessage();
   }, [id]);
 
-  useEffect(() => {
-    console.log(lastMessageMap);
-  }, [lastMessageMap]);
-
   return (
     <button
       className={`relative flex w-full items-center 
