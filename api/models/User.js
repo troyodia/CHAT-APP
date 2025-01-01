@@ -43,6 +43,7 @@ const UserSchema = mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    blockedContacts: [mongoose.Types.ObjectId],
   },
   { timestamps: true }
 );

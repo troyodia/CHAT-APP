@@ -1,5 +1,8 @@
 import React from "react";
-import block from "../../images/icons/blockUserIcon.png";
+// import block from "../../images/icons/blockUserIcon.png";
+import block from "../../images/icons/blockLock.png";
+import unblock from "../../images/icons/unblocklock.png";
+
 import cancel from "../../images/icons/cancelround.png";
 import settings from "../../images/icons/settingsIcon.png";
 import { useEffect, useRef, useState } from "react";
@@ -21,6 +24,10 @@ export default function ChatHeader() {
     setVoiceCall,
     setVideoCall,
     isOnline,
+    disableMessageBar,
+    setDisabledMessageBar,
+    blockedContacts,
+    setBlockedContacts,
   } = useAppStore(
     useShallow((state) => ({
       selectedChatData: state.selectedChatData,
@@ -30,8 +37,51 @@ export default function ChatHeader() {
       setVoiceCall: state.setVoiceCall,
       setVideoCall: state.setVideoCall,
       isOnline: state.isOnline,
+      disableMessageBar: state.disableMessageBar,
+      setDisabledMessageBar: state.setDisabledMessageBar,
+      blockedContacts: state.blockedContacts,
+      setBlockedContacts: state.setBlockedContacts,
     }))
   );
+
+  const blockUserUrl = "http://localhost:5000/api/v1/contact/blockContact";
+  const unblockUserUrl = "http://localhost:5000/api/v1/contact/unblockContact";
+
+  const handleBlockUser = async () => {
+    try {
+      const res = await axiosInstance.post(
+        blockUserUrl,
+        { contact: selectedChatData.id },
+        { withCredentials: true }
+      );
+      if (res.data && res.status === 200) {
+        console.log(res.data.blockedContactsArr);
+        const { blockedContacts } = res.data.blockedContactsArr;
+        setBlockedContacts(blockedContacts);
+      }
+    } catch (error) {
+      console.log(error?.response?.data?.msg);
+    }
+  };
+  const handleUnBlockUser = async () => {
+    try {
+      const res = await axiosInstance.post(
+        unblockUserUrl,
+        { contact: selectedChatData.id },
+        { withCredentials: true }
+      );
+      if (res.data && res.status === 200) {
+        console.log(res.data.blockedContactsArr);
+        const { blockedContacts } = res.data.blockedContactsArr;
+        setBlockedContacts(blockedContacts);
+      }
+    } catch (error) {
+      console.log(error?.response?.data?.msg);
+    }
+  };
+  useEffect(() => {
+    console.log(blockedContacts);
+  }, [blockedContacts]);
   const handleVoiceCall = () => {
     setVoiceCall({
       ...selectedChatData,
@@ -134,9 +184,31 @@ export default function ChatHeader() {
           <img src={videoCallIcon} alt=""></img>
         </button>
       </div>
-      <div className="flex mr-6 ">
-        <button className="w-10">
-          <img src={block} alt=""></img>
+      <div className="flex mr-6 relative group">
+        <button
+          className="w-6 "
+          onClick={() => {
+            if (blockedContacts.includes(selectedChatData.id)) {
+              handleUnBlockUser();
+            } else {
+              handleBlockUser();
+            }
+          }}
+        >
+          <img
+            src={
+              !blockedContacts.includes(selectedChatData.id) ? block : unblock
+            }
+            alt=""
+          ></img>
+          <span
+            className=" w-16 p-2 top-8 left-1/2 -translate-x-1/2  
+        text-sm text-black bg-white hidden group-hover:flex group-hover:justify-center absolute rounded-lg capitalize"
+          >
+            {!blockedContacts.includes(selectedChatData.id)
+              ? "Block " + selectedChatData.firstname
+              : "Unblock " + selectedChatData.firstname}
+          </span>{" "}
         </button>
       </div>
       <div className="flex mr-6 ">
@@ -144,10 +216,6 @@ export default function ChatHeader() {
           className="w-7"
           onClick={() => {
             setToggleSettings();
-            console.log(
-              process.env.REACT_APP_PUBLIC_ZEGO_APP_ID,
-              process.env.REACT_APP_PUBLIC_ZEGO_SERVER_SECRET
-            );
           }}
         >
           <img src={settings} alt=""></img>

@@ -31,6 +31,8 @@ export default function MessageBar() {
     audioRecordingMap,
     uploadedFilesMap,
     replyMap,
+    blockedContacts,
+    disableMessageBar,
   } = useAppStore(
     useShallow((state) => ({
       selectedChatType: state.selectedChatType,
@@ -41,6 +43,8 @@ export default function MessageBar() {
       audioRecordingMap: state.audioRecordingMap,
       uploadedFilesMap: state.uploadedFilesMap,
       replyMap: state.replyMap,
+      blockedContacts: state.blockedContacts,
+      disableMessageBar: state.disableMessageBar,
     }))
   );
   const socket = useSocket();
@@ -243,7 +247,10 @@ export default function MessageBar() {
             <form className="">
               <button
                 type="submit"
-                className={`w-8 `} //pt-3
+                className={`w-8 ${
+                  blockedContacts.includes(selectedChatData.id) &&
+                  "cursor-not-allowed"
+                }`}
                 onClick={handleFileAttachementClick}
               >
                 <img
@@ -265,7 +272,10 @@ export default function MessageBar() {
               (uploadedFilesMap.get(selectedChatData.id) === undefined ||
                 uploadedFilesMap.get(selectedChatData.id).length < 1) && (
                 <button
-                  className={`w-7  hover:outline hover:outline-1 hover:outline-dashed`} //pt-1
+                  className={`w-7  hover:outline hover:outline-1 hover:outline-dashed ${
+                    blockedContacts.includes(selectedChatData.id) &&
+                    "cursor-not-allowed"
+                  }`} //pt-1
                   onClick={() => {
                     useAppStore.setState((prev) => ({
                       audioRecordingMap: new Map(prev.audioRecordingMap).set(
@@ -301,24 +311,47 @@ export default function MessageBar() {
                   </div>
                 </div>
               )}
-
-            <input
-              type="text"
-              value={
-                messageMap.get(selectedChatData.id) !== undefined
-                  ? messageMap.get(selectedChatData.id)
-                  : ""
-              }
-              className="ml-8 flex-1 py-4 pl-4 bg-white/5 rounded-md outline-none text-lg 
-            focus:outline focus:outline-3 focus:outline-dashed focus:outline-white min-w-2 "
-              placeholder="Type a message"
-              id="input"
-              onChange={(e) => {
-                setMessageMap(
-                  (map) => new Map(map.set(selectedChatData.id, e.target.value))
-                );
-              }}
-            ></input>
+            <div className="flex-1 ml-6 group relative">
+              <input
+                type="text"
+                value={
+                  messageMap.get(selectedChatData.id) !== undefined
+                    ? messageMap.get(selectedChatData.id)
+                    : ""
+                }
+                className={` w-full py-4 pl-4 bg-white/5 rounded-md outline-none text-lg 
+            focus:outline focus:outline-3 focus:outline-dashed focus:outline-white min-w-2 ${
+              blockedContacts.includes(selectedChatData.id) &&
+              "cursor-not-allowed"
+            }`}
+                placeholder="Type a message"
+                id="input"
+                onChange={(e) => {
+                  setMessageMap(
+                    (map) =>
+                      new Map(map.set(selectedChatData.id, e.target.value))
+                  );
+                }}
+                disabled={
+                  blockedContacts &&
+                  blockedContacts.includes(selectedChatData.id)
+                }
+              ></input>
+              {blockedContacts.includes(selectedChatData.id) && (
+                <span
+                  className="justify-center text-center p-2 -top-14 left-1/2 -translate-x-1/2  
+        text-sm text-black bg-white hidden group-hover:flex group-hover:justify-center absolute rounded-lg"
+                >
+                  <span>
+                    Cannot message a blocked contact, unblock{" "}
+                    <span className=" capitalize font-semibold">
+                      {selectedChatData.firstname}
+                    </span>{" "}
+                    to send them a message
+                  </span>
+                </span>
+              )}
+            </div>
           </div>
           <button
             className={`mx-7 w-8 flex shrink-0 ${
@@ -326,7 +359,10 @@ export default function MessageBar() {
               replyMap.get(selectedChatData.id)
                 ? "mt-9"
                 : ""
-            } `}
+            } ${
+              blockedContacts.includes(selectedChatData.id) &&
+              "cursor-not-allowed"
+            }`}
             onClick={() => {
               setDisplayEmojiPicker(true);
             }}

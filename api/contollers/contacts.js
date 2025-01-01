@@ -3,12 +3,12 @@ const { BadRequestError } = require("../errors");
 const User = require("../models/User");
 
 const searchContact = async (req, res) => {
-  const { search } = req.body;
-  if (!search) {
-    throw new BadRequestError("search term required");
+  const { contact } = req.body;
+  if (!contact) {
+    throw new BadRequestError("contact term required");
   }
   const regex = /[`~!#$%^&*()_|+\-=?;:'",.<>\{\}\[\]\\\/]/gi;
-  const searchTerm = search.replace(regex, "");
+  const searchTerm = contact.replace(regex, "");
   const searchRegex = new RegExp(searchTerm, "i");
   const users = await User.find(
     {
@@ -29,4 +29,28 @@ const searchContact = async (req, res) => {
   res.status(StatusCodes.OK).json({ users });
   //   console.log(searchRegex);
 };
-module.exports = searchContact;
+const blockContact = async (req, res) => {
+  const { contact } = req.body;
+  if (!contact) {
+    throw new BadRequestError("contact term required");
+  }
+  const blockedContactsArr = await User.findOneAndUpdate(
+    { _id: req.user.userId },
+    { $addToSet: { blockedContacts: contact } },
+    { new: true }
+  ).select("blockedContacts");
+  res.status(StatusCodes.OK).json({ blockedContactsArr });
+};
+const unBlockContact = async (req, res) => {
+  const { contact } = req.body;
+  if (!contact) {
+    throw new BadRequestError("contact term required");
+  }
+  const blockedContactsArr = await User.findOneAndUpdate(
+    { _id: req.user.userId },
+    { $pull: { blockedContacts: contact } },
+    { new: true }
+  ).select("blockedContacts");
+  res.status(StatusCodes.OK).json({ blockedContactsArr });
+};
+module.exports = { searchContact, blockContact, unBlockContact };
