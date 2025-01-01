@@ -21,18 +21,6 @@ export default function Detail() {
       </div>
       <div className="flex w-full border border-x-0 border-b-0 border-t-white/30 px-6">
         <ul className="w-full list-none mt-5">
-          <li className="flex w-full mb-8 font-semibold">
-            <div>Chat Settings</div>
-            <button className="w-6 h-6 rounded-full ml-auto bg-white/10 flex items-center justify-center">
-              <img className="w-3" src={arrowUp} alt=""></img>
-            </button>
-          </li>
-          <li className="flex w-full mb-8 font-semibold">
-            <div>Privacy & Help</div>
-            <button className="w-6 h-6 rounded-full ml-auto bg-white/10 flex items-center justify-center">
-              <img className="w-3" src={arrowUp} alt=""></img>
-            </button>
-          </li>
           <li className="flex w-full font-semibold mb-4">
             <div>Shared Photos</div>
             <button
@@ -130,14 +118,6 @@ export default function Detail() {
           </li>
         </ul>
       </div>
-      {/* <div className="flex flex-col w-full mt-auto px-6 font-bold text-lg mb-7">
-        <button className="text-center py-4 bg-red-800 rounded-md mb-6 hover:opacity-80">
-          Block User
-        </button>
-        <button className="text-center py-2 bg-sky-800 rounded-md hover:opacity-80">
-          Logout
-        </button>
-      </div> */}
     </div>
   );
 }

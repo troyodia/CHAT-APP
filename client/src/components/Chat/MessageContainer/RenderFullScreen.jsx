@@ -29,7 +29,7 @@ export default function RenderFullScreen() {
         </button>
       </div>
       <img
-        className="max-w-[850px] max-h-[850px] w-full object-contain"
+        className="max-w-[600px] max-h-[600px] w-full object-contain"
         src={`http://localhost:5000/uploads/files/${fullScreenParams}`}
         alt=""
       ></img>

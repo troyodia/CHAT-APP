@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 import defaultImg from "../../images/default.jpeg";
 import pictureIcon from "../../images/icons/picture.png";
 import fileIcon from "../../images/icons/file-Icon.png";
+import pictureIconBlack from "../../images/icons/pictureIconBlack.png";
+import fileIconBlack from "../../images/icons/file-Icon-black.png";
 import exclamationIcon from "../../images/icons/exclamationIcon.png";
 import { useMediaQuery } from "react-responsive";
 import { useAppStore } from "../../store";
@@ -219,12 +221,20 @@ function UserList({ image, firstname, lastname, id }) {
             <div className="flex space-x-1 items-center font-semibold">
               {isImage(lastMessageMap.get(id).message) ? (
                 <>
-                  <img className="w-6" src={pictureIcon} alt=""></img>
+                  <img
+                    className="w-6"
+                    src={activeItem === id ? pictureIconBlack : pictureIcon}
+                    alt=""
+                  ></img>
                   <span className="text-xs">Image</span>
                 </>
               ) : (
                 <>
-                  <img className="w-4" src={fileIcon} alt=""></img>
+                  <img
+                    className="w-4"
+                    src={activeItem === id ? fileIconBlack : fileIcon}
+                    alt=""
+                  ></img>
                   <span className="text-xs">File</span>
                 </>
               )}

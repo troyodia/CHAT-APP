@@ -24,17 +24,20 @@ export default function RenderFileMessage({ file, isSender, id, isRecording }) {
     <>
       {isImage(file) && (
         <div className="mb-2 relative group/images">
-          <img
-            className={`${
-              isSender ? "border-sky-500 " : "border-white/30"
-            } rounded-3xl max-w-[400px] max-h-[400px] object-contain border border-solid cursor-pointer`}
-            src={`http://localhost:5000/uploads/files/${file}`}
-            alt=""
+          <button
             onClick={() => {
               setIsFullScreen(true);
               setFullScreenParams(file);
             }}
-          ></img>
+          >
+            <img
+              className={`${
+                isSender ? "border-sky-500 " : "border-white/30"
+              } rounded-3xl max-w-[400px] max-h-[400px] object-contain border border-solid cursor-pointer`}
+              src={`http://localhost:5000/uploads/files/${file}`}
+              alt=""
+            ></img>
+          </button>
           <button
             className="absolute top-2 right-2 flex  items-center justify-center w-10 h-10 rounded-full bg-black invisible group-hover/images:visible"
             onClick={() => downloadFile(file)}
