@@ -10,7 +10,7 @@ import { lazy, Suspense } from "react";
 const MyLottie = lazy(() => import("./MyLottie"));
 export default function AddNewUserModal() {
   const [search, setSearch] = useState("");
-  const [searchedContacts, setSearchContacts] = useState([]);
+  const [searchedContacts, setSearchedContacts] = useState([]);
   const [cancelModal, setCancelModal] = useState(false);
 
   const searchContactUrl = "http://localhost:5000/api/v1/contact/searchContact";
@@ -39,23 +39,27 @@ export default function AddNewUserModal() {
     }
   };
   useEffect(() => {
+    const controller = new AbortController();
     const searchContacts = async () => {
       try {
         const res = await axiosInstance.post(
           searchContactUrl,
-          { search },
-          { withCredentials: true }
+          { contact: search },
+          { withCredentials: true, signal: controller.signal }
         );
         if (res.data && res.status === 200) {
           // console.log(res.data.users);
-          setSearchContacts([...res.data.users]);
+          setSearchedContacts([...res.data.users]);
         }
       } catch (error) {
         console.log(error?.response?.data?.msg);
       }
     };
     if (search.length > 0) searchContacts();
-    else setSearchContacts([]);
+    else setSearchedContacts([]);
+    return () => {
+      controller.abort();
+    };
   }, [search]);
   const addToContactList = async (contactId) => {
     try {

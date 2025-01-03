@@ -202,6 +202,7 @@ export default function MessageBar() {
     }
   };
   useEffect(() => {
+    const controller = new AbortController();
     const handleCheckedifBlocked = async () => {
       try {
         const res = await axiosInstance.post(
@@ -209,6 +210,7 @@ export default function MessageBar() {
           { contact: selectedChatData.id },
           {
             withCredentials: true,
+            signal: controller.signal,
           }
         );
         if (res.data && res.status === 200) {
@@ -222,6 +224,9 @@ export default function MessageBar() {
     if (selectedChatData) {
       handleCheckedifBlocked();
     }
+    return () => {
+      controller.abort();
+    };
   }, [selectedChatData, setDisableReplyButton]);
   useEffect(() => {
     if (socket && selectedChatData) {

@@ -99,12 +99,13 @@ function UserList({ image, firstname, lastname, id }) {
     }));
   };
   useEffect(() => {
+    const controller = new AbortController();
     const getLastContactMessage = async () => {
       try {
         const res = await axiosInstance.post(
           getLastMessageUrl,
           { contactId: id },
-          { withCredentials: true }
+          { withCredentials: true, signal: controller.signal }
         );
         if (res.data && res.status === 200) {
           const {
@@ -147,6 +148,9 @@ function UserList({ image, firstname, lastname, id }) {
       }
     };
     getLastContactMessage();
+    return () => {
+      controller.abort();
+    };
   }, [id]);
 
   return (

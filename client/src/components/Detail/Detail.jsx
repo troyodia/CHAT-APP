@@ -12,7 +12,6 @@ import { shallow, useShallow } from "zustand/shallow";
 import axiosInstance from "../../utils/axiosInstance";
 import { isImage } from "../../utils/isImage";
 import { v4 as uuidv4 } from "uuid";
-import { useSocket } from "../../use-contexts/socketContext";
 
 export default function Detail() {
   const getMessagesURL = "http://localhost:5000/api/v1/messages/getMessages";
@@ -36,7 +35,6 @@ export default function Detail() {
     },
     []
   );
-  const socket = useSocket();
   const { selectedChatData, setSelectedChatMessages } = useAppStore(
     useShallow((state) => ({
       selectedChatData: state.selectedChatData,
@@ -44,13 +42,14 @@ export default function Detail() {
     }))
   );
   useEffect(() => {
+    const controller = new AbortController();
     const selectedChatData = useAppStore.getState().selectedChatData;
     const getChatFiles = async () => {
       try {
         const res = await axiosInstance.post(
           getMessagesURL,
           { contactId: selectedChatData.id },
-          { withCredentials: true }
+          { withCredentials: true, signal: controller.signal }
         );
         if (res.data && res.status === 200) {
           const arrayCopyImages = [];
@@ -80,7 +79,12 @@ export default function Detail() {
     };
     if (selectedChatData) {
       getChatFiles();
+      setFilesToggle(false);
+      setImagesToggle(false);
     }
+    return () => {
+      controller.abort();
+    };
   }, [handleSetFileArray, selectedChatData, setSelectedChatMessages]);
 
   return (

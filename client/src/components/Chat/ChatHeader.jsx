@@ -153,12 +153,13 @@ export default function ChatHeader() {
   useEffect(() => {
     const selectedChatData = useAppStore.getState().selectedChatData;
     const setIsOnline = useAppStore.getState().setIsOnline;
+    const controller = new AbortController();
     const getOnlinestatus = async () => {
       try {
         const res = await axiosInstance.post(
           getOnlinestatusUrl,
           { contactId: selectedChatData.id },
-          { withCredentials: true }
+          { withCredentials: true, signal: controller.signal }
         );
         if (res.data && res.status === 200) {
           console.log(res.data.contactOnlineStatus);
@@ -169,6 +170,9 @@ export default function ChatHeader() {
       }
     };
     getOnlinestatus();
+    return () => {
+      controller.abort();
+    };
   }, [selectedChatData]);
   return (
     <div className="flex h-28 w-full items-center">
