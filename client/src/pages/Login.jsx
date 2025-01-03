@@ -3,7 +3,6 @@ import { useEffect } from "react";
 import { useState } from "react";
 import { json, Link, useLocation, useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
-import { UpdateUserState, UserState } from "../use-contexts/userContext";
 import "react-toastify/dist/ReactToastify.css";
 import regsiterImage from "../images/signupimage.png";
 import eyeOPen from "../images/icons/eyeopen.png";
@@ -23,6 +22,7 @@ export default function LoginScreen() {
   const urlRegsiter = "http://localhost:5000/api/v1/auth/register";
   const urlLogin = "http://localhost:5000/api/v1/auth/login";
   const socket = useSocket();
+  const setAuthinfo = useAppStore((state) => state.setAuthinfo);
   const signUpOrLoginUser = async (url) => {
     try {
       const res = await axios.post(
@@ -50,7 +50,7 @@ export default function LoginScreen() {
           state: { previousUrl: location.pathname },
         });
         console.log(res.data);
-        localStorage.setItem("isLoggedIn", "loggedIn");
+        setAuthinfo({ user: res.data.user, token: res.data.token });
       }
     } catch (error) {
       if (error.response.data.msg) {

@@ -3,9 +3,11 @@ const url = "http://localhost:5000/api/v1/user/getSingleUser";
 
 export const createAuthSlice = (set, get) => ({
   userInfo: undefined,
+  authInfo: undefined,
   error: undefined,
   logout: false,
   setLogout: () => set((state) => ({ logout: !state.logout })),
+  setAuthinfo: (authInfo) => set({ authInfo }),
   fetchData: async () => {
     try {
       const res = await axiosInstance.get(url, {

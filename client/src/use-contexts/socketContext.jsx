@@ -9,16 +9,13 @@ export const useSocket = () => {
   return useContext(SocketContext);
 };
 export default function SocketProvider({ children }) {
-  // const socket = useRef();
   const [socket, setSocket] = useState();
   const userInfo = useAppStore((state) => state.userInfo, shallow);
-  // const { userInfo } = useAppStore();
   console.log("render");
   useEffect(() => {
     if (userInfo) {
       const directMessageContactList =
         useAppStore.getState().directMessageContactList;
-      console.log(userInfo, directMessageContactList);
       const newSocket = io("http://localhost:5000", {
         withCredentials: true,
         query: {
@@ -28,26 +25,8 @@ export default function SocketProvider({ children }) {
       setSocket(newSocket);
       newSocket.on("connect", () => console.log("connected to socket server"));
       newSocket.emit("coming-online", directMessageContactList);
-
-      // const handleRecieveMessage = (message) => {
-      //   const addMessage = useAppStore.getState().addMessage;
-      //   const selectedChatType = useAppStore.getState().selectedChatType;
-      //   const selectedChatData = useAppStore.getState().selectedChatData;
-      //   console.log(message);
-      //   if (
-      //     selectedChatType !== undefined &&
-      //     (message.sender._id === selectedChatData.id ||
-      //       message.recipient._id === selectedChatData.id)
-      //   ) {
-      //     addMessage(message);
-      //     // useAppStore.getState().addMessage(message);
-      //     console.log("message received", message);
-      //   }
-      // };
-      // socket.current.on("recieveMessage", handleRecieveMessage);
       return () => {
         newSocket.disconnect();
-        // socket.current.off("recieveMessage", handleRecieveMessage);
       };
     }
   }, [userInfo]);

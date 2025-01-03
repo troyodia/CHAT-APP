@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import defaultImg from "../images/default.png";
-import { UserState } from "../use-contexts/userContext";
 import UploadImage from "../components/UploadImage";
 import leftArrow from "../images/icons/arrow-left.png";
 import trash from "../images/icons/trash.png";
@@ -126,11 +125,7 @@ export default function ProfileScreen() {
       console.log(error.response.data.msg);
     }
   };
-  // useEffect(() => {
-  //   if (!userId) {
-  //     navigate("/login");
-  //   }
-  // }, []);
+
   return (
     <div className=" flex h-screen justify-center items-center text-white px-10">
       <div className="flex flex-col w-[300px] md:w-[520px]">

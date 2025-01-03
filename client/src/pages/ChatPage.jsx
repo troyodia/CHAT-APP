@@ -35,7 +35,11 @@ export default function ChatPage({ emptyChat, chat, detail, messageList }) {
   );
   const socket = useSocket();
   useEffect(() => {
+    const controller = new AbortController();
     fetchData();
+    return () => {
+      controller.abort();
+    };
   }, [fetchData]);
   useEffect(() => {
     console.log(replyMap);
