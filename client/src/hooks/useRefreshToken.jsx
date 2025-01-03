@@ -7,7 +7,9 @@ export default function useRefreshToken() {
   const refreshUrl = "http://localhost:5000/api/v1/auth/refresh";
   const refresh = async () => {
     try {
-      const res = await axios.get(refreshUrl, { withCredentials: true });
+      const res = await axios.get(refreshUrl, {
+        withCredentials: true,
+      });
       if (res.data && res.status === 200) {
         console.log(res.data);
         useAppStore.setState((prev) => ({

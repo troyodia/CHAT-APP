@@ -47,12 +47,13 @@ export default function MessageContainer({ renderMessages, renderFullScreen }) {
   useEffect(() => {
     const setSelectedChatMessages =
       useAppStore.getState().setSelectedChatMessages;
+    const controller = new AbortController();
     const populateMessages = async () => {
       try {
         const res = await axiosInstance.post(
           getMessagesURL,
           { contactId: selectedChatData.id },
-          { withCredentials: true }
+          { withCredentials: true, signal: controller.signal }
         );
         if (res.data && res.status === 200) {
           setSelectedChatMessages(res.data);
@@ -64,6 +65,9 @@ export default function MessageContainer({ renderMessages, renderFullScreen }) {
     if (selectedChatData) {
       if (selectedChatType === "contact") populateMessages();
     }
+    return () => {
+      controller.abort();
+    };
   }, [selectedChatData, selectedChatType]);
 
   return (

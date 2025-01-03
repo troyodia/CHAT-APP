@@ -1,7 +1,7 @@
 import { useAppStore } from "../../store";
 import UserList from "./UserList";
 import axiosInstance from "../../utils/axiosInstance";
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback, useEffect, useRef } from "react";
 import { useShallow } from "zustand/shallow";
 import { useState } from "react";
 import dayjs from "dayjs";
@@ -10,6 +10,8 @@ function DirectMessageContactList() {
     "http://localhost:5000/api/v1/contactList/getContactList";
   const unreadMessagesUrl =
     "http://localhost:5000/api/v1/messages/unreadMessages";
+  const getContactsAbortControllerRef = useRef(null);
+  const getUnreadAbortControllerRef = useRef(null);
 
   const { directMessageContactList, dmSearch, dmListSearchResultsArr } =
     useAppStore(
@@ -21,9 +23,12 @@ function DirectMessageContactList() {
     );
   const getContactList = useCallback(async () => {
     const { setDirectMessageContactList } = useAppStore.getState();
+    getContactsAbortControllerRef.current = new AbortController();
+    getUnreadAbortControllerRef.current = new AbortController();
     try {
       const res = await axiosInstance.get(contactListUrl, {
         withCredentials: true,
+        signal: getContactsAbortControllerRef.current.signal,
       });
       if (res.data && res.status === 200) {
         const messageList = res.data;
@@ -33,6 +38,7 @@ function DirectMessageContactList() {
         try {
           const res = await axiosInstance.get(unreadMessagesUrl, {
             withCredentials: true,
+            signal: getUnreadAbortControllerRef.current.signal,
           });
           if (res?.data?.unreadMessages?.length > 0 && res.status === 200) {
             setUnreadMessages(res.data.unreadMessages);
@@ -78,7 +84,18 @@ function DirectMessageContactList() {
   }, []);
 
   useEffect(() => {
+    // const controller = new AbortController();
     getContactList();
+    const abortGetContacts = getContactsAbortControllerRef.current;
+    const abortGetUnreadMessages = getUnreadAbortControllerRef.current;
+    return () => {
+      if (abortGetContacts) {
+        abortGetContacts.abort();
+      }
+      if (abortGetUnreadMessages) {
+        abortGetUnreadMessages.abort();
+      }
+    };
   }, [getContactList]);
   useEffect(() => {
     const directMessageContactList =
