@@ -40,7 +40,6 @@ export default function SideBarFooter() {
         navigate("/login");
         closeChat();
         setActiveItem(undefined);
-        localStorage.removeItem("isLoggedIn");
       }
     } catch (error) {
       if (error) console.log(error.response.data.msg);

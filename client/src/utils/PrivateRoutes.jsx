@@ -1,15 +1,11 @@
-import React, { useEffect, useLayoutEffect, useRef } from "react";
-import { UserState } from "../use-contexts/userContext";
-import { useNavigate } from "react-router-dom";
-export default function PrivateRoutes({ children }) {
-  const navigate = useNavigate();
+import React from "react";
+import { Navigate, Outlet } from "react-router-dom";
+import { useAppStore } from "../store";
+import { shallow } from "zustand/shallow";
 
-  useEffect(() => {
-    if (!localStorage.getItem("isLoggedIn")) {
-      navigate("/login", { replace: true });
-    }
-  }, [navigate]);
-  if (!localStorage.getItem("isLoggedIn")) return <h1>Loading..</h1>;
-
-  return children;
+export default function PrivateRoutes() {
+  const authInfo = useAppStore((state) => state.authInfo, shallow);
+  const isAuthenticated = !!authInfo;
+  console.log(authInfo);
+  return isAuthenticated ? <Outlet /> : <Navigate to="/login" />;
 }

@@ -82,6 +82,7 @@ const login = async (req, res) => {
       userId: user._id,
     },
     onlinestatus,
+    token: req.cookies.ACCESS_TOKEN,
   });
 };
 const logout = async (req, res) => {
