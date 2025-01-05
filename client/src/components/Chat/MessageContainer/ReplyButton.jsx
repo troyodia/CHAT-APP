@@ -5,7 +5,7 @@ import { useAppStore } from "../../../store";
 import { shallow } from "zustand/shallow";
 import { useState, useEffect } from "react";
 import { useSocket } from "../../../use-contexts/socketContext";
-export default function ReplyButton({
+function ReplyButton({
   sender,
   replyContent,
   replyFile,
@@ -18,8 +18,6 @@ export default function ReplyButton({
     (state) => state.selectedChatData,
     shallow
   );
-  const blockedContacts = useAppStore((state) => state.blockedContacts);
-  // const [disableReplyButton, setDisableReplyButton] = useState(false);
   const disableReplyButton = useAppStore(
     (state) => state.disableReplyButton,
     shallow
@@ -69,3 +67,4 @@ export default function ReplyButton({
     </button>
   );
 }
+export default React.memo(ReplyButton);

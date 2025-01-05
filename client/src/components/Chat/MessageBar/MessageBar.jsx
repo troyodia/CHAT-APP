@@ -1,30 +1,29 @@
 import { useEffect, useRef, useState } from "react";
-import uploadFile from "../../images/icons/uploadfile.png";
-import microphoneIcon from "../../images/icons/microphone.png";
-import emojiIcon from "../../images/icons/emoji.png";
+import uploadFile from "../../../images/icons/uploadfile.png";
+import microphoneIcon from "../../../images/icons/microphone.png";
+import emojiIcon from "../../../images/icons/emoji.png";
 import Picker from "emoji-picker-react";
-import { useAppStore } from "../../store";
-import { useSocket } from "../../use-contexts/socketContext";
-import axiosInstance from "../../utils/axiosInstance";
-import defaultImage from "../../images/default.png";
-import fileImage from "../../images/icons/myfile.png";
-import cancel from "../../images/icons/cancelround.png";
+import { useAppStore } from "../../../store";
+import { useSocket } from "../../../use-contexts/socketContext";
+import axiosInstance from "../../../utils/axiosInstance";
+import fileImage from "../../../images/icons/myfile.png";
+import cancel from "../../../images/icons/cancelround.png";
 import { useMediaQuery } from "react-responsive";
 import { v4 as uuidv4 } from "uuid";
-import AudioRecorder from "./AudioRecorder";
+import AudioRecorder from "../AudioRecorder";
 import { useShallow } from "zustand/shallow";
-import { isImage } from "../../utils/isImage";
+import { isImage } from "../../../utils/isImage";
+import Emoji from "./Emoji";
+import UploadFileButton from "./UploadFileButton";
+import SendMessageButton from "./SendMessageButton";
 export default function MessageBar() {
   console.log("message bar");
-  const emojiRef = useRef(null);
-  const fileUploadRef = useRef(null);
   const [displayEmojiPicker, setDisplayEmojiPicker] = useState(false);
-  // const [messageMap, setMessageMap] = useState(new Map());
-  const isTablet = useMediaQuery({ maxWidth: 1400 });
-  const isSmall = useMediaQuery({ maxWidth: 1140 });
-
+  const socket = useSocket();
+  const [userBlocked, setUserBlocked] = useState(false);
+  const checkifBlockedUrl =
+    "http://localhost:5000/api/v1/contact/checkifBlocked";
   const {
-    selectedChatType,
     selectedChatData,
     userInfo,
     removeFiles,
@@ -33,11 +32,9 @@ export default function MessageBar() {
     replyMap,
     blockedContacts,
     messageMap,
-    disableMessageBar,
     setDisableReplyButton,
   } = useAppStore(
     useShallow((state) => ({
-      selectedChatType: state.selectedChatType,
       selectedChatData: state.selectedChatData,
       userInfo: state.userInfo,
       setUploadedFiles: state.setUploadedFiles,
@@ -47,148 +44,12 @@ export default function MessageBar() {
       replyMap: state.replyMap,
       blockedContacts: state.blockedContacts,
       messageMap: state.messageMap,
-      disableMessageBar: state.disableMessageBar,
       setDisableReplyButton: state.setDisableReplyButton,
     }))
   );
-  const socket = useSocket();
-  const [userBlocked, setUserBlocked] = useState(false);
-  const url = "http://localhost:5000/api/v1/messages/uploadFile";
-  const checkifBlockedUrl =
-    "http://localhost:5000/api/v1/contact/checkifBlocked";
 
-  const handleSendMessage = () => {
-    if (selectedChatType === "contact") {
-      if (
-        messageMap.get(selectedChatData.id) !== undefined &&
-        messageMap.get(selectedChatData.id) &&
-        (uploadedFilesMap.get(selectedChatData.id) === undefined ||
-          uploadedFilesMap.get(selectedChatData.id).length < 1)
-      ) {
-        socket?.emit("sendMessage", {
-          sender: userInfo._id,
-          recipient: selectedChatData.id,
-          content: messageMap.get(selectedChatData.id),
-          messageType: "text",
-          fileUrl: undefined,
-          contentAndFile: undefined,
-          reply: replyMap.get(selectedChatData.id),
-        });
-      }
-      if (
-        (messageMap.get(selectedChatData.id) === undefined ||
-          !messageMap.get(selectedChatData.id)) &&
-        uploadedFilesMap.get(selectedChatData.id) !== undefined &&
-        uploadedFilesMap.get(selectedChatData.id).length > 0
-      ) {
-        socket?.emit("sendMessage", {
-          sender: userInfo._id,
-          recipient: selectedChatData.id,
-          content: undefined,
-          messageType: "file",
-          fileUrl: uploadedFilesMap.get(selectedChatData.id),
-          contentAndFile: undefined,
-          reply: replyMap.get(selectedChatData.id),
-        });
-      }
-      if (
-        messageMap.get(selectedChatData.id) !== undefined &&
-        messageMap.get(selectedChatData.id) &&
-        uploadedFilesMap.get(selectedChatData.id) !== undefined &&
-        uploadedFilesMap.get(selectedChatData.id).length > 0
-      ) {
-        socket?.emit("sendMessage", {
-          sender: userInfo._id,
-          recipient: selectedChatData.id,
-          content: undefined,
-          messageType: "combined",
-          fileUrl: undefined,
-          contentAndFile: {
-            text: messageMap.get(selectedChatData.id),
-            files: uploadedFilesMap.get(selectedChatData.id),
-          },
-          reply: replyMap.get(selectedChatData.id),
-        });
-      }
-    }
-    useAppStore.setState((prev) => ({
-      replyMap: new Map(prev.replyMap).set(selectedChatData.id, undefined),
-    }));
-    useAppStore.setState((prev) => ({
-      messageMap: new Map(prev.messageMap).set(selectedChatData.id, ""),
-    }));
-  };
-  useEffect(() => {
-    const handleClickOutside = (e) => {
-      if (emojiRef.current && !emojiRef.current.contains(e.target)) {
-        setDisplayEmojiPicker(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [emojiRef]);
-  const handleEmoji = (emojiData) => {
-    let pos = document.getElementById("input").selectionStart;
-    useAppStore.setState((prev) => ({
-      messageMap: new Map(prev.messageMap).set(
-        selectedChatData.id,
-        prev.messageMap.get(selectedChatData.id).slice(0, pos) +
-          emojiData.emoji +
-          prev.messageMap.get(selectedChatData.id).slice(pos)
-      ),
-    }));
-    // setMessageMap(
-    //   (map) =>
-    //     new Map(
-    //       map.set(
-    //         selectedChatData.id,
-    //         map.get(selectedChatData.id).slice(0, pos) +
-    //           emojiData.emoji +
-    //           map.get(selectedChatData.id).slice(pos)
-    //       )
-    //     )
-    // );
-  };
-  const handleFileAttachementClick = (e) => {
-    e.preventDefault();
-
-    if (fileUploadRef.current) {
-      fileUploadRef.current.click();
-    }
-  };
-  const handleFileUpload = async () => {
-    const file = fileUploadRef.current.files[0];
-    const formData = new FormData();
-    if (file) {
-      formData.append("file", file);
-    } else {
-      console.log("no file");
-    }
-    try {
-      const res = await axiosInstance.post(url, formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-        withCredentials: true,
-      });
-      if (res.data && res.status === 200) {
-        console.log(res.data.filePath);
-
-        useAppStore.setState((prev) => ({
-          uploadedFilesMap: new Map(prev.uploadedFilesMap).set(
-            selectedChatData.id,
-            [
-              ...(prev.uploadedFilesMap.get(selectedChatData.id) !== undefined
-                ? prev.uploadedFilesMap.get(selectedChatData.id)
-                : []),
-              res.data.filePath,
-            ]
-          ),
-        }));
-      }
-    } catch (error) {
-      console.log("file upload error", error?.response?.data?.msg);
-    }
+  const handleDisplayEmojiPicker = (bool) => {
+    setDisplayEmojiPicker(bool);
   };
   const handleReplyName = () => {
     if (
@@ -316,30 +177,7 @@ export default function MessageBar() {
                 : ""
             }`}
           >
-            <form className="">
-              <button
-                type="submit"
-                className={`w-8 ${
-                  (blockedContacts.includes(selectedChatData.id) ||
-                    userBlocked) &&
-                  "cursor-not-allowed"
-                }`}
-                onClick={handleFileAttachementClick}
-              >
-                <img
-                  className="p-1 hover:outline hover:outline-1 hover:outline-dashed"
-                  src={uploadFile}
-                  alt=""
-                ></img>
-              </button>
-              <input
-                type="file"
-                hidden
-                ref={fileUploadRef}
-                onChange={handleFileUpload}
-              ></input>
-            </form>
-
+            <UploadFileButton userBlocked={userBlocked} />
             {(messageMap.get(selectedChatData.id) === undefined ||
               !messageMap.get(selectedChatData.id)) &&
               (uploadedFilesMap.get(selectedChatData.id) === undefined ||
@@ -407,10 +245,6 @@ export default function MessageBar() {
                       e.target.value
                     ),
                   }));
-                  // setMessageMap(
-                  //   (map) =>
-                  //     new Map(map.set(selectedChatData.id, e.target.value))
-                  // );
                 }}
                 disabled={
                   (blockedContacts &&
@@ -462,45 +296,7 @@ export default function MessageBar() {
           >
             <img src={emojiIcon} alt=""></img>
           </button>
-          <button
-            className={`flex text-black ml-auto mr-4 justify-center rounded ${
-              isSmall
-                ? "text-lg px-5 py-2"
-                : isTablet
-                ? "text-lg px-6 py-3"
-                : "text-xl px-7 py-4"
-            } ${
-              (messageMap.get(selectedChatData.id) !== undefined &&
-                messageMap.get(selectedChatData.id)) ||
-              (uploadedFilesMap.get(selectedChatData.id) !== undefined &&
-                uploadedFilesMap.get(selectedChatData.id).length > 0)
-                ? "  hover:outline-dashed hover:outline-3 hover:outline-offset-4 hover:outline-cyan-300 bg-[#00eeff]"
-                : "bg-gray-800 cursor-not-allowed"
-            } ${
-              replyMap.get(selectedChatData.id) !== undefined &&
-              replyMap.get(selectedChatData.id)
-                ? "mt-9"
-                : ""
-            }
-          font-bold `}
-            onClick={() => {
-              if (
-                (messageMap.get(selectedChatData.id) !== undefined &&
-                  messageMap.get(selectedChatData.id)) ||
-                (uploadedFilesMap.get(selectedChatData.id) !== undefined &&
-                  uploadedFilesMap.get(selectedChatData.id).length > 0)
-              )
-                handleSendMessage();
-              useAppStore.setState((prev) => ({
-                uploadedFilesMap: new Map(prev.uploadedFilesMap).set(
-                  selectedChatData.id,
-                  []
-                ),
-              }));
-            }}
-          >
-            Send
-          </button>
+          <SendMessageButton />
         </div>
       )}
       {audioRecordingMap.get(selectedChatData.id) !== undefined &&
@@ -531,18 +327,10 @@ export default function MessageBar() {
           </div>
         )}
 
-      <div className="absolute bottom-24 right-32 z-10" ref={emojiRef}>
-        <Picker
-          open={displayEmojiPicker}
-          theme="dark"
-          autoFocusSearch={true}
-          onEmojiClick={(emojiData, event) => {
-            handleEmoji(emojiData);
-          }}
-        ></Picker>
-      </div>
-
-      {/* </div> */}
+      <Emoji
+        displayEmoji={displayEmojiPicker}
+        setDisplayEmojiPicker={handleDisplayEmojiPicker}
+      />
     </div>
   );
 }

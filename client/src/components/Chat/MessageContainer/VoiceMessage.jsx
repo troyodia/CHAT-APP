@@ -32,10 +32,6 @@ function VoiceMessage({ file, isSender }) {
         setIsPlaying(false);
       });
     }
-
-    // return () => {
-    //   waveForm.current.destroy();
-    // };
   }, []);
   useEffect(() => {
     // console.log("render");

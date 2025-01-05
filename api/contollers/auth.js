@@ -21,13 +21,13 @@ const register = async (req, res) => {
   );
   res.cookie("ACCESS_TOKEN", accessToken, {
     httpOnly: true,
-    maxAge: 24 * 60 * 60 * 1000,
+    // maxAge: 24 * 60 * 60 * 1000,
     secure: true,
     sameSite: "none",
   });
   res.cookie("REFRESH_TOKEN", refreshToken, {
     httpOnly: true,
-    maxAge: 24 * 60 * 60 * 1000,
+    // maxAge: 24 * 60 * 60 * 1000,
     secure: true,
     sameSite: "none",
   });

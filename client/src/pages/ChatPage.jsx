@@ -18,19 +18,15 @@ export default function ChatPage({ emptyChat, chat, detail, messageList }) {
     selectedChatType,
     fetchData,
     toggleSettings,
-    lastMessageMap,
     directMessageContactList,
     setDirectMessageContactList,
-    replyMap,
   } = useAppStore(
     useShallow((state) => ({
       selectedChatType: state.selectedChatType,
       fetchData: state.fetchData,
       toggleSettings: state.toggleSettings,
-      lastMessageMap: state.lastMessageMap,
       directMessageContactList: state.directMessageContactList,
       setDirectMessageContactList: state.setDirectMessageContactList,
-      replyMap: state.replyMap,
     }))
   );
   const socket = useSocket();
@@ -41,9 +37,9 @@ export default function ChatPage({ emptyChat, chat, detail, messageList }) {
       controller.abort();
     };
   }, [fetchData]);
-  useEffect(() => {
-    console.log(replyMap);
-  }, [replyMap]);
+  // useEffect(() => {
+  //   console.log(replyMap);
+  // }, [replyMap]);
   const handleSetFirstUnreadMessage = (id, message) => {
     useAppStore.setState((prev) => ({
       firstUnreadMessage: new Map(prev.firstUnreadMessage).set(id, message),

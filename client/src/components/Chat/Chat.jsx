@@ -1,6 +1,6 @@
 import { useMediaQuery } from "react-responsive";
 import { useEffect, useRef, useState } from "react";
-import MessageBar from "./MessageBar.jsx";
+import MessageBar from "./MessageBar/MessageBar.jsx";
 import ChatHeader from "./ChatHeader.jsx";
 import Messages from "./MessageContainer/Messages.jsx";
 

@@ -9,6 +9,10 @@ import { isImage } from "../../../utils/isImage";
 import RenderFileMessage from "./RenderFileMessage";
 import ReplyButton from "./ReplyButton";
 import CreateMessage from "./CreateMessage";
+import RenderUnreadMessages from "./RenderUnreadMessages";
+import Message from "./Message";
+import RepliedMessageRef from "./RepliedMessageRef";
+import RenderMessageType from "./RenderMessageType";
 
 export default function RenderMessages() {
   let latestDate = null;
@@ -30,25 +34,59 @@ export default function RenderMessages() {
     return (
       <CreateMessage
         key={message._id}
-        index={index}
         showDate={showDate}
         timeStamps={message.timeStamps}
-        messageSender={message.sender}
-        isSender={isSender}
-        messageReply={message.reply}
-        replySender={message.reply?.sender}
-        repliedText={message.reply?.repliedText}
-        repliedFile={message.reply?.repliedFile}
-        repliedMessageRef={message.reply?.messageRef}
-        messageType={message.messageType}
-        messageContent={message.content}
-        messageId={message._id}
-        isRecording={message.isRecording}
-        isUnread={message.isUnread}
-        messageFiles={message.fileUrl}
-        combinedMessageFiles={message.contentAndFile?.files}
-        combinedMessageText={message.contentAndFile?.text}
-      />
+        // messageSender={message.sender}
+        // isSender={isSender}
+        // messageReply={message.reply}
+        // replySender={message.reply?.sender}
+        // repliedText={message.reply?.repliedText}
+        // repliedFile={message.reply?.repliedFile}
+        // repliedMessageRef={message.reply?.messageRef}
+        // messageType={message.messageType}
+        // messageContent={message.content}
+        // messageId={message._id}
+        // isRecording={message.isRecording}
+        // isUnread={message.isUnread}
+        // messageFiles={message.fileUrl}
+        // combinedMessageFiles={message.contentAndFile?.files}
+        // combinedMessageText={message.contentAndFile?.text}
+      >
+        <RenderUnreadMessages
+          messageSender={message.sender}
+          messageId={message._id}
+        />
+        <Message
+          messageId={message._id}
+          messageSender={message.sender}
+          isSender={isSender}
+          timeStamps={message.timeStamps}
+          repliedMessageRef={message.reply?.messageRef}
+          repliedFile={message.reply?.repliedFile}
+          replySender={message.reply?.sender}
+          repliedText={message.reply?.repliedText}
+          messageReply={message.reply}
+        >
+          {/* <RepliedMessageRef
+            repliedMessageRef={message.reply?.messageRef}
+            repliedFile={message.reply?.repliedFile}
+            replySender={message.reply?.sender}
+            repliedText={message.reply?.repliedText}
+            messageReply={message.reply}
+          /> */}
+          <RenderMessageType
+            messageType={message.messageType}
+            messageSender={message.sender}
+            isSender={isSender}
+            messageContent={message.content}
+            messageId={message._id}
+            isRecording={message.isRecording}
+            messageFiles={message.fileUrl}
+            combinedMessageFiles={message.contentAndFile?.files}
+            combinedMessageText={message.contentAndFile?.text}
+          />
+        </Message>
+      </CreateMessage>
     );
   });
 }

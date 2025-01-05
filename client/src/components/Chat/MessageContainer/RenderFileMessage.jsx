@@ -10,7 +10,7 @@ import { Suspense } from "react";
 import { lazy } from "react";
 const VoiceMessage = lazy(() => import("./VoiceMessage"));
 
-export default function RenderFileMessage({ file, isSender, id, isRecording }) {
+export default function RenderFileMessage({ file, isSender, isRecording }) {
   console.log("render file messages");
 
   const { downloadFile, setIsFullScreen, setFullScreenParams } = useAppStore(

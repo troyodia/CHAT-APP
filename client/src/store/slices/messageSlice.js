@@ -40,8 +40,14 @@ export const createMessageSlice = (set, get) => ({
   downloadFile: async (url) => {
     set({ isDownloading: true });
     try {
+      let location;
+      if (url.slice(1 + url.lastIndexOf(".")) === "mp3") {
+        location = "audioFiles";
+      } else {
+        location = "files";
+      }
       const res = await axios.get(
-        `http://localhost:5000/uploads/files/${url}`,
+        `http://localhost:5000/uploads/${location}/${url}`,
         { responseType: "blob" }
       );
       if (res.data && res.status === 200) {

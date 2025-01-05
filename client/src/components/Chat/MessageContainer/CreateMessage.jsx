@@ -10,54 +10,54 @@ import dayjs from "dayjs";
 import { v4 as uuidv4 } from "uuid";
 import { isImage } from "../../../utils/isImage";
 function CreateMessage({
-  index,
   showDate,
   timeStamps,
-  messageSender,
-  isSender,
-  messageReply,
-  replySender,
-  repliedText,
-  repliedFile,
-  repliedMessageRef,
-  messageType,
-  messageContent,
-  messageId,
-  isRecording,
-  isUnread,
-  messageFiles,
-  combinedMessageFiles,
-  combinedMessageText,
+  children,
+  // messageSender,
+  // isSender,
+  // messageReply,
+  // replySender,
+  // repliedText,
+  // repliedFile,
+  // repliedMessageRef,
+  // messageType,
+  // messageContent,
+  // messageId,
+  // isRecording,
+  // isUnread,
+  // messageFiles,
+  // combinedMessageFiles,
+  // combinedMessageText,
 }) {
-  const {
-    selectedChatData,
-    userInfo,
-    selectedChatType,
-    firstUnreadMessage,
-    scrollHighlight,
-  } = useAppStore(
-    useShallow((state) => ({
-      selectedChatData: state.selectedChatData,
-      userInfo: state.userInfo,
-      selectedChatType: state.selectedChatType,
-      firstUnreadMessage: state.firstUnreadMessage,
-      scrollHighlight: state.scrollHighlight,
-    }))
-  );
-  const handleReplyName = (replyId) => {
-    if (replyId === userInfo._id) {
-      return userInfo.firstname;
-    } else {
-      return selectedChatData.firstname;
-    }
-  };
-  const handleClearFirstUnreadMessage = (id) => {
-    const newMap = new Map(firstUnreadMessage);
-    newMap.delete(id);
-    useAppStore.setState((prev) => ({
-      firstUnreadMessage: newMap,
-    }));
-  };
+  // const {
+  //   selectedChatData,
+  //   userInfo,
+  //   selectedChatType,
+  //   firstUnreadMessage,
+  //   scrollHighlight,
+  // } = useAppStore(
+  //   useShallow((state) => ({
+  //     selectedChatData: state.selectedChatData,
+  //     userInfo: state.userInfo,
+  //     selectedChatType: state.selectedChatType,
+  //     firstUnreadMessage: state.firstUnreadMessage,
+  //     scrollHighlight: state.scrollHighlight,
+  //   }))
+  // );
+  // const handleReplyName = (replyId) => {
+  //   if (replyId === userInfo._id) {
+  //     return userInfo.firstname;
+  //   } else {
+  //     return selectedChatData.firstname;
+  //   }
+  // };
+  // const handleClearFirstUnreadMessage = (id) => {
+  //   const newMap = new Map(firstUnreadMessage);
+  //   newMap.delete(id);
+  //   useAppStore.setState((prev) => ({
+  //     firstUnreadMessage: newMap,
+  //   }));
+  // };
   // console.log(firstUnreadMessage.get(messageSender));
   return (
     <div>
@@ -70,8 +70,8 @@ function CreateMessage({
           ""
         )}
       </div>
-      {firstUnreadMessage &&
-        /* firstUnreadMessage.get(messageSender) && */
+      {children}
+      {/* {firstUnreadMessage &&
         firstUnreadMessage.get(messageSender) !== undefined &&
         firstUnreadMessage.get(messageSender) === messageId && (
           <div className="flex w-full space-x-4 items-center m">
@@ -85,8 +85,9 @@ function CreateMessage({
             </button>
             <div className="w-full h-0.5 bg-white"></div>
           </div>
-        )}
-      <div
+        )}  */}
+
+      {/* <div
         id={messageId}
         className={`${
           scrollHighlight?.get(messageId) !== undefined &&
@@ -266,7 +267,7 @@ function CreateMessage({
             </div>
           )}
         </div>
-      </div>
+      </div> */}
     </div>
   );
 }

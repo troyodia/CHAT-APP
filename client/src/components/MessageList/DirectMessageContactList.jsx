@@ -5,6 +5,7 @@ import React, { useCallback, useEffect, useRef } from "react";
 import { useShallow } from "zustand/shallow";
 import { useState } from "react";
 import dayjs from "dayjs";
+import RenderLastMessage from "./RenderLastMessage";
 function DirectMessageContactList() {
   const contactListUrl =
     "http://localhost:5000/api/v1/contactList/getContactList";
@@ -34,7 +35,6 @@ function DirectMessageContactList() {
         const messageList = res.data;
         const setUnreadMessages = useAppStore.getState().setUnreadMessages;
         let tempDate = "2011-01-01";
-        let lastMsg = "";
         try {
           const res = await axiosInstance.get(unreadMessagesUrl, {
             withCredentials: true,
@@ -127,7 +127,9 @@ function DirectMessageContactList() {
               lastname={item?.lastname}
               id={item?._id}
               key={item?._id}
-            ></UserList>
+            >
+              <RenderLastMessage id={item?._id} />
+            </UserList>
           );
         })}
       {directMessageContactList.length > 0 &&
@@ -140,7 +142,9 @@ function DirectMessageContactList() {
               lastname={item?.lastname}
               id={item?._id}
               key={item?._id}
-            ></UserList>
+            >
+              <RenderLastMessage id={item?._id} />
+            </UserList>
           );
         })}
       {directMessageContactList.length > 0 &&

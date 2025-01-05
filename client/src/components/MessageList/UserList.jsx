@@ -12,41 +12,35 @@ import axiosInstance from "../../utils/axiosInstance";
 import { useShallow } from "zustand/shallow";
 import { useSocket } from "../../use-contexts/socketContext";
 import { isImage } from "../../utils/isImage";
-function UserList({ image, firstname, lastname, id }) {
-  const getMessagesURL = "http://localhost:5000/api/v1/messages/getMessages";
+function UserList({ image, firstname, lastname, id, children }) {
+  console.log("user list");
   const isMobile = useMediaQuery({ maxWidth: 1200 });
   const transitionPage = useMediaQuery({ maxWidth: 940 });
   const updateMessageReadStatusUrl =
     "http://localhost:5000/api/v1/messages/updateReadStatus";
-  const getLastMessageUrl =
-    "http://localhost:5000/api/v1/messages/getLastMessage";
-  const socket = useSocket();
+
   const {
     setSelectedChatType,
     setSelectedChatData,
-    selectedChatMessages,
     activeItem,
     setActiveItem,
     messageNotification,
     unreadMessages,
     firstUnreadMessage,
-    lastMessageMap,
     setUnreadMessages,
   } = useAppStore(
     useShallow((state) => ({
       setSelectedChatType: state.setSelectedChatType,
       setSelectedChatData: state.setSelectedChatData,
-      selectedChatMessages: state.selectedChatMessages,
       activeItem: state.activeItem,
       setActiveItem: state.setActiveItem,
       messageNotification: state.messageNotification,
       unreadMessages: state.unreadMessages,
       firstUnreadMessage: state.firstUnreadMessage,
-      lastMessageMap: state.lastMessageMap,
       setUnreadMessages: state.setUnreadMessages,
     }))
   );
-  const handleDirectMessageClick = (id) => {
+  const handleDirectMessageClick = () => {
     setActiveItem(id);
   };
   const clearNotifications = async () => {
@@ -93,75 +87,17 @@ function UserList({ image, firstname, lastname, id }) {
   useEffect(() => {
     console.log(firstUnreadMessage);
   }, [firstUnreadMessage]);
-  const setLastMessageMap = (contactid, lastMessage) => {
-    useAppStore.setState((prev) => ({
-      lastMessageMap: new Map(prev.lastMessageMap).set(contactid, lastMessage),
-    }));
-  };
-  useEffect(() => {
-    const controller = new AbortController();
-    const getLastContactMessage = async () => {
-      try {
-        const res = await axiosInstance.post(
-          getLastMessageUrl,
-          { contactId: id },
-          { withCredentials: true, signal: controller.signal }
-        );
-        if (res.data && res.status === 200) {
-          const {
-            data: {
-              lastMessage: [message],
-            },
-          } = res;
-          console.log(message);
-
-          if (message !== undefined) {
-            const { messages } = message;
-            if (messages.messageType === "text") {
-              setLastMessageMap(id, {
-                type: "text",
-                message: messages.content,
-              });
-            }
-            if (messages.messageType === "file") {
-              setLastMessageMap(id, {
-                type: "file",
-                message: messages.fileUrl[messages.fileUrl.length - 1],
-              });
-            }
-            if (messages.messageType === "combined") {
-              setLastMessageMap(id, {
-                type: "combined",
-                message: messages.contentAndFile.text,
-              });
-            }
-          } else {
-            setLastMessageMap(id, {
-              type: "empty",
-              message: "No messages in chat",
-            });
-          }
-        }
-      } catch (error) {
-        console.log(error);
-        console.log(error?.response?.data?.msg);
-      }
-    };
-    getLastContactMessage();
-    return () => {
-      controller.abort();
-    };
-  }, [id]);
 
   return (
     <button
       className={`relative flex w-full items-center 
-     px-4 py-2 border border-solid border-transparent rounded-lg hover:border-white ${
-       activeItem === id ? "bg-white text-black" : ""
-     }`}
+     px-4 py-2 border border-solid border-transparent rounded-lg hover:border-white
+   ${activeItem === id ? "bg-white text-black" : ""}
+
+     `}
       onClick={() => {
         if (activeItem !== id) {
-          handleDirectMessageClick(id);
+          handleDirectMessageClick();
           setSelectedChatType("contact");
           setSelectedChatData({
             image,
@@ -194,52 +130,7 @@ function UserList({ image, firstname, lastname, id }) {
         >
           {firstname} {lastname}
         </p>
-        {lastMessageMap &&
-          (lastMessageMap.get(id) !== undefined || null) &&
-          lastMessageMap.get(id).type === "text" && (
-            <p className={`items-end flex text-xs font-semibold`}>
-              {lastMessageMap.get(id).message}
-            </p>
-          )}
-        {lastMessageMap &&
-          (lastMessageMap.get(id) !== undefined || null) &&
-          lastMessageMap.get(id).type === "empty" && (
-            <p className={`items-end flex italic text-xs font-semibold`}>
-              {lastMessageMap.get(id).message}
-            </p>
-          )}
-        {lastMessageMap &&
-          (lastMessageMap.get(id) !== undefined || null) &&
-          lastMessageMap.get(id).type === "combined" && (
-            <p className={`items-end flex text-xs font-semibold`}>
-              {lastMessageMap.get(id).message}
-            </p>
-          )}
-        {lastMessageMap &&
-          (lastMessageMap.get(id) !== undefined || null) &&
-          lastMessageMap.get(id).type === "file" && (
-            <div className="flex space-x-1 items-center font-semibold">
-              {isImage(lastMessageMap.get(id).message) ? (
-                <>
-                  <img
-                    className="w-6"
-                    src={activeItem === id ? pictureIconBlack : pictureIcon}
-                    alt=""
-                  ></img>
-                  <span className="text-xs">Image</span>
-                </>
-              ) : (
-                <>
-                  <img
-                    className="w-4"
-                    src={activeItem === id ? fileIconBlack : fileIcon}
-                    alt=""
-                  ></img>
-                  <span className="text-xs">File</span>
-                </>
-              )}
-            </div>
-          )}
+        {children}
       </div>
       {messageNotification &&
         (messageNotification.get(id) !== undefined || null) &&

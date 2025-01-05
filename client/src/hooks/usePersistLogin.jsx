@@ -14,12 +14,14 @@ export default function PersistLogin() {
     const validateRefresh = async () => {
       try {
         await refresh();
+        console.log(authInfo);
       } catch (error) {
         console.log(error);
       } finally {
         setIsLoading(false);
       }
     };
+    // if (authInfo)
     !authInfo?.token ? validateRefresh() : setIsLoading(false);
   }, []);
   return isLoading ? <div>loading...</div> : <Outlet />;
