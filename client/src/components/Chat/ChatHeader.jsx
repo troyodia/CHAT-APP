@@ -8,8 +8,7 @@ import settings from "../../images/icons/settingsIcon.png";
 import { useEffect, useRef, useState } from "react";
 import { useAppStore } from "../../store/index.js";
 import { shallow, useShallow } from "zustand/shallow";
-import phoneCallIcon from "../../images/icons/telephone.png";
-import videoCallIcon from "../../images/icons/videoCallIcon.png";
+
 import axiosInstance from "../../utils/axiosInstance.js";
 import { useSocket } from "../../use-contexts/socketContext.jsx";
 export default function ChatHeader() {
@@ -21,8 +20,6 @@ export default function ChatHeader() {
     setActiveItem,
     closeChat,
     setToggleSettings,
-    setVoiceCall,
-    setVideoCall,
     isOnline,
     blockedContacts,
     setBlockedContacts,
@@ -33,8 +30,6 @@ export default function ChatHeader() {
       setActiveItem: state.setActiveItem,
       closeChat: state.closeChat,
       setToggleSettings: state.setToggleSettings,
-      setVoiceCall: state.setVoiceCall,
-      setVideoCall: state.setVideoCall,
       isOnline: state.isOnline,
       blockedContacts: state.blockedContacts,
       setBlockedContacts: state.setBlockedContacts,
@@ -108,42 +103,7 @@ export default function ChatHeader() {
   useEffect(() => {
     console.log(blockedContacts);
   }, [blockedContacts]);
-  const handleVoiceCall = () => {
-    setVoiceCall({
-      ...selectedChatData,
-      type: "out-going",
-      callType: "voice",
-      roomId: Date.now(),
-    });
-  };
-  const handleVideoCall = () => {
-    setVideoCall({
-      ...selectedChatData,
-      type: "out-going",
-      callType: "video",
-      roomId: Date.now(),
-    });
-  };
-  useEffect(() => {
-    if (socket) {
-      const setIsOnline = useAppStore.getState().setIsOnline;
 
-      const handleOfflineFunc = (data) => {
-        console.log(data);
-        console.log("contact offline");
-        setIsOnline(false);
-      };
-      const handleOnlineFunc = (data) => {
-        setIsOnline(true);
-      };
-      socket.on("contact-offline", handleOfflineFunc);
-      socket.on("contact-online", handleOnlineFunc);
-      return () => {
-        socket.off("contact-offline", handleOfflineFunc);
-        socket.off("contact-online", handleOnlineFunc);
-      };
-    }
-  }, [socket]);
   useEffect(() => {
     const selectedChatData = useAppStore.getState().selectedChatData;
     const setIsOnline = useAppStore.getState().setIsOnline;
@@ -206,17 +166,8 @@ export default function ChatHeader() {
           <img src={cancel} alt=""></img>
         </button>
       </div>
-      <div className="mr-6 ml-auto">
-        <button className="w-7" onClick={handleVoiceCall}>
-          <img src={phoneCallIcon} alt=""></img>
-        </button>
-      </div>
-      <div className="mr-6 pt-1">
-        <button className="w-10" onClick={handleVideoCall}>
-          <img src={videoCallIcon} alt=""></img>
-        </button>
-      </div>
-      <div className="flex mr-6 relative group">
+
+      <div className="flex mr-6 relative group  ml-auto">
         <button
           className="w-6 "
           onClick={() => {

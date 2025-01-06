@@ -1,28 +1,11 @@
-import React, { useEffect, useRef, useState, Suspense, lazy } from "react";
-import replyIcon from "../../../images/icons/reply.png";
-import replyRightIcon from "../../../images/icons/replyright.png";
-import fileImage from "../../../images/icons/myfile.png";
-import downloadIcon from "../../../images/icons/download.png";
-import closeIcon from "../../../images/icons/close.png";
+import React, { useEffect, useRef } from "react";
 import rasengan from "../../../images/icons/newrasengan.png";
-import repliedIconFlip from "../../../images/icons/replyIconFlip.png";
-
 import { useAppStore } from "../../../store";
-import dayjs from "dayjs";
 import axiosInstance from "../../../utils/axiosInstance";
-import { isImage } from "../../../utils/isImage";
-import { v4 as uuidv4 } from "uuid";
-import axios from "axios";
-
 import { useShallow } from "zustand/shallow";
-// import VoiceMessage from "./VoiceMessage";
-
-// const VoiceMessage = lazy(() => import("./VoiceMessage"));
 
 export default function MessageContainer({ renderMessages, renderFullScreen }) {
-  console.log("Mesage container");
-  const endRef = useRef();
-
+  const endRef = useRef(null);
   const getMessagesURL = "http://localhost:5000/api/v1/messages/getMessages";
 
   const {
@@ -41,7 +24,10 @@ export default function MessageContainer({ renderMessages, renderFullScreen }) {
     }))
   );
   useEffect(() => {
-    if (endRef.current) endRef.current.scrollIntoView({ behaviour: "smooth" });
+    if (endRef.current && selectedChatMessages)
+      endRef.current.scrollIntoView({
+        behaviour: "smooth",
+      });
   }, [selectedChatMessages]);
 
   useEffect(() => {
@@ -72,11 +58,11 @@ export default function MessageContainer({ renderMessages, renderFullScreen }) {
 
   return (
     <div
-      className=" flex flex-col w-full h-full  bg-[#0E0E10] overflow-auto scrollbar-hidden scrollbar-hidden::-webkit-scrollbar  pb-8"
+      className=" flex flex-col w-full h-full bg-[#0E0E10] overflow-auto scrollbar-hidden scrollbar-hidden::-webkit-scrollbar"
       id="chat-box"
     >
       {renderMessages}
-      <div className="" ref={endRef}></div>
+      <div className="mt-8" ref={endRef}></div>
       {isFullScreen && renderFullScreen}
 
       {isDownloading && (

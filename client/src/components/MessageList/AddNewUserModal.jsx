@@ -33,11 +33,6 @@ export default function AddNewUserModal() {
       setActiveItem: state.setActiveItem,
     }))
   );
-  const updateContactList = (contact) => {
-    if (contact) {
-      setDirectMessageContactList([...directMessageContactList, ...contact]);
-    }
-  };
   useEffect(() => {
     const controller = new AbortController();
     const searchContacts = async () => {
@@ -48,7 +43,6 @@ export default function AddNewUserModal() {
           { withCredentials: true, signal: controller.signal }
         );
         if (res.data && res.status === 200) {
-          // console.log(res.data.users);
           setSearchedContacts([...res.data.users]);
         }
       } catch (error) {
@@ -61,6 +55,11 @@ export default function AddNewUserModal() {
       controller.abort();
     };
   }, [search]);
+  const updateContactList = (contact) => {
+    if (contact) {
+      setDirectMessageContactList([...directMessageContactList, ...contact]);
+    }
+  };
   const addToContactList = async (contactId) => {
     try {
       const res = await axiosInstance.post(

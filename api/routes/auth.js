@@ -7,7 +7,6 @@ const {
   createProfile,
   addProfileImage,
   deleteProfileImage,
-  generateZegoToken,
   getOnlinestatus,
 } = require("../contollers/auth");
 const refreshAccessToken = require("../contollers/refreshTokenController");
@@ -24,6 +23,5 @@ router
 router.route("/delete-profile-image").delete(authorize, deleteProfileImage);
 
 router.route("/refresh").get(refreshAccessToken);
-router.route("/generate-Zego-Token").get(authorize, generateZegoToken);
 router.route("/isOnline").post(authorize, getOnlinestatus);
 module.exports = router;

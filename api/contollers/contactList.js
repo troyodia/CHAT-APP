@@ -3,13 +3,6 @@ const { BadRequestError } = require("../errors");
 const Contacts = require("../models/Contacts");
 const User = require("../models/User");
 
-// const createContactList = async (req, res) => {
-//   if (!req.body) {
-//     throw new BadRequestError("please provide contact details");
-//   }
-//   const contactList = await Contacts.create({ ...req.body });
-//   res.status(StatusCodes.OK).json({ contactList });
-// };
 const createContactList = async (req, res) => {
   if (!req.body) {
     throw new BadRequestError("please provide contact details");
@@ -23,7 +16,7 @@ const createContactList = async (req, res) => {
       "email image firstname lastname _id"
     );
     console.log(contact);
-    const userWithContactList = await User.findOneAndUpdate(
+    await User.findOneAndUpdate(
       { _id: req.user.userId },
       { $addToSet: { contactList: req.body.contactId } },
       { new: true }

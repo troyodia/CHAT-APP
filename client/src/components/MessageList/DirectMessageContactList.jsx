@@ -115,7 +115,7 @@ function DirectMessageContactList() {
     setDMListSearchResultsArr(searchedContactArr);
   }, [dmSearch]);
   return (
-    <div className="w-full bg-[#0E0E10] rounded-lg space-y-2 max-h-56 overflow-auto scrollbar-hidden scrollbar-hidden::-webkit-scrollbar">
+    <div className=" w-full bg-[#0E0E10] rounded-lg space-y-2 max-h-[420px] overflow-y-auto scrollbar-hidden scrollbar-hidden::-webkit-scrollbar">
       {directMessageContactList.length > 0 &&
         dmListSearchResultsArr.length < 1 &&
         dmSearch === "" &&

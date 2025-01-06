@@ -14,7 +14,6 @@ export default function PersistLogin() {
     const validateRefresh = async () => {
       try {
         await refresh();
-        console.log(authInfo);
       } catch (error) {
         console.log(error);
       } finally {

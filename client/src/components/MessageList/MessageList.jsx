@@ -1,38 +1,27 @@
 import rasengan from "../../images/icons/newrasengan.png";
 
 import { useMediaQuery } from "react-responsive";
-
-import UserList from "./UserList";
-import AddNewUserModal from "./AddNewUserModal";
-import AddNewChannelModal from "./AddNewChannel";
-
-import SideBarFooter from "./SideBarFooter";
-import DirectMessageSection from "./DirectMessageSection";
-import ChannelSection from "./ChannelSection";
 import { useAppStore } from "../../store";
 import { useShallow } from "zustand/shallow";
 export default function MessageList({
   directMessageSection,
-  channelSection,
   sideBarFooter,
   addNewUserModal,
-  addNewChannelModal,
 }) {
   const isMobile = useMediaQuery({ maxWidth: 1200 });
   const transitionPage = useMediaQuery({ maxWidth: 940 });
   const lg = useMediaQuery({ maxWidth: 1006 });
   const md = useMediaQuery({ maxWidth: 768 });
 
-  const { displayChannelModal, displayDirectMessageModal } = useAppStore(
+  const { displayDirectMessageModal } = useAppStore(
     useShallow((state) => ({
-      displayChannelModal: state.displayChannelModal,
       displayDirectMessageModal: state.displayDirectMessageModal,
     }))
   );
   return (
     <>
       <div
-        className={`relative flex flex-col items-center ${
+        className={`relative flex flex-col items-center h-screen ${
           transitionPage ? "w-full" : lg ? "w-[350px]" : "w-[450px]"
         }  border-0 bg-[#010103]`}
       >
@@ -47,11 +36,9 @@ export default function MessageList({
           <div className="font-bold text-3xl">Rasengan</div>
         </div>
         {directMessageSection}
-        {channelSection}
         {sideBarFooter}
       </div>
       {displayDirectMessageModal && addNewUserModal}
-      {displayChannelModal && addNewChannelModal}
     </>
   );
 }
