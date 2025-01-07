@@ -58,7 +58,7 @@ export default function MessageContainer({ renderMessages, renderFullScreen }) {
 
   return (
     <div
-      className=" flex flex-col w-full h-full bg-[#0E0E10] overflow-auto scrollbar-hidden scrollbar-hidden::-webkit-scrollbar"
+      className=" flex flex-col flex-grow w-full h-full bg-[#0E0E10] overflow-auto scrollbar-hidden scrollbar-hidden::-webkit-scrollbar"
       id="chat-box"
     >
       {renderMessages}

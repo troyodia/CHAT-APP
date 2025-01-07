@@ -68,7 +68,7 @@ export default function SideBarFooter() {
       </div>
       <div className="flex space-x-3 ml-auto">
         <button
-          className={`group relative ${transitionPage ? "w-7" : "w-5"}`}
+          className={`group relative w-5`}
           onClick={() => {
             navigate("/profile", {
               state: {
@@ -85,12 +85,7 @@ export default function SideBarFooter() {
             Edit Profile
           </span>
         </button>
-        <button
-          className={`group relative ${
-            transitionPage ? "w-14 pt-1" : "w-10 pt-1"
-          }`}
-          onClick={loggOutUser}
-        >
+        <button className={`group relative w-10 pt-1`} onClick={loggOutUser}>
           <img src={logout} alt=""></img>
           <span
             className=" w-16 p-2 bottom-4 left-1/2 -translate-x-1/2 -translate-y-1/2 

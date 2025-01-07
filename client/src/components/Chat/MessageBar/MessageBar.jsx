@@ -23,6 +23,8 @@ export default function MessageBar() {
   const [userBlocked, setUserBlocked] = useState(false);
   const checkifBlockedUrl =
     "http://localhost:5000/api/v1/contact/checkifBlocked";
+  const responsiveIcons = useMediaQuery({ maxWidth: 600 });
+
   const {
     selectedChatData,
     userInfo,
@@ -123,7 +125,7 @@ export default function MessageBar() {
       {uploadedFilesMap.get(selectedChatData.id) !== undefined &&
         uploadedFilesMap.get(selectedChatData.id).length > 0 &&
         !audioRecordingMap.get(selectedChatData.id) && (
-          <div className=" flex shrink bg-[#0E0E10] w-[600px] gap-x-6 overflow-auto p-3 h-20">
+          <div className=" flex shrink bg-[#0E0E10] border max-w-80  gap-x-6 overflow-auto p-3 h-20">
             {uploadedFilesMap.get(selectedChatData.id).map((file) => {
               return isImage(file) ? (
                 <div className="w-14  relative flex shrink-0 " key={uuidv4()}>
@@ -281,7 +283,9 @@ export default function MessageBar() {
             </div>
           </div>
           <button
-            className={`mx-7 w-8 flex shrink-0 ${
+            className={`${
+              responsiveIcons ? "mx-4" : "mx-7"
+            } w-8 flex shrink-0 ${
               replyMap.get(selectedChatData.id) !== undefined &&
               replyMap.get(selectedChatData.id)
                 ? "mt-9"

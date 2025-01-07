@@ -7,61 +7,9 @@ import { useMediaQuery } from "react-responsive";
 import Rasengan from "./Rasengan";
 import CanvasLoader from "./CanvasLoader";
 export default function EmptyChat() {
-  // const controls = useControls("Rasengan", {
-  //   positionX: {
-  //     value: 2.5,
-  //     min: -10,
-  //     max: 10,
-  //   },
-  //   positionY: {
-  //     value: 2.5,
-  //     min: -10,
-  //     max: 10,
-  //   },
-  //   positionZ: {
-  //     value: 2.5,
-  //     min: -10,
-  //     max: 10,
-  //   },
-  //   rotationX: {
-  //     value: 0,
-  //     min: -10,
-  //     max: 10,
-  //   },
-  //   rotationY: {
-  //     value: 0,
-  //     min: -10,
-  //     max: 10,
-  //   },
-  //   rotationZ: {
-  //     value: 0,
-  //     min: -10,
-  //     max: 10,
-  //   },
-  //   scale: {
-  //     value: 1,
-  //     min: 0.1,
-  //     max: 10,
-  //   },
-  // });
   const isMobile = useMediaQuery({ maxWidth: 1200 });
   const transitionPage = useMediaQuery({ maxWidth: 940 });
 
-  // const OrbitControlsComponent = () => {
-  //   const {
-  //     camera,
-  //     gl: { domElement },
-  //   } = useThree();
-  //   const controls = useRef();
-  //   useFrame((state) => controls.current.update());
-  //   return (
-  //     <OrbitControls
-  //       enableZoom={false}
-  //       ref={controls}
-  //       args={[camera, domElement]}
-  //     ></OrbitControls>
-  //   );
-  // };
   return (
     <div
       className={`relative flex-1 flex-col min-h-screen ${

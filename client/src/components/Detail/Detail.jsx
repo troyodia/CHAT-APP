@@ -1,10 +1,9 @@
-import defaultImg from "../../images/default.png";
 import arrowUp from "../../images/icons/uparrow.png";
 import arrowDown from "../../images/icons/downarrow.png";
-import plusIcon from "../../images/icons/plus.png";
-import minusIcon from "../../images/icons/minus.png";
 import downloadIcon from "../../images/icons/download.png";
 import fileImage from "../../images/icons/myfile.png";
+import rasengan from "../../images/icons/newrasengan.png";
+import cancel from "../../images/icons/cancelround.png";
 
 import { useCallback, useEffect, useState } from "react";
 import { useAppStore } from "../../store";
@@ -12,6 +11,7 @@ import { shallow, useShallow } from "zustand/shallow";
 import axiosInstance from "../../utils/axiosInstance";
 import { isImage } from "../../utils/isImage";
 import { v4 as uuidv4 } from "uuid";
+import { useMediaQuery } from "react-responsive";
 
 export default function Detail() {
   const getMessagesURL = "http://localhost:5000/api/v1/messages/getMessages";
@@ -21,8 +21,14 @@ export default function Detail() {
 
   const [filesArr, setFilesArr] = useState([]);
   const [imagesArr, setImagesArr] = useState([]);
-
+  const hideDetailScreenSize = useMediaQuery({ maxWidth: 810 });
+  const toggleSettings = useAppStore((state) => state.toggleSettings, shallow);
+  const setToggleSettings = useAppStore(
+    (state) => state.setToggleSettings,
+    shallow
+  );
   const downloadFile = useAppStore((state) => state.downloadFile, shallow);
+  const isDownloading = useAppStore((state) => state.isDownloading, shallow);
   const handleSetFileArray = useCallback(
     (imageArrCopy, filesArrCopy, files) => {
       files.forEach((file) => {
@@ -86,12 +92,21 @@ export default function Detail() {
       controller.abort();
     };
   }, [handleSetFileArray, selectedChatData, setSelectedChatMessages]);
+  // ${hideDetailScreenSize && selectedChatData &&toggleSettings ? 'hidden' :'flex'}
 
   return (
-    <div className="flex flex-col items-center border border-y-0 border-r-0 border-l-white/30 ml-auto w-[300px]">
-      <div className="w-24 h-24 my-4">
+    <div
+      className={` relative flex flex-col items-center border border-y-0 border-r-0 border-l-white/30 ml-auto ${
+        hideDetailScreenSize ? "w-full" : "w-[250px]"
+      }`}
+    >
+      <div
+        className={`${hideDetailScreenSize ? "w-32 h-32" : "w-24 h-24"} my-4`}
+      >
         <img
-          className="w-24 h-24 rounded-full object-cover"
+          className={`${
+            hideDetailScreenSize ? "w-32 h-32" : "w-24 h-24"
+          } rounded-full object-cover`}
           src={`http://localhost:5000/uploads/profiles/${selectedChatData?.image}`}
           alt=""
         ></img>
@@ -120,7 +135,7 @@ export default function Detail() {
           </li>
           {imagesToggle
             ? imagesArr.length > 0 && (
-                <li className="flex w-full mb-8 h-52 overflow-auto scrollbar-hidden scrollbar-hidden::-webkit-scrollbar">
+                <li className="flex w-full mb-2 max-h-36 overflow-auto scrollbar-hidden scrollbar-hidden::-webkit-scrollbar">
                   <ul className="w-full list-none ">
                     {imagesArr.map((image) => {
                       return (
@@ -135,11 +150,11 @@ export default function Detail() {
                               alt=""
                             ></img>
                           </div>
-                          <div className="text-xs w-40 truncate mr-2">
+                          <div className=" flex shrink text-xs truncate mr-2">
                             {image}
                           </div>
                           <button
-                            className="w-6 h-6 rounded-full ml-auto  bg-white/10 flex justify-center items-center hover:border"
+                            className="w-6 h-6 rounded-full ml-auto  bg-white/10 flex shrink-0 justify-center items-center hover:border"
                             onClick={() => downloadFile(image)}
                           >
                             <img
@@ -156,7 +171,7 @@ export default function Detail() {
               )
             : ""}
 
-          <li className="flex w-full mb-8 font-semibold">
+          <li className="flex w-full mb-4 font-semibold">
             <div>Shared Files</div>
             <button
               className="w-6 h-6 rounded-full ml-auto bg-white/10 flex items-center justify-center"
@@ -173,7 +188,7 @@ export default function Detail() {
           </li>
           {filesToggle
             ? filesArr.length > 0 && (
-                <li className="flex w-full mb-8 h-48 overflow-auto scrollbar-hidden scrollbar-hidden::-webkit-scrollbar">
+                <li className="flex w-full mb-8 max-h-36  overflow-auto scrollbar-hidden scrollbar-hidden::-webkit-scrollbar">
                   <ul className="w-full list-none ">
                     {filesArr.map((file) => {
                       return (
@@ -184,11 +199,11 @@ export default function Detail() {
                           <div className="w-6 mr-2">
                             <img className="" src={fileImage} alt=""></img>
                           </div>
-                          <div className="text-xs w-40 truncate mr-2">
+                          <div className="text-xs flex shrink truncate mr-2">
                             {file}
                           </div>
                           <button
-                            className="w-6 h-6 rounded-full ml-auto  bg-white/10 flex  items-center hover:border"
+                            className="w-6 h-6 rounded-full ml-auto  bg-white/10 flex shrink-0 items-center hover:border"
                             onClick={() => downloadFile(file)}
                           >
                             <img
@@ -206,6 +221,22 @@ export default function Detail() {
             : ""}
         </ul>
       </div>
+      {hideDetailScreenSize && toggleSettings && (
+        <button
+          className="absolute top-6 right-6 w-10"
+          onClick={() => {
+            setToggleSettings(false);
+          }}
+        >
+          <img className="w-full" src={cancel} alt=""></img>
+        </button>
+      )}
+      {isDownloading && (
+        <div className="fixed flex justify-center items-center bottom-8 left-1/2 -translate-x-1/2  z-[3000] rounded-full px-5 py-3 bg-white">
+          <img className="rounded-lg w-8" src={rasengan} alt=""></img>
+          <div className="ml-4 text-lg text-white">Downloading...</div>
+        </div>
+      )}
     </div>
   );
 }

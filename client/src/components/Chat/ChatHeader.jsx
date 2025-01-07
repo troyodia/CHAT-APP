@@ -134,7 +134,7 @@ export default function ChatHeader() {
         <div className="w-16 h-16 ml-8 mr-4">
           {selectedChatData ? (
             <img
-              className="w-16 h-16 rounded-lg object-cover"
+              className="w-14 h-14 rounded-lg object-cover"
               src={`http://localhost:5000/uploads/profiles/${selectedChatData.image}`}
               alt=""
             ></img>
@@ -153,7 +153,7 @@ export default function ChatHeader() {
           </span>
         </div>
       </div>
-      <div className="flex ml-10">
+      <div className="flex ml-4">
         <button
           className="w-9 pt-1"
           onClick={() => {
@@ -186,7 +186,7 @@ export default function ChatHeader() {
           ></img>
           <span
             className=" w-16 p-2 top-8 left-1/2 -translate-x-1/2  
-        text-sm text-black bg-white hidden group-hover:flex group-hover:justify-center absolute rounded-lg capitalize"
+        text-sm text-black bg-white hidden group-hover:flex group-hover:justify-center absolute rounded-lg capitalize z-30"
           >
             {!blockedContacts.includes(selectedChatData.id)
               ? "Block " + selectedChatData.firstname

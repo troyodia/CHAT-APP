@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useAppStore } from "../../store";
 import { useMediaQuery } from "react-responsive";
 import { useState } from "react";
@@ -16,6 +16,7 @@ export default function DirectMessageSection() {
     dmSearch,
     setDMSearch,
     setDMListSearchResultsArr,
+    activeItem,
   } = useAppStore(
     useShallow((state) => ({
       displayDirectMessageModal: state.displayDirectMessageModal,
@@ -23,10 +24,21 @@ export default function DirectMessageSection() {
       dmSearch: state.dmSearch,
       setDMSearch: state.setDMSearch,
       setDMListSearchResultsArr: state.setDMListSearchResultsArr,
+      activeItem: state.activeItem,
     }))
   );
   const isMobile = useMediaQuery({ maxWidth: 1200 });
   const transitionPage = useMediaQuery({ maxWidth: 940 });
+  useEffect(() => {
+    const setDMListSearchResultsArr =
+      useAppStore.getState().setDMListSearchResultsArr;
+    const setDMSearch = useAppStore.getState().setDMSearch;
+    if (activeItem !== undefined) {
+      setDMSearch("");
+      setShowSearch(false);
+      setDMListSearchResultsArr([]);
+    }
+  }, [activeItem]);
   return (
     <div className="flex flex-col w-full items-center px-10 mb-10">
       <div className="flex w-full mb-4">

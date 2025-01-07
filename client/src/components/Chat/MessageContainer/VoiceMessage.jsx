@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import WaveSurfer from "wavesurfer.js";
 import pauseImage from "../../../images/icons/pauseIcon.png";
 import playIcon from "../../../images/icons/play.png";
-
+import { useMediaQuery } from "react-responsive";
 function VoiceMessage({ file, isSender }) {
   // console.log("voice message");
   const [isPlaying, setIsPlaying] = useState(false);
@@ -14,6 +14,7 @@ function VoiceMessage({ file, isSender }) {
 
   const waveFormRef = useRef(null);
   const waveForm = useRef(null);
+  const responsiveImageSize = useMediaQuery({ maxWidth: 600 });
 
   useEffect(() => {
     if (waveForm.current === null) {
@@ -91,7 +92,11 @@ function VoiceMessage({ file, isSender }) {
         </button>
       )}
       <div className="relative">
-        <div className="w-72" ref={waveFormRef} id="waveform"></div>
+        <div
+          className={`${responsiveImageSize ? "w-52" : "w-72"}`}
+          ref={waveFormRef}
+          id="waveform"
+        ></div>
         <div
           className={`absolute ${
             !isSender && "right-0"

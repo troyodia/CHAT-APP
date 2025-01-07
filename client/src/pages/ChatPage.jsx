@@ -1,12 +1,9 @@
 import { useCallback, useEffect, useState } from "react";
-import Chat from "../components/Chat/Chat";
-import Detail from "../components/Detail/Detail";
-import MessageList from "../components/MessageList/MessageList";
-import EmptyChat from "../components/EmptyChat/EmptyChat";
 import { useAppStore } from "../store";
 import { shallow, useShallow } from "zustand/shallow";
 import { useSocket } from "../use-contexts/socketContext";
 import axiosInstance from "../utils/axiosInstance";
+import { useMediaQuery } from "react-responsive";
 
 export default function ChatPage({ emptyChat, chat, detail, messageList }) {
   const updateMessageReadStatusUrl =

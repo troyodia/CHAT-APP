@@ -36,21 +36,6 @@ export default function RenderMessages() {
         key={message._id}
         showDate={showDate}
         timeStamps={message.timeStamps}
-        // messageSender={message.sender}
-        // isSender={isSender}
-        // messageReply={message.reply}
-        // replySender={message.reply?.sender}
-        // repliedText={message.reply?.repliedText}
-        // repliedFile={message.reply?.repliedFile}
-        // repliedMessageRef={message.reply?.messageRef}
-        // messageType={message.messageType}
-        // messageContent={message.content}
-        // messageId={message._id}
-        // isRecording={message.isRecording}
-        // isUnread={message.isUnread}
-        // messageFiles={message.fileUrl}
-        // combinedMessageFiles={message.contentAndFile?.files}
-        // combinedMessageText={message.contentAndFile?.text}
       >
         <RenderUnreadMessages
           messageSender={message.sender}
@@ -67,13 +52,6 @@ export default function RenderMessages() {
           repliedText={message.reply?.repliedText}
           messageReply={message.reply}
         >
-          {/* <RepliedMessageRef
-            repliedMessageRef={message.reply?.messageRef}
-            repliedFile={message.reply?.repliedFile}
-            replySender={message.reply?.sender}
-            repliedText={message.reply?.repliedText}
-            messageReply={message.reply}
-          /> */}
           <RenderMessageType
             messageType={message.messageType}
             messageSender={message.sender}

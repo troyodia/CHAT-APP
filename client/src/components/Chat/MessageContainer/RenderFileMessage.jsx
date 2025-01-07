@@ -2,10 +2,9 @@ import React from "react";
 import fileImage from "../../../images/icons/myfile.png";
 import downloadIcon from "../../../images/icons/download.png";
 import { isImage } from "../../../utils/isImage";
-// import { useState } from "react";
 import { useAppStore } from "../../../store";
 import { useShallow } from "zustand/shallow";
-import axios from "axios";
+import { useMediaQuery } from "react-responsive";
 import { Suspense } from "react";
 import { lazy } from "react";
 const VoiceMessage = lazy(() => import("./VoiceMessage"));
@@ -20,6 +19,8 @@ export default function RenderFileMessage({ file, isSender, isRecording }) {
       setFullScreenParams: state.setFullScreenParams,
     }))
   );
+  const responsiveImageSize = useMediaQuery({ maxWidth: 600 });
+
   return (
     <>
       {isImage(file) && (
@@ -33,7 +34,11 @@ export default function RenderFileMessage({ file, isSender, isRecording }) {
             <img
               className={`${
                 isSender ? "border-sky-500 " : "border-white/30"
-              } rounded-3xl max-w-[400px] max-h-[400px] object-contain border border-solid cursor-pointer`}
+              } rounded-3xl ${
+                responsiveImageSize
+                  ? "max-w-[280px] max-h-[280px]"
+                  : "max-w-[350px] max-h-[350px]"
+              } object-contain border border-solid cursor-pointer`}
               src={`http://localhost:5000/uploads/files/${file}`}
               alt=""
             ></img>
@@ -47,26 +52,30 @@ export default function RenderFileMessage({ file, isSender, isRecording }) {
         </div>
       )}
       {isRecording && (
-        // {childern}
-        // <div></div>
         <Suspense fallback={<div>loading..</div>}>
           <VoiceMessage file={file} isSender={isSender}></VoiceMessage>
         </Suspense>
       )}
       {!isImage(file) && !isRecording && (
         <div
-          className={`flex items-center justify-between border border-solid rounded-md px-6 py-2 w-[350px] bg-white/10 mb-2 ${
+          className={`flex items-center justify-between border border-solid rounded-md px-6 py-2  ${
+            responsiveImageSize ? "w-[220px] space-x-3" : "w-[300px] space-x-4"
+          } bg-white/10 mb-2 ${
             isSender ? "border-sky-500 " : "border-white/30"
           }`}
         >
-          <div className="flex items-center justify-center w-10 h-10 rounded-full bg-black/60">
+          <div className="flex shrink-0 items-center justify-center w-10 h-10 rounded-full bg-black/60">
             <img className="w-6" src={fileImage} alt=""></img>
           </div>
-          <div className=" w-[150px] text-lg text-[#F5DEB3] break-all">
+          <div
+            className={`${
+              responsiveImageSize ? "w-[90px] text-base" : "w-[150px] text-lg"
+            }  text-[#F5DEB3] break-all line-clamp-3`}
+          >
             {file}
           </div>
           <button
-            className="flex items-center justify-center w-10 h-10 rounded-full bg-black/60"
+            className="flex items-center shrink-0 justify-center w-10 h-10 rounded-full bg-black/60"
             onClick={() => downloadFile(file)}
           >
             <img className="w-8" src={downloadIcon} alt=""></img>

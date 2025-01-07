@@ -11,35 +11,75 @@ export default function MessageList({
   sideBarFooter,
   addNewUserModal,
 }) {
-  const isMobile = useMediaQuery({ maxWidth: 1200 });
   const transitionPage = useMediaQuery({ maxWidth: 940 });
-  const lg = useMediaQuery({ maxWidth: 1006 });
-  const md = useMediaQuery({ maxWidth: 768 });
+  const rasenganResponsive = useMediaQuery({ maxWidth: 1150 });
   const rasenganRef = useRef();
-  const { displayDirectMessageModal } = useAppStore(
+  const { displayDirectMessageModal, selectedChatType } = useAppStore(
     useShallow((state) => ({
       displayDirectMessageModal: state.displayDirectMessageModal,
+      selectedChatType: state.selectedChatType,
     }))
   );
+  const hideContactListScreenSize = useMediaQuery({ maxWidth: 1070 });
+  const changeTitleResponsive = useMediaQuery({ maxWidth: 499 });
+
   useGSAP(() => {
-    gsap.to(rasenganRef.current, {
-      x: 100,
-      duration: 3,
-      repeat: -1,
-      yoyo: true,
-      // ease: "bounce.inOut",
-      ease: "steps(10)",
+    let mm = gsap.matchMedia();
+    mm.add("(max-width: 499px)", () => {
+      gsap.to(rasenganRef.current, {
+        rotate: 360,
+        duration: 2,
+        delay: 0.5,
+        repeat: -1,
+        yoyo: true,
+        ease: "bounce.inOut",
+      });
+    });
+    mm.add("(min-width: 500px) and (max-width: 941px)", () => {
+      gsap.to(rasenganRef.current, {
+        x: 200,
+        duration: 2,
+        repeat: -1,
+        yoyo: true,
+        ease: "steps(8)",
+        // ease: "bounce.inOut",
+      });
+    });
+    mm.add("(min-width: 940px) and (max-width: 1150px)", () => {
+      gsap.to(rasenganRef.current, {
+        rotate: 360,
+        duration: 2,
+        delay: 0.5,
+        repeat: -1,
+        yoyo: true,
+        ease: "bounce.inOut",
+      });
+    });
+    mm.add("(min-width: 1151px)", () => {
+      gsap.to(rasenganRef.current, {
+        x: 80,
+        duration: 1.5,
+        repeat: -1,
+        yoyo: true,
+        ease: "bounce.inOut",
+      });
     });
   });
+
   return (
     <>
       <div
-        className={`relative flex flex-col items-center  h-screen ${
-          transitionPage ? "w-full" : lg ? "w-[350px]" : "w-[450px]"
-        }  border-0 bg-[#010103]`}
+        className={`relative  flex-col items-center ${
+          transitionPage ? "w-full" : "max-w-[400px] w-[400px]"
+        } h-screen ${
+          hideContactListScreenSize && selectedChatType !== undefined
+            ? "hidden"
+            : "flex"
+        }
+         border-0 bg-[#010103]`}
       >
         <div className="flex items-center w-full mt-2 mb-10">
-          <div className="w-20 ml-4">
+          <div className={` w-20 ml-4`}>
             <img
               // className="transition ease-in-out delay-150 duration-300 hover:scale-[1.1]"
               src={rasengan}
@@ -47,7 +87,15 @@ export default function MessageList({
               ref={rasenganRef}
             ></img>
           </div>
-          <div className=" ml-auto mr-24 font-bold text-3xl ">Rasengan</div>
+          <div
+            className={`   ${rasenganResponsive ? "ml-4" : "ml-auto mr-20"} ${
+              transitionPage ? "mr-auto ml-56" : ""
+            } 
+            ${changeTitleResponsive && transitionPage ? "ml-24" : ""}
+  font-bold text-3xl  `}
+          >
+            Rasengan
+          </div>
         </div>
         {directMessageSection}
         {sideBarFooter}

@@ -7,6 +7,8 @@ export default function SendMessageButton() {
   const socket = useSocket();
   const isTablet = useMediaQuery({ maxWidth: 1400 });
   const isSmall = useMediaQuery({ maxWidth: 1140 });
+  const responsiveIcons = useMediaQuery({ maxWidth: 600 });
+
   const {
     selectedChatType,
     selectedChatData,
@@ -88,12 +90,8 @@ export default function SendMessageButton() {
   };
   return (
     <button
-      className={`flex text-black ml-auto mr-4 justify-center rounded ${
-        isSmall
-          ? "text-lg px-5 py-2"
-          : isTablet
-          ? "text-lg px-6 py-3"
-          : "text-xl px-7 py-4"
+      className={`flex text-black ml-auto mr-4 justify-center rounded py-4 ${
+        isSmall ? "text-lg px-5" : isTablet ? "text-lg px-6" : "text-xl px-7"
       } ${
         (messageMap.get(selectedChatData.id) !== undefined &&
           messageMap.get(selectedChatData.id)) ||
@@ -106,7 +104,7 @@ export default function SendMessageButton() {
         replyMap.get(selectedChatData.id)
           ? "mt-9"
           : ""
-      }
+      } ${responsiveIcons && "px-3 text-base"}
               font-bold `}
       onClick={() => {
         if (

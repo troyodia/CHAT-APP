@@ -1,17 +1,11 @@
-import React, { useCallback } from "react";
-import { useEffect, useState } from "react";
-import defaultImg from "../../images/default.jpeg";
-import pictureIcon from "../../images/icons/picture.png";
-import fileIcon from "../../images/icons/file-Icon.png";
-import pictureIconBlack from "../../images/icons/pictureIconBlack.png";
-import fileIconBlack from "../../images/icons/file-Icon-black.png";
+import React, { useEffect } from "react";
+
 import exclamationIcon from "../../images/icons/exclamationIcon.png";
 import { useMediaQuery } from "react-responsive";
 import { useAppStore } from "../../store";
 import axiosInstance from "../../utils/axiosInstance";
 import { useShallow } from "zustand/shallow";
-import { useSocket } from "../../use-contexts/socketContext";
-import { isImage } from "../../utils/isImage";
+
 function UserList({ image, firstname, lastname, id, children }) {
   console.log("user list");
   const isMobile = useMediaQuery({ maxWidth: 1200 });
