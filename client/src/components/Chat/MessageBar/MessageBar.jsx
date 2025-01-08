@@ -1,8 +1,6 @@
-import { useEffect, useRef, useState } from "react";
-import uploadFile from "../../../images/icons/uploadfile.png";
+import { useEffect, useState } from "react";
 import microphoneIcon from "../../../images/icons/microphone.png";
 import emojiIcon from "../../../images/icons/emoji.png";
-import Picker from "emoji-picker-react";
 import { useAppStore } from "../../../store";
 import { useSocket } from "../../../use-contexts/socketContext";
 import axiosInstance from "../../../utils/axiosInstance";
@@ -20,7 +18,6 @@ export default function MessageBar() {
   console.log("message bar");
   const [displayEmojiPicker, setDisplayEmojiPicker] = useState(false);
   const socket = useSocket();
-  const [userBlocked, setUserBlocked] = useState(false);
   const checkifBlockedUrl =
     "http://localhost:5000/api/v1/contact/checkifBlocked";
   const responsiveIcons = useMediaQuery({ maxWidth: 600 });
@@ -34,7 +31,7 @@ export default function MessageBar() {
     replyMap,
     blockedContacts,
     messageMap,
-    setDisableReplyButton,
+    blockedByUser,
   } = useAppStore(
     useShallow((state) => ({
       selectedChatData: state.selectedChatData,
@@ -46,7 +43,7 @@ export default function MessageBar() {
       replyMap: state.replyMap,
       blockedContacts: state.blockedContacts,
       messageMap: state.messageMap,
-      setDisableReplyButton: state.setDisableReplyButton,
+      blockedByUser: state.blockedByUser,
     }))
   );
 
@@ -66,6 +63,7 @@ export default function MessageBar() {
   };
   useEffect(() => {
     const controller = new AbortController();
+    const setBlockedByUser = useAppStore.getState().setBlockedByUser;
     const handleCheckedifBlocked = async () => {
       try {
         const res = await axiosInstance.post(
@@ -77,8 +75,7 @@ export default function MessageBar() {
           }
         );
         if (res.data && res.status === 200) {
-          setUserBlocked(res.data.isBlocked);
-          setDisableReplyButton(res.data.isBlocked);
+          setBlockedByUser(res.data.isBlocked);
         }
       } catch (error) {
         console.log(error?.response?.data?.msg);
@@ -90,11 +87,16 @@ export default function MessageBar() {
     return () => {
       controller.abort();
     };
-  }, [selectedChatData, setDisableReplyButton]);
+  }, [selectedChatData]);
+  useEffect(() => {
+    console.log(blockedByUser);
+  }, [blockedByUser]);
   useEffect(() => {
     if (socket && selectedChatData) {
+      const setBlockedByUser = useAppStore.getState().setBlockedByUser;
+
       const handleBlockedStatus = (data) => {
-        setUserBlocked(data);
+        setBlockedByUser(data);
         useAppStore.setState((prev) => ({
           uploadedFilesMap: new Map(prev.uploadedFilesMap).set(
             selectedChatData.id,
@@ -179,15 +181,15 @@ export default function MessageBar() {
                 : ""
             }`}
           >
-            <UploadFileButton userBlocked={userBlocked} />
+            <UploadFileButton blockedByUser={blockedByUser} />
             {(messageMap.get(selectedChatData.id) === undefined ||
               !messageMap.get(selectedChatData.id)) &&
               (uploadedFilesMap.get(selectedChatData.id) === undefined ||
                 uploadedFilesMap.get(selectedChatData.id).length < 1) && (
                 <button
                   className={`w-7  hover:outline hover:outline-1 hover:outline-dashed ${
-                    (blockedContacts.includes(selectedChatData.id) ||
-                      userBlocked) &&
+                    (blockedContacts?.includes(selectedChatData.id) ||
+                      blockedByUser) &&
                     "cursor-not-allowed"
                   }`} //pt-1
                   onClick={() => {
@@ -198,13 +200,21 @@ export default function MessageBar() {
                       ),
                     }));
                   }}
+                  disabled={
+                    (blockedContacts &&
+                      blockedContacts.includes(selectedChatData.id)) ||
+                    blockedByUser
+                  }
                 >
                   <img src={microphoneIcon} alt=""></img>
                 </button>
               )}
           </div>
           <div className="flex flex-col w-full">
-            {replyMap.get(selectedChatData.id) !== undefined &&
+            {(blockedContacts.length > 0
+              ? !blockedContacts.includes(selectedChatData.id)
+              : !blockedByUser) &&
+              replyMap.get(selectedChatData.id) !== undefined &&
               replyMap.get(selectedChatData.id) && (
                 <div className="flex items-center ml-6 text-white text-lg italic bg-white/20 pl-2 py-1 rounded-md">
                   <button
@@ -235,7 +245,8 @@ export default function MessageBar() {
                 }
                 className={` w-full py-4 pl-4 bg-white/5 rounded-md outline-none text-lg 
             focus:outline focus:outline-3 focus:outline-dashed focus:outline-white min-w-2 ${
-              (blockedContacts.includes(selectedChatData.id) || userBlocked) &&
+              (blockedContacts?.includes(selectedChatData.id) ||
+                blockedByUser) &&
               "cursor-not-allowed"
             }`}
                 placeholder="Type a message"
@@ -251,17 +262,17 @@ export default function MessageBar() {
                 disabled={
                   (blockedContacts &&
                     blockedContacts.includes(selectedChatData.id)) ||
-                  userBlocked
+                  blockedByUser
                 }
               ></input>
-              {(blockedContacts.includes(selectedChatData.id) ||
-                userBlocked) && (
+              {(blockedContacts?.includes(selectedChatData.id) ||
+                blockedByUser) && (
                 <span
                   className="justify-center text-center p-2 -top-14 left-1/2 -translate-x-1/2  
         text-sm text-black bg-white hidden group-hover:flex group-hover:justify-center absolute rounded-lg"
                 >
-                  {userBlocked &&
-                  !blockedContacts.includes(selectedChatData.id) ? (
+                  {blockedByUser &&
+                  !blockedContacts?.includes(selectedChatData.id) ? (
                     <span>
                       Cannot send any messages, you have been{" "}
                       <span className="font-semibold">Blocked</span> by{" "}
@@ -291,12 +302,18 @@ export default function MessageBar() {
                 ? "mt-9"
                 : ""
             } ${
-              (blockedContacts.includes(selectedChatData.id) || userBlocked) &&
+              (blockedContacts.includes(selectedChatData.id) ||
+                blockedByUser) &&
               "cursor-not-allowed"
             }`}
             onClick={() => {
               setDisplayEmojiPicker(true);
             }}
+            disabled={
+              (blockedContacts &&
+                blockedContacts.includes(selectedChatData.id)) ||
+              blockedByUser
+            }
           >
             <img src={emojiIcon} alt=""></img>
           </button>

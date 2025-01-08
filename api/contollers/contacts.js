@@ -29,6 +29,12 @@ const searchContact = async (req, res) => {
   res.status(StatusCodes.OK).json({ users });
   //   console.log(searchRegex);
 };
+const getBlockedContacts = async (req, res) => {
+  const blockedContacts = await User.findOne({ _id: req.user.userId }).select(
+    "blockedContacts"
+  );
+  res.status(StatusCodes.OK).json({ blockedContacts });
+};
 const blockContact = async (req, res) => {
   const { contact } = req.body;
   if (!contact) {
@@ -61,14 +67,20 @@ const checkifBlocked = async (req, res) => {
   const blockedContactsArr = await User.find({ _id: contact }).select(
     "blockedContacts"
   );
+  const userBlockContactArr = await User.find({ _id: req.user.userId }).select(
+    "blockedContacts"
+  );
   const isBlocked = blockedContactsArr[0].blockedContacts.includes(
     req.user.userId
   );
-  res.status(StatusCodes.OK).json({ isBlocked });
+  const isBlockedByYou =
+    userBlockContactArr[0].blockedContacts.includes(contact);
+  res.status(StatusCodes.OK).json({ isBlocked, isBlockedByYou });
 };
 module.exports = {
   searchContact,
   blockContact,
   unBlockContact,
   checkifBlocked,
+  getBlockedContacts,
 };

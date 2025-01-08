@@ -18,49 +18,33 @@ function ReplyButton({
     (state) => state.selectedChatData,
     shallow
   );
-  const disableReplyButton = useAppStore(
-    (state) => state.disableReplyButton,
+  const blockedByUser = useAppStore((state) => state.blockedByUser, shallow);
+  const blockedContacts = useAppStore(
+    (state) => state.blockedContacts,
     shallow
   );
-
-  const socket = useSocket();
-
-  useEffect(() => {
-    if (socket) {
-      const setDisableReplyButton =
-        useAppStore.getState().setDisableReplyButton;
-      const handleBlockedStatus = (data) => {
-        setDisableReplyButton(data);
-      };
-      socket.on("update-block-status", handleBlockedStatus);
-      return () => {
-        socket.off("update-block-status", handleBlockedStatus);
-      };
-    }
-  }, [socket]);
   return (
-    // !blockedContacts.includes(selectedChatData.id) &&
     <button
-      className={`w-full group  ${
-        !disableReplyButton ? " cursor-pointer" : "cursor-default"
-      }`}
+      className={`w-full group  cursor-pointer `}
       onClick={() => {
-        useAppStore.setState((prev) => ({
-          replyMap: new Map(prev.replyMap).set(selectedChatData.id, {
-            sender: sender,
-            repliedText: replyContent,
-            repliedFile: replyFile,
-            messageRef: messageRefId,
-          }),
-        }));
+        if (
+          blockedContacts.length > 0
+            ? !blockedContacts.includes(selectedChatData.id)
+            : !blockedByUser
+        )
+          useAppStore.setState((prev) => ({
+            replyMap: new Map(prev.replyMap).set(selectedChatData.id, {
+              sender: sender,
+              repliedText: replyContent,
+              repliedFile: replyFile,
+              messageRef: messageRefId,
+            }),
+          }));
       }}
     >
       <img
-        className={`w-6 invisible ${
-          !disableReplyButton
-            ? "group-hover:visible group-hover/files:visible group-hover/texts:visible"
-            : ""
-        } ${!isSender && "ml-auto"}`}
+        className={`w-6 invisible group-hover:visible group-hover/files:visible group-hover/texts:visible 
+         ${!isSender && "ml-auto"}`}
         src={isSender ? replyRightIcon : replyIcon}
         alt=""
       ></img>

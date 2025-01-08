@@ -79,7 +79,7 @@ export default function MessageList({
          border-0 bg-[#010103]`}
       >
         <div className="flex items-center w-full mt-2 mb-10">
-          <div className={` w-20 ml-4`}>
+          <div className={` w-20 ml-4 `}>
             <img
               // className="transition ease-in-out delay-150 duration-300 hover:scale-[1.1]"
               src={rasengan}
@@ -88,10 +88,10 @@ export default function MessageList({
             ></img>
           </div>
           <div
-            className={`   ${rasenganResponsive ? "ml-4" : "ml-auto mr-20"} ${
-              transitionPage ? "mr-auto ml-56" : ""
+            className={`${rasenganResponsive ? "ml-4" : "ml-auto mr-20"} ${
+              transitionPage && !changeTitleResponsive && " ml-56"
             } 
-            ${changeTitleResponsive && transitionPage ? "ml-24" : ""}
+          ${changeTitleResponsive && "ml-2"}
   font-bold text-3xl  `}
           >
             Rasengan

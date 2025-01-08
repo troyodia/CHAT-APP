@@ -1,5 +1,4 @@
 import React from "react";
-// import block from "../../images/icons/blockUserIcon.png";
 import block from "../../images/icons/blockLock.png";
 import unblock from "../../images/icons/unblocklock.png";
 
@@ -14,6 +13,10 @@ import { useSocket } from "../../use-contexts/socketContext.jsx";
 export default function ChatHeader() {
   console.log("child");
   const getOnlinestatusUrl = "http://localhost:5000/api/v1/auth/isOnline";
+  const getBlockedContactsUrl =
+    "http://localhost:5000/api/v1/contact/getBlockedContacts";
+  const blockUserUrl = "http://localhost:5000/api/v1/contact/blockContact";
+  const unblockUserUrl = "http://localhost:5000/api/v1/contact/unblockContact";
   const socket = useSocket();
   const {
     selectedChatData,
@@ -23,7 +26,6 @@ export default function ChatHeader() {
     isOnline,
     blockedContacts,
     setBlockedContacts,
-    setDisableReplyButton,
   } = useAppStore(
     useShallow((state) => ({
       selectedChatData: state.selectedChatData,
@@ -33,12 +35,31 @@ export default function ChatHeader() {
       isOnline: state.isOnline,
       blockedContacts: state.blockedContacts,
       setBlockedContacts: state.setBlockedContacts,
-      setDisableReplyButton: state.setDisableReplyButton,
     }))
   );
+  useEffect(() => {
+    const setBlockedContacts = useAppStore.getState().setBlockedContacts;
+    const controller = new AbortController();
 
-  const blockUserUrl = "http://localhost:5000/api/v1/contact/blockContact";
-  const unblockUserUrl = "http://localhost:5000/api/v1/contact/unblockContact";
+    const getBlockedContacts = async () => {
+      try {
+        const res = await axiosInstance.get(getBlockedContactsUrl, {
+          withCredentials: true,
+          signal: controller.signal,
+        });
+        if (res.data && res.status === 200) {
+          console.log(res.data.blockedContacts.blockedContacts);
+          setBlockedContacts(res.data.blockedContacts.blockedContacts);
+        }
+      } catch (error) {
+        console.log(error?.response?.data?.msg);
+      }
+    };
+    getBlockedContacts();
+    return () => {
+      controller.abort();
+    };
+  }, []);
   const blockUserSocket = (data) => {
     socket.emit("user-block-status", {
       contact: selectedChatData.id,
@@ -57,7 +78,6 @@ export default function ChatHeader() {
         const { blockedContacts } = res.data.blockedContactsArr;
         setBlockedContacts(blockedContacts);
         blockUserSocket(blockedContacts);
-        setDisableReplyButton(true);
         useAppStore.setState((prev) => ({
           uploadedFilesMap: new Map(prev.uploadedFilesMap).set(
             selectedChatData.id,
@@ -82,11 +102,12 @@ export default function ChatHeader() {
     }
   };
   const handleUnBlockUser = async () => {
+    const controller = new AbortController();
     try {
       const res = await axiosInstance.post(
         unblockUserUrl,
         { contact: selectedChatData.id },
-        { withCredentials: true }
+        { withCredentials: true, signal: controller.signal }
       );
       if (res.data && res.status === 200) {
         console.log(res.data.blockedContactsArr);
@@ -94,11 +115,13 @@ export default function ChatHeader() {
           res.data.blockedContactsArr;
         setBlockedContacts(userBlockedContacts);
         blockUserSocket(userBlockedContacts);
-        setDisableReplyButton(false);
       }
     } catch (error) {
       console.log(error?.response?.data?.msg);
     }
+    return () => {
+      controller.abort();
+    };
   };
   useEffect(() => {
     console.log(blockedContacts);

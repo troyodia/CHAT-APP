@@ -3,7 +3,7 @@ import axiosInstance from "../../../utils/axiosInstance";
 import { useAppStore } from "../../../store";
 import uploadFile from "../../../images/icons/uploadfile.png";
 
-export default function UploadFileButton({ userBlocked }) {
+export default function UploadFileButton({ blockedByUser }) {
   const url = "http://localhost:5000/api/v1/messages/uploadFile";
   const fileUploadRef = useRef(null);
   const selectedChatData = useAppStore((state) => state.selectedChatData);
@@ -52,10 +52,14 @@ export default function UploadFileButton({ userBlocked }) {
       <button
         type="submit"
         className={`w-8 ${
-          (blockedContacts.includes(selectedChatData.id) || userBlocked) &&
+          (blockedContacts?.includes(selectedChatData.id) || blockedByUser) &&
           "cursor-not-allowed"
         }`}
         onClick={handleFileAttachementClick}
+        disabled={
+          (blockedContacts && blockedContacts.includes(selectedChatData.id)) ||
+          blockedByUser
+        }
       >
         <img
           className="p-1 hover:outline hover:outline-1 hover:outline-dashed"
