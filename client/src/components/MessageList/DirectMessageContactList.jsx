@@ -3,17 +3,16 @@ import UserList from "./UserList";
 import axiosInstance from "../../utils/axiosInstance";
 import React, { useCallback, useEffect, useRef } from "react";
 import { useShallow } from "zustand/shallow";
-import { useState } from "react";
 import dayjs from "dayjs";
 import RenderLastMessage from "./RenderLastMessage";
+import {
+  GET_UNREAD_MESSAGES_URL,
+  GET_CONTACT_LIST_URL,
+} from "../../utils/URLS";
 function DirectMessageContactList() {
-  const contactListUrl =
-    "http://localhost:5000/api/v1/contactList/getContactList";
-  const unreadMessagesUrl =
-    "http://localhost:5000/api/v1/messages/unreadMessages";
   const getContactsAbortControllerRef = useRef(null);
   const getUnreadAbortControllerRef = useRef(null);
-
+  console.log(process.env.REACT_APP_LOCAL_BASE_URL, GET_CONTACT_LIST_URL);
   const { directMessageContactList, dmSearch, dmListSearchResultsArr } =
     useAppStore(
       useShallow((state) => ({
@@ -27,7 +26,7 @@ function DirectMessageContactList() {
     getContactsAbortControllerRef.current = new AbortController();
     getUnreadAbortControllerRef.current = new AbortController();
     try {
-      const res = await axiosInstance.get(contactListUrl, {
+      const res = await axiosInstance.get(GET_CONTACT_LIST_URL, {
         withCredentials: true,
         signal: getContactsAbortControllerRef.current.signal,
       });
@@ -36,7 +35,7 @@ function DirectMessageContactList() {
         const setUnreadMessages = useAppStore.getState().setUnreadMessages;
         let tempDate = "2011-01-01";
         try {
-          const res = await axiosInstance.get(unreadMessagesUrl, {
+          const res = await axiosInstance.get(GET_UNREAD_MESSAGES_URL, {
             withCredentials: true,
             signal: getUnreadAbortControllerRef.current.signal,
           });

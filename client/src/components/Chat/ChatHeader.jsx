@@ -1,22 +1,23 @@
-import React from "react";
 import block from "../../images/icons/blockLock.png";
 import unblock from "../../images/icons/unblocklock.png";
 
 import cancel from "../../images/icons/cancelround.png";
 import settings from "../../images/icons/settingsIcon.png";
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect } from "react";
 import { useAppStore } from "../../store/index.js";
-import { shallow, useShallow } from "zustand/shallow";
+import { useShallow } from "zustand/shallow";
 
 import axiosInstance from "../../utils/axiosInstance.js";
 import { useSocket } from "../../use-contexts/socketContext.jsx";
+import {
+  GET_ONLINE_STATUS_URL,
+  GET_BLOCKED_CONTACTS_URL,
+  BLOCK_CONTACT_URL,
+  UNBLOCK_CONTACT_URL,
+  AWS_BASE_FILE_PATH,
+} from "../../utils/URLS.js";
+
 export default function ChatHeader() {
-  console.log("child");
-  const getOnlinestatusUrl = "http://localhost:5000/api/v1/auth/isOnline";
-  const getBlockedContactsUrl =
-    "http://localhost:5000/api/v1/contact/getBlockedContacts";
-  const blockUserUrl = "http://localhost:5000/api/v1/contact/blockContact";
-  const unblockUserUrl = "http://localhost:5000/api/v1/contact/unblockContact";
   const socket = useSocket();
   const {
     selectedChatData,
@@ -43,7 +44,7 @@ export default function ChatHeader() {
 
     const getBlockedContacts = async () => {
       try {
-        const res = await axiosInstance.get(getBlockedContactsUrl, {
+        const res = await axiosInstance.get(GET_BLOCKED_CONTACTS_URL, {
           withCredentials: true,
           signal: controller.signal,
         });
@@ -69,7 +70,7 @@ export default function ChatHeader() {
   const handleBlockUser = async () => {
     try {
       const res = await axiosInstance.post(
-        blockUserUrl,
+        BLOCK_CONTACT_URL,
         { contact: selectedChatData.id },
         { withCredentials: true }
       );
@@ -105,7 +106,7 @@ export default function ChatHeader() {
     const controller = new AbortController();
     try {
       const res = await axiosInstance.post(
-        unblockUserUrl,
+        UNBLOCK_CONTACT_URL,
         { contact: selectedChatData.id },
         { withCredentials: true, signal: controller.signal }
       );
@@ -126,7 +127,25 @@ export default function ChatHeader() {
   useEffect(() => {
     console.log(blockedContacts);
   }, [blockedContacts]);
-
+  useEffect(() => {
+    if (socket) {
+      const setIsOnline = useAppStore.getState().setIsOnline;
+      const handleOfflineFunc = (data) => {
+        console.log(data);
+        console.log("contact offline");
+        setIsOnline(false);
+      };
+      const handleOnlineFunc = (data) => {
+        setIsOnline(true);
+      };
+      socket.on("contact-offline", handleOfflineFunc);
+      socket.on("contact-online", handleOnlineFunc);
+      return () => {
+        socket.off("contact-offline", handleOfflineFunc);
+        socket.off("contact-online", handleOnlineFunc);
+      };
+    }
+  }, [socket]);
   useEffect(() => {
     const selectedChatData = useAppStore.getState().selectedChatData;
     const setIsOnline = useAppStore.getState().setIsOnline;
@@ -134,7 +153,7 @@ export default function ChatHeader() {
     const getOnlinestatus = async () => {
       try {
         const res = await axiosInstance.post(
-          getOnlinestatusUrl,
+          GET_ONLINE_STATUS_URL,
           { contactId: selectedChatData.id },
           { withCredentials: true, signal: controller.signal }
         );
@@ -158,7 +177,7 @@ export default function ChatHeader() {
           {selectedChatData ? (
             <img
               className="w-14 h-14 rounded-lg object-cover"
-              src={`http://localhost:5000/uploads/profiles/${selectedChatData.image}`}
+              src={`${AWS_BASE_FILE_PATH}/profiles/${selectedChatData.image}`}
               alt=""
             ></img>
           ) : (

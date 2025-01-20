@@ -20,7 +20,7 @@ router.route("/profile").post(authorize, createProfile);
 router
   .route("/add-profile-image")
   .post(authorize, upload.single("image"), addProfileImage);
-router.route("/delete-profile-image").delete(authorize, deleteProfileImage);
+router.route("/delete-profile-image").post(authorize, deleteProfileImage);
 
 router.route("/refresh").get(refreshAccessToken);
 router.route("/isOnline").post(authorize, getOnlinestatus);

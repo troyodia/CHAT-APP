@@ -5,7 +5,14 @@ const socketSetUp = (server) => {
   const io = new Server(server, {
     cors: {
       credentials: true,
-      origin: "http://localhost:3000",
+      // origin: "http://localhost:3000",
+      origin: [
+        // "https://auth.localhost",
+        // "wss://auth.localhost",
+        "https://auth.localhost:*",
+        "http://localhost:3000",
+      ],
+      // origin: "*",
     },
   });
   const socketMap = new Map();
@@ -113,6 +120,11 @@ const socketSetUp = (server) => {
       socket.to(recipientSocketId).emit("update-block-status", data.status);
     }
   };
+  io.on("connection_error", (err) => {
+    console.log(err.code); // 3
+    console.log(err.message); // "Bad request"
+    console.log(err.context); //
+  });
   io.on("connection", (socket) => {
     console.log("socket on");
     const userId = socket.handshake.query.userId;

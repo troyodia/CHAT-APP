@@ -5,13 +5,14 @@ import { useMediaQuery } from "react-responsive";
 import { useAppStore } from "../../store";
 import axiosInstance from "../../utils/axiosInstance";
 import { useShallow } from "zustand/shallow";
-
+import {
+  UPDATE_MESSAGE_READ_STATUS_URL,
+  AWS_BASE_FILE_PATH,
+} from "../../utils/URLS";
 function UserList({ image, firstname, lastname, id, children }) {
   console.log("user list");
   const isMobile = useMediaQuery({ maxWidth: 1200 });
   const transitionPage = useMediaQuery({ maxWidth: 940 });
-  const updateMessageReadStatusUrl =
-    "http://localhost:5000/api/v1/messages/updateReadStatus";
 
   const {
     setSelectedChatType,
@@ -41,7 +42,7 @@ function UserList({ image, firstname, lastname, id, children }) {
     if (messageNotification.has(id)) {
       try {
         const res = await axiosInstance.post(
-          updateMessageReadStatusUrl,
+          UPDATE_MESSAGE_READ_STATUS_URL,
           {
             isUnread: false,
             messageId: undefined,
@@ -51,7 +52,6 @@ function UserList({ image, firstname, lastname, id, children }) {
           { withCredentials: true }
         );
         if (res.data && res.status === 200) {
-          // console.log(res.data.msg);
           useAppStore.setState((prev) => ({
             messageNotification: new Map(prev.messageNotification).set(id, 0),
           }));
@@ -106,7 +106,7 @@ function UserList({ image, firstname, lastname, id, children }) {
       <div className="w-10 h-10 ">
         <img
           className="w-10 h-10 object-cover rounded-lg"
-          src={`http://localhost:5000/uploads/profiles/${image}`}
+          src={`${AWS_BASE_FILE_PATH}/profiles/${image}`}
           alt=""
         ></img>
       </div>

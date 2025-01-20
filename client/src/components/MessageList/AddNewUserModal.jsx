@@ -1,21 +1,21 @@
-import { useEffect, useState } from "react";
-import Lottie from "react-lottie";
-import defaultImg from "../../images/default.jpeg";
+import { useEffect, useState, lazy, Suspense } from "react";
 import plusIcon from "../../images/icons/plus.png";
 import close from "../../images/icons/close.png";
 import axiosInstance from "../../utils/axiosInstance";
 import { useAppStore } from "../../store";
 import { useShallow } from "zustand/shallow";
-import { lazy, Suspense } from "react";
+import {
+  CREATE_CONTACT_LIST_URL,
+  SEARCH_CONTACT_LIST_URL,
+  AWS_BASE_FILE_PATH,
+} from "../../utils/URLS";
 const MyLottie = lazy(() => import("./MyLottie"));
+
 export default function AddNewUserModal() {
   const [search, setSearch] = useState("");
   const [searchedContacts, setSearchedContacts] = useState([]);
   const [cancelModal, setCancelModal] = useState(false);
 
-  const searchContactUrl = "http://localhost:5000/api/v1/contact/searchContact";
-  const contactListUrl =
-    "http://localhost:5000/api/v1/contactList/createContactList";
   const {
     setDisplayDirectMessageModal,
     setSelectedChatType,
@@ -38,7 +38,7 @@ export default function AddNewUserModal() {
     const searchContacts = async () => {
       try {
         const res = await axiosInstance.post(
-          searchContactUrl,
+          SEARCH_CONTACT_LIST_URL,
           { contact: search },
           { withCredentials: true, signal: controller.signal }
         );
@@ -63,7 +63,7 @@ export default function AddNewUserModal() {
   const addToContactList = async (contactId) => {
     try {
       const res = await axiosInstance.post(
-        contactListUrl,
+        CREATE_CONTACT_LIST_URL,
         { contactId },
         {
           withCredentials: true,
@@ -125,7 +125,7 @@ export default function AddNewUserModal() {
                   <div className="w-10 h-10 mr-4">
                     <img
                       className="w-full h-full object-cover rounded-lg"
-                      src={`http://localhost:5000/uploads/profiles/${contact.image}`}
+                      src={`${AWS_BASE_FILE_PATH}/profiles/${contact.image}`}
                       alt=""
                     ></img>
                   </div>

@@ -2,6 +2,8 @@ require("dotenv").config();
 const { StatusCodes } = require("http-status-codes");
 const User = require("../models/User");
 const { BadRequestError, UnauthenticatedError } = require("../errors");
+const { s3Upload, s3Delete } = require("../aws/s3Service");
+const uuid = require("uuid").v4;
 
 const register = async (req, res) => {
   const user = await User.create({
@@ -120,10 +122,13 @@ const createProfile = async (req, res) => {
 };
 const addProfileImage = async (req, res) => {
   if (!req.file) throw new BadRequestError("image not uploaded");
-  const { filename } = req.file;
+  const { originalname } = req.file;
+  const uniqueFileID = uuid();
+  const result = await s3Upload(req.file, "profiles", uniqueFileID);
+  console.log(result);
   const updateUser = await User.findOneAndUpdate(
     { _id: req.user.userId },
-    { image: filename },
+    { image: `${uniqueFileID}-${originalname}` },
     { runValidators: true, new: true }
   );
   console.log(req.file);
@@ -134,9 +139,13 @@ const addProfileImage = async (req, res) => {
     lastname: updateUser.lastname,
     image: updateUser.image,
     profileSetup: updateUser.profileSetup,
+    // result,
   });
 };
 const deleteProfileImage = async (req, res) => {
+  if (!req.body) throw new BadRequestError("file name not provided");
+  const result = await s3Delete(req.body.filename, "profiles");
+  console.log(result);
   await User.updateOne({ _id: req.user.userId }, { $unset: { image: 1 } });
   const updatedUser = await User.findOne({ _id: req.user.userId });
   res.status(StatusCodes.OK).json(updatedUser);

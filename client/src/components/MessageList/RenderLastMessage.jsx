@@ -6,10 +6,8 @@ import pictureIcon from "../../images/icons/picture.png";
 import fileIcon from "../../images/icons/file-Icon.png";
 import pictureIconBlack from "../../images/icons/pictureIconBlack.png";
 import fileIconBlack from "../../images/icons/file-Icon-black.png";
+import { GET_LAST_MESSAGE_URL } from "../../utils/URLS";
 function RenderLastMessage({ id }) {
-  const getLastMessageUrl =
-    "http://localhost:5000/api/v1/messages/getLastMessage";
-
   const lastMessageMap = useAppStore((state) => state.lastMessageMap);
   const activeItem = useAppStore((state) => state.activeItem);
   const setLastMessageMap = (contactid, lastMessage) => {
@@ -22,7 +20,7 @@ function RenderLastMessage({ id }) {
     const getLastContactMessage = async () => {
       try {
         const res = await axiosInstance.post(
-          getLastMessageUrl,
+          GET_LAST_MESSAGE_URL,
           { contactId: id },
           { withCredentials: true, signal: controller.signal }
         );

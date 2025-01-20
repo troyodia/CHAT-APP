@@ -1,17 +1,14 @@
-import React from "react";
+import React, { Suspense, lazy } from "react";
 import fileImage from "../../../images/icons/myfile.png";
 import downloadIcon from "../../../images/icons/download.png";
 import { isImage } from "../../../utils/isImage";
 import { useAppStore } from "../../../store";
 import { useShallow } from "zustand/shallow";
 import { useMediaQuery } from "react-responsive";
-import { Suspense } from "react";
-import { lazy } from "react";
+import { AWS_BASE_FILE_PATH } from "../../../utils/URLS";
 const VoiceMessage = lazy(() => import("./VoiceMessage"));
 
 export default function RenderFileMessage({ file, isSender, isRecording }) {
-  console.log("render file messages");
-
   const { downloadFile, setIsFullScreen, setFullScreenParams } = useAppStore(
     useShallow((state) => ({
       downloadFile: state.downloadFile,
@@ -39,7 +36,7 @@ export default function RenderFileMessage({ file, isSender, isRecording }) {
                   ? "max-w-[280px] max-h-[280px]"
                   : "max-w-[350px] max-h-[350px]"
               } object-contain border border-solid cursor-pointer`}
-              src={`http://localhost:5000/uploads/files/${file}`}
+              src={`${AWS_BASE_FILE_PATH}/messagefiles/${file}`}
               alt=""
             ></img>
           </button>

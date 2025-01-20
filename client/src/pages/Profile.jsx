@@ -1,35 +1,34 @@
-import { useEffect, useRef, useState } from "react";
-import axios from "axios";
-import { Navigate, useLocation, useNavigate } from "react-router-dom";
-import defaultImg from "../images/default.png";
+import { useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import UploadImage from "../components/UploadImage";
 import leftArrow from "../images/icons/arrow-left.png";
 import trash from "../images/icons/trash.png";
 import { toast } from "react-toastify";
 import axiosInstance from "../utils/axiosInstance";
+import { CREATE_PROFILE_URL, DELETE_PROFILE_IMAGE_URL } from "../utils/URLS";
 import { useAppStore } from "../store";
 export default function ProfileScreen() {
   const [firstname, setFirstname] = useState("");
   const [lastname, setLastname] = useState("");
   const [email, setEmail] = useState("");
-  const [error, setError] = useState("");
-  const [imgPath, setImgPath] = useState(defaultImg);
   const [imageData, setImageData] = useState("");
+  const [imagePath, setImagePath] = useState("");
   const navigate = useNavigate();
   const location = useLocation();
-  const urlProfile = "http://localhost:5000/api/v1/auth/profile";
-  const urlDelete = "http://localhost:5000/api/v1/auth/delete-profile-image";
 
   const createProfile = async () => {
     try {
       const res = await axiosInstance.post(
-        urlProfile,
+        CREATE_PROFILE_URL,
         { email, firstname, lastname },
         { withCredentials: true }
       );
       if (res.data && res.status === 200) {
         console.log(res.data);
         navigate("/chat-page");
+        useAppStore.setState((prev) => ({
+          authInfo: { ...prev.authInfo, profileSetup: true },
+        }));
         toast.success("Profile Completed!", {
           position: "bottom-right",
           autoClose: 5000,
@@ -110,14 +109,19 @@ export default function ProfileScreen() {
       }
     }
   };
-  const updateImgData = (imgData) => {
+  const updateImgData = (imgData, imagePath) => {
     setImageData(imgData);
+    setImagePath(imagePath);
   };
   const deleteProfileImage = async () => {
     try {
-      const res = await axiosInstance.delete(urlDelete, {
-        withCredentials: true,
-      });
+      const res = await axiosInstance.post(
+        DELETE_PROFILE_IMAGE_URL,
+        { filename: imagePath },
+        {
+          withCredentials: true,
+        }
+      );
       if (res.data && res.status === 200) {
         setImageData("");
       }
@@ -179,7 +183,6 @@ export default function ProfileScreen() {
               onSubmit={(e) => {
                 e.preventDefault();
                 validateProfile();
-                // naviagate("/profile");
               }}
             >
               <input

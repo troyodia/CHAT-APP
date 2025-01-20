@@ -4,6 +4,7 @@ import downloadIcon from "../../../images/icons/download.png";
 
 import { useAppStore } from "../../../store";
 import { useShallow } from "zustand/shallow";
+import { AWS_BASE_FILE_PATH } from "../../../utils/URLS";
 export default function RenderFullScreen() {
   const { downloadFile, setIsFullScreen, fullScreenParams } = useAppStore(
     useShallow((state) => ({
@@ -30,7 +31,7 @@ export default function RenderFullScreen() {
       </div>
       <img
         className="max-w-[600px] max-h-[600px] w-full object-contain"
-        src={`http://localhost:5000/uploads/files/${fullScreenParams}`}
+        src={`${AWS_BASE_FILE_PATH}/messagefiles/${fullScreenParams}`}
         alt=""
       ></img>
     </div>

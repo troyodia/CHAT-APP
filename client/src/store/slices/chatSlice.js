@@ -12,11 +12,6 @@ export const createChatSlice = (set, get) => ({
     set({ selectedChatMessages }),
   setToggleSettings: (toggleSettings) => set({ toggleSettings }),
   setIsOnline: (isOnline) => set({ isOnline }),
-
-  // setBlockedContacts: (blockedContacts) =>
-  //   set((state) => ({
-  //     blockedContacts: [...state.blockedContacts, ...blockedContacts],
-  //   })),
   setBlockedContacts: (blockedContacts) =>
     set({
       blockedContacts,

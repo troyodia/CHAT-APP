@@ -14,12 +14,12 @@ import { isImage } from "../../../utils/isImage";
 import Emoji from "./Emoji";
 import UploadFileButton from "./UploadFileButton";
 import SendMessageButton from "./SendMessageButton";
+import { CHECK_IF_BLOCKED_URL, AWS_BASE_FILE_PATH } from "../../../utils/URLS";
+
 export default function MessageBar() {
   console.log("message bar");
   const [displayEmojiPicker, setDisplayEmojiPicker] = useState(false);
   const socket = useSocket();
-  const checkifBlockedUrl =
-    "http://localhost:5000/api/v1/contact/checkifBlocked";
   const responsiveIcons = useMediaQuery({ maxWidth: 600 });
 
   const {
@@ -67,7 +67,7 @@ export default function MessageBar() {
     const handleCheckedifBlocked = async () => {
       try {
         const res = await axiosInstance.post(
-          checkifBlockedUrl,
+          CHECK_IF_BLOCKED_URL,
           { contact: selectedChatData.id },
           {
             withCredentials: true,
@@ -127,13 +127,13 @@ export default function MessageBar() {
       {uploadedFilesMap.get(selectedChatData.id) !== undefined &&
         uploadedFilesMap.get(selectedChatData.id).length > 0 &&
         !audioRecordingMap.get(selectedChatData.id) && (
-          <div className=" flex shrink bg-[#0E0E10] border max-w-80  gap-x-6 overflow-auto p-3 h-20">
+          <div className=" flex shrink bg-[#0E0E10] max-w-80  gap-x-6 overflow-auto p-3 h-20">
             {uploadedFilesMap.get(selectedChatData.id).map((file) => {
               return isImage(file) ? (
                 <div className="w-14  relative flex shrink-0 " key={uuidv4()}>
                   <img
                     className="rounded-lg  w-full object-cover"
-                    src={`http://localhost:5000/uploads/files/${file}`}
+                    src={`${AWS_BASE_FILE_PATH}/messagefiles/${file}`}
                     alt=""
                   ></img>
                   <button

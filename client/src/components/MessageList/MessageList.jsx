@@ -1,5 +1,4 @@
 import rasengan from "../../images/icons/newrasengan.png";
-
 import { useMediaQuery } from "react-responsive";
 import { useAppStore } from "../../store";
 import { useShallow } from "zustand/shallow";
@@ -42,7 +41,6 @@ export default function MessageList({
         repeat: -1,
         yoyo: true,
         ease: "steps(8)",
-        // ease: "bounce.inOut",
       });
     });
     mm.add("(min-width: 940px) and (max-width: 1150px)", () => {
@@ -80,19 +78,14 @@ export default function MessageList({
       >
         <div className="flex items-center w-full mt-2 mb-10">
           <div className={` w-20 ml-4 `}>
-            <img
-              // className="transition ease-in-out delay-150 duration-300 hover:scale-[1.1]"
-              src={rasengan}
-              alt=""
-              ref={rasenganRef}
-            ></img>
+            <img src={rasengan} alt="" ref={rasenganRef}></img>
           </div>
           <div
             className={`${rasenganResponsive ? "ml-4" : "ml-auto mr-20"} ${
               transitionPage && !changeTitleResponsive && " ml-56"
             } 
           ${changeTitleResponsive && "ml-2"}
-  font-bold text-3xl  `}
+            font-bold text-3xl  `}
           >
             Rasengan
           </div>

@@ -1,10 +1,11 @@
-import React, { useRef, useEffect } from "react";
+import React, { useRef } from "react";
 import axiosInstance from "../../../utils/axiosInstance";
 import { useAppStore } from "../../../store";
 import uploadFile from "../../../images/icons/uploadfile.png";
+import { UPLOAD_FILE_URL } from "../../../utils/URLS";
+import { toast } from "react-toastify";
 
 export default function UploadFileButton({ blockedByUser }) {
-  const url = "http://localhost:5000/api/v1/messages/uploadFile";
   const fileUploadRef = useRef(null);
   const selectedChatData = useAppStore((state) => state.selectedChatData);
   const blockedContacts = useAppStore((state) => state.blockedContacts);
@@ -23,28 +24,45 @@ export default function UploadFileButton({ blockedByUser }) {
     } else {
       console.log("no file");
     }
-    try {
-      const res = await axiosInstance.post(url, formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-        withCredentials: true,
-      });
-      if (res.data && res.status === 200) {
-        console.log(res.data.filePath);
+    const uploadedFilesMap = useAppStore.getState().uploadedFilesMap;
+    if (
+      uploadedFilesMap?.get(selectedChatData.id) === undefined ||
+      uploadedFilesMap?.get(selectedChatData.id).length < 3
+    ) {
+      try {
+        const res = await axiosInstance.post(UPLOAD_FILE_URL, formData, {
+          headers: { "Content-Type": "multipart/form-data" },
+          withCredentials: true,
+        });
+        if (res.data && res.status === 200) {
+          console.log(res.data.filePath);
 
-        useAppStore.setState((prev) => ({
-          uploadedFilesMap: new Map(prev.uploadedFilesMap).set(
-            selectedChatData.id,
-            [
-              ...(prev.uploadedFilesMap.get(selectedChatData.id) !== undefined
-                ? prev.uploadedFilesMap.get(selectedChatData.id)
-                : []),
-              res.data.filePath,
-            ]
-          ),
-        }));
+          useAppStore.setState((prev) => ({
+            uploadedFilesMap: new Map(prev.uploadedFilesMap).set(
+              selectedChatData.id,
+              [
+                ...(prev.uploadedFilesMap.get(selectedChatData.id) !== undefined
+                  ? prev.uploadedFilesMap.get(selectedChatData.id)
+                  : []),
+                res.data.filePath,
+              ]
+            ),
+          }));
+        }
+      } catch (error) {
+        console.log("file upload error", error?.response?.data?.msg);
       }
-    } catch (error) {
-      console.log("file upload error", error?.response?.data?.msg);
+    } else {
+      toast.error("Cannot upload more than 3 files at once", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+      });
     }
   };
   return (

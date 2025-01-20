@@ -1,15 +1,13 @@
 import axios from "axios";
-import { useEffect } from "react";
 import { useState } from "react";
-import { json, Link, useLocation, useNavigate } from "react-router-dom";
-import { ToastContainer, toast } from "react-toastify";
+import { useLocation, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import regsiterImage from "../images/signupimage.png";
 import eyeOPen from "../images/icons/eyeopen.png";
 import eyeClose from "../images/icons/eyeclosed.png";
 import { useAppStore } from "../store";
-import { shallow } from "zustand/shallow";
-import { useSocket } from "../use-contexts/socketContext";
+import { LOGIN_USER_URL, REGISTER_USER_URL } from "../utils/URLS";
 export default function LoginScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -19,9 +17,7 @@ export default function LoginScreen() {
   const [seeConfirm, setSeeConfirm] = useState(false);
   const naviagate = useNavigate();
   const location = useLocation();
-  const urlRegsiter = "http://localhost:5000/api/v1/auth/register";
-  const urlLogin = "http://localhost:5000/api/v1/auth/login";
-  const socket = useSocket();
+
   const setAuthinfo = useAppStore((state) => state.setAuthinfo);
   const signUpOrLoginUser = async (url) => {
     try {
@@ -71,7 +67,7 @@ export default function LoginScreen() {
   const validateEntrySignUp = () => {
     if (email && password && confirmPassword) {
       if (confirmPassword === password) {
-        signUpOrLoginUser(urlRegsiter);
+        signUpOrLoginUser(REGISTER_USER_URL);
       } else {
         toast.error("Passwords do not match", {
           position: "top-right",
@@ -126,7 +122,7 @@ export default function LoginScreen() {
 
   const validateEntryLogin = () => {
     if (email && password) {
-      signUpOrLoginUser(urlLogin);
+      signUpOrLoginUser(LOGIN_USER_URL);
     } else {
       if (!email) {
         toast.error("Please provide email", {

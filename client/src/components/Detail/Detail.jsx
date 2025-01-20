@@ -12,10 +12,8 @@ import axiosInstance from "../../utils/axiosInstance";
 import { isImage } from "../../utils/isImage";
 import { v4 as uuidv4 } from "uuid";
 import { useMediaQuery } from "react-responsive";
-
+import { GET_CHAT_MESSAGES, AWS_BASE_FILE_PATH } from "../../utils/URLS";
 export default function Detail() {
-  const getMessagesURL = "http://localhost:5000/api/v1/messages/getMessages";
-
   const [imagesToggle, setImagesToggle] = useState(false);
   const [filesToggle, setFilesToggle] = useState(false);
 
@@ -53,7 +51,7 @@ export default function Detail() {
     const getChatFiles = async () => {
       try {
         const res = await axiosInstance.post(
-          getMessagesURL,
+          GET_CHAT_MESSAGES,
           { contactId: selectedChatData.id },
           { withCredentials: true, signal: controller.signal }
         );
@@ -92,7 +90,6 @@ export default function Detail() {
       controller.abort();
     };
   }, [handleSetFileArray, selectedChatData, setSelectedChatMessages]);
-  // ${hideDetailScreenSize && selectedChatData &&toggleSettings ? 'hidden' :'flex'}
 
   return (
     <div
@@ -107,7 +104,7 @@ export default function Detail() {
           className={`${
             hideDetailScreenSize ? "w-32 h-32" : "w-24 h-24"
           } rounded-full object-cover`}
-          src={`http://localhost:5000/uploads/profiles/${selectedChatData?.image}`}
+          src={`${AWS_BASE_FILE_PATH}/profiles/${selectedChatData?.image}`}
           alt=""
         ></img>
       </div>
@@ -146,7 +143,7 @@ export default function Detail() {
                           <div className="w-10 h-10 mr-2">
                             <img
                               className="min-w-10 h-10 rounded-md object-cover "
-                              src={`http://localhost:5000/uploads/files/${image}`}
+                              src={`${AWS_BASE_FILE_PATH}/messagefiles/${image}`}
                               alt=""
                             ></img>
                           </div>
@@ -232,7 +229,7 @@ export default function Detail() {
         </button>
       )}
       {isDownloading && (
-        <div className="fixed flex justify-center items-center bottom-8 left-1/2 -translate-x-1/2  z-[3000] rounded-full px-5 py-3 bg-white">
+        <div className="fixed flex justify-center items-center bottom-8 left-1/2 -translate-x-1/2  z-[3000] rounded-full px-5 py-3 bg-black">
           <img className="rounded-lg w-8" src={rasengan} alt=""></img>
           <div className="ml-4 text-lg text-white">Downloading...</div>
         </div>

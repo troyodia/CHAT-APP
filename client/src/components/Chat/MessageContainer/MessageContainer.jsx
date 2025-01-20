@@ -3,10 +3,9 @@ import rasengan from "../../../images/icons/newrasengan.png";
 import { useAppStore } from "../../../store";
 import axiosInstance from "../../../utils/axiosInstance";
 import { useShallow } from "zustand/shallow";
-
+import { GET_CHAT_MESSAGES } from "../../../utils/URLS";
 export default function MessageContainer({ renderMessages, renderFullScreen }) {
   const endRef = useRef(null);
-  const getMessagesURL = "http://localhost:5000/api/v1/messages/getMessages";
 
   const {
     selectedChatMessages,
@@ -37,7 +36,7 @@ export default function MessageContainer({ renderMessages, renderFullScreen }) {
     const populateMessages = async () => {
       try {
         const res = await axiosInstance.post(
-          getMessagesURL,
+          GET_CHAT_MESSAGES,
           { contactId: selectedChatData.id },
           { withCredentials: true, signal: controller.signal }
         );

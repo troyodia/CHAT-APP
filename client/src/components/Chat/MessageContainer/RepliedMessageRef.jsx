@@ -4,6 +4,7 @@ import fileImage from "../../../images/icons/myfile.png";
 import { useAppStore } from "../../../store";
 import { useShallow } from "zustand/shallow";
 import { isImage } from "../../../utils/isImage";
+import { AWS_BASE_FILE_PATH } from "../../../utils/URLS";
 function RepliedMessageRef({
   repliedMessageRef,
   repliedFile,
@@ -66,7 +67,7 @@ function RepliedMessageRef({
           <div className="w-10 h-10">
             <img
               className=" w-full h-full object-cover rounded-md"
-              src={`http://localhost:5000/uploads/files/${repliedFile}`}
+              src={`${AWS_BASE_FILE_PATH}/messagefiles/${repliedFile}`}
               alt=""
             ></img>
           </div>

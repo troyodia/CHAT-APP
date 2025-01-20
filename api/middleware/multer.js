@@ -1,31 +1,24 @@
 const multer = require("multer");
-const path = require("path");
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, "uploads/profiles/");
-  },
-  filename: function (req, file, cb) {
-    cb(null, file.originalname + Date.now() + path.extname(file.originalname));
-  },
+
+const fileFilter = (req, file, cb) => {
+  console.log(file);
+  if (file.mimetype.split("/")[0] === "image") {
+    cb(null, true);
+  } else {
+    cb(new multer.MulterError("LIMIT_UNEXPECTED_FILE"), false);
+  }
+};
+const storage = multer.memoryStorage();
+const fileStorage = multer.memoryStorage();
+const audioFileStorage = multer.memoryStorage();
+const upload = multer({ storage, fileFilter, limits: { fileSize: 5000000 } });
+const fileUpload = multer({
+  storage: fileStorage,
+  limits: { fileSize: 5000000 },
 });
-const fileStorage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, "uploads/files/");
-  },
-  filename: function (req, file, cb) {
-    cb(null, file.originalname + Date.now() + path.extname(file.originalname));
-  },
+const audioFileUpload = multer({
+  storage: audioFileStorage,
+  limits: { fileSize: 5000000 },
 });
-const audioFileStorage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, "uploads/audioFiles/");
-  },
-  filename: function (req, file, cb) {
-    cb(null, file.originalname + Date.now() + path.extname(file.originalname));
-  },
-});
-const upload = multer({ storage });
-const fileUpload = multer({ storage: fileStorage });
-const audioFileUpload = multer({ storage: audioFileStorage });
 
 module.exports = { upload, fileUpload, audioFileUpload };

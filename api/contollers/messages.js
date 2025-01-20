@@ -1,6 +1,9 @@
 const { StatusCodes } = require("http-status-codes");
 const Message = require("../models/Message");
 const { default: mongoose } = require("mongoose");
+const { s3Upload, s3Delete, s3GetSignedUrl } = require("../aws/s3Service");
+const uuid = require("uuid").v4;
+
 const getMessages = async (req, res) => {
   if (!req.body) {
     throw new BadRequestError("cannot get messages");
@@ -18,22 +21,31 @@ const getMessages = async (req, res) => {
 };
 const uploadFile = async (req, res) => {
   if (!req.file) throw new BadRequestError("file not uploaded");
-  const { filename } = req.file;
-  console.log(req.file, filename);
-  res.status(StatusCodes.OK).json({ filePath: filename });
+  const { originalname } = req.file;
+  const uniqueFileID = uuid();
+  const result = await s3Upload(req.file, "messagefiles", uniqueFileID);
+  console.log(result);
+  console.log(req.file);
+  res
+    .status(StatusCodes.OK)
+    .json({ filePath: `${uniqueFileID}-${originalname}` });
+};
+const deleteFile = async (req, res) => {
+  if (!req.body) throw new BadRequestError("file name not provided");
+  const result = await s3Delete(req.body.filename, "messagefiles");
+  console.log(result);
+  res.status(StatusCodes.OK).json({ msg: "success" });
 };
 const updatedMessageReadStatus = async (req, res) => {
   const { isUnread, messageId, markAllAsRead, contactId } = req.body;
 
   if (markAllAsRead && contactId !== undefined) {
-    // console.log("all messages marked as read", contactId);
     await Message.updateMany(
       { sender: contactId, recipient: req.user.userId, isUnread: true },
       { $set: { isUnread: isUnread } }
     );
     return res.status(StatusCodes.OK).json({ msg: "updated read status" });
   }
-  // console.log("message updated ", messageId);
   const message = await Message.findByIdAndUpdate(
     { _id: messageId },
     { $set: { isUnread: isUnread } },
@@ -62,7 +74,6 @@ const getUnreadMessages = async (req, res) => {
     { $project: { _id: "$messages._id", sender: "$messages.sender" } },
   ]);
 
-  // console.log("aggregate", firstAgregate);
   res.status(StatusCodes.OK).json({
     unreadMessages,
     firstUnreadMessage: firstAgregate,
@@ -90,55 +101,12 @@ const getLastMessage = async (req, res) => {
   ]);
   console.log(contactId, lastMessage);
   res.status(StatusCodes.OK).json({ lastMessage });
-  //from mongo worked incase
-  // {
-  //   $match:
-  //     /**
-  //      * query: The query in MQL.
-  //      */
-  //     {
-  //       $or: [
-  //         {
-  //           recipient: ObjectId(
-  //             "673e52eb150905b52ce95403"
-  //           ),
-  //           sender: ObjectId(
-  //             "673e568f150905b52ce954db"
-  //           ),
-  //         },
-  //         {
-  //           recipient: ObjectId(
-  //             "673e568f150905b52ce954db"
-  //           ),
-  //           sender: ObjectId(
-  //             "673e52eb150905b52ce95403"
-  //           ),
-  //         },
-  //       ],
-  //     },
-  // },
-  // {
-  //   $sort:
-  //     /**
-  //      * Provide any number of field/order pairs.
-  //      */
-  //     {
-  //       timeStamps: 1,
-  //     },
-  // },
-  // {
-  //   $group:
-  //     /**
-  //      * _id: The id of the group.
-  //      * fieldN: The first field name.
-  //      */
-  //     {
-  //       _id: null,
-  //       message: {
-  //         $last: "$$ROOT",
-  //       },
-  //     },
-  // },
+};
+const getSignedUrl = async (req, res) => {
+  if (!req.body) throw new BadRequestError("file not provided");
+  const url = await s3GetSignedUrl(req.body.filename, "messagefiles");
+  console.log(url);
+  res.status(StatusCodes.OK).json({ url });
 };
 module.exports = {
   getMessages,
@@ -146,4 +114,6 @@ module.exports = {
   getUnreadMessages,
   updatedMessageReadStatus,
   getLastMessage,
+  deleteFile,
+  getSignedUrl,
 };

@@ -10,8 +10,8 @@ import axiosInstance from "../../utils/axiosInstance";
 import { useAppStore } from "../../store";
 import { useSocket } from "../../use-contexts/socketContext";
 import { useShallow } from "zustand/shallow";
+import { UPLOAD_AUDIO_FILE_URL } from "../../utils/URLS";
 export default function AudioRecorder() {
-  console.log("audio recorder");
   const [recordedAudio, setRecordedAudio] = useState(null);
 
   const [recordingDuration, setRecordingDuration] = useState(0);
@@ -25,33 +25,19 @@ export default function AudioRecorder() {
   const waveFormRef = useRef(null);
   const audioRef = useRef(null);
   const mediaRecorderRef = useRef(null);
-  const url = "http://localhost:5000/api/v1/messages/uploadAudioFile";
-  // const {
-  //   selectedChatData,
-  //   userInfo,
-  //   setUploadedFiles,
-  //   uploadedFiles,
-  //   reply,
-  //   setAudioRecording,
-  // } = useAppStore();
+  // const url = "http://localhost:5000/api/v1/messages/uploadAudioFile";
   const {
     selectedChatData,
     userInfo,
     setUploadedFiles,
     uploadedFiles,
-    reply,
     replyMap,
-    setAudioRecording,
-    audioRecordingMap,
   } = useAppStore(
     useShallow((state) => ({
       selectedChatData: state.selectedChatData,
       userInfo: state.userInfo,
       setUploadedFiles: state.setUploadedFiles,
       uploadedFiles: state.uploadedFiles,
-      reply: state.reply,
-      setAudioRecording: state.setAudioRecording,
-      audioRecordingMap: state.audioRecordingMap,
       replyMap: state.replyMap,
     }))
   );
@@ -158,14 +144,12 @@ export default function AudioRecorder() {
 
   const handlePlayRecording = () => {
     if (recordedAudio) {
-      // waveForm.stop();
       waveForm.play();
       recordedAudio.play();
       setIsPlaying(true);
     }
   };
   const handlePauseRecording = () => {
-    // waveForm.stop();
     waveForm.pause();
     recordedAudio.pause();
     setIsPlaying(false);
@@ -189,7 +173,7 @@ export default function AudioRecorder() {
       console.log("no audio file");
     }
     try {
-      const res = await axiosInstance.post(url, formData, {
+      const res = await axiosInstance.post(UPLOAD_AUDIO_FILE_URL, formData, {
         headers: { "Content-Type": "multipart/form-data" },
         withCredentials: true,
       });

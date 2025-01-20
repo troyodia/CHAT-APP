@@ -1,15 +1,14 @@
-import React from "react";
-import { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect } from "react";
 
 import WaveSurfer from "wavesurfer.js";
 import pauseImage from "../../../images/icons/pauseIcon.png";
 import playIcon from "../../../images/icons/play.png";
 import { useMediaQuery } from "react-responsive";
+import { AWS_BASE_FILE_PATH } from "../../../utils/URLS";
 function VoiceMessage({ file, isSender }) {
-  // console.log("voice message");
   const [isPlaying, setIsPlaying] = useState(false);
   const [audioMessage, setAudioMessage] = useState(null);
-  const [CurrentPlayBackTime, setCurrentPlayBackTime] = useState(0);
+  const [currentPlayBackTime, setCurrentPlayBackTime] = useState(0);
   const [totalRecordingTime, setTotalRecordingTime] = useState(0);
 
   const waveFormRef = useRef(null);
@@ -18,7 +17,6 @@ function VoiceMessage({ file, isSender }) {
 
   useEffect(() => {
     if (waveForm.current === null) {
-      // console.log("render");
       waveForm.current = WaveSurfer.create({
         container: waveFormRef.current,
         waveColor: "#ffffff",
@@ -35,9 +33,7 @@ function VoiceMessage({ file, isSender }) {
     }
   }, []);
   useEffect(() => {
-    // console.log("render");
-
-    const audioUrl = `http://localhost:5000/uploads/audioFiles/${file}`;
+    const audioUrl = `${AWS_BASE_FILE_PATH}/messagefiles/${file}`;
     const audio = new Audio(audioUrl);
     setAudioMessage(audio);
     waveForm?.current?.load(audioUrl).catch((err) => {
@@ -104,7 +100,7 @@ function VoiceMessage({ file, isSender }) {
         >
           <span className="ml-2">
             {formatRecordingTime(
-              isPlaying ? CurrentPlayBackTime : totalRecordingTime
+              isPlaying ? currentPlayBackTime : totalRecordingTime
             )}
           </span>
         </div>

@@ -1,13 +1,12 @@
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import plusIcon from "../images/icons/uploadwhite.png";
-import axios from "axios";
-import { toast } from "react-toastify";
+
 import axiosInstance from "../utils/axiosInstance";
+import { ADD_USER_PROFILE_IMAGE_URL } from "../utils/URLS";
+import { toast } from "react-toastify";
+
 export default function UploadImage({ updateImgData }) {
   const fileUploadRef = useRef("");
-  const [image, setImage] = useState("");
-  const url = "http://localhost:5000/api/v1/auth/add-profile-image";
-
   const handleFileUpload = (e) => {
     e.preventDefault();
     if (fileUploadRef.current) fileUploadRef.current.click();
@@ -15,39 +14,48 @@ export default function UploadImage({ updateImgData }) {
   const uploadImageDisplay = async () => {
     const file = fileUploadRef.current.files[0];
     const formData = new FormData();
+    const reader = new FileReader();
     if (file) {
       formData.append("image", file);
-      const reader = new FileReader();
-      reader.onload = () => {
-        updateImgData(reader.result);
-      };
-      reader.readAsDataURL(file);
+      try {
+        const res = await axiosInstance.post(
+          ADD_USER_PROFILE_IMAGE_URL,
+          formData,
+          {
+            headers: { "Content-Type": "multipart/form-data" },
+            withCredentials: true,
+          }
+        );
+        if (res.data && res.status === 200) {
+          console.log(res.data);
+          reader.onload = () => {
+            updateImgData(reader.result, res.data.image);
+            console.log(
+              "this is the profile page image upload path" + reader.result
+            );
+          };
+          reader.readAsDataURL(file);
+        }
+      } catch (error) {
+        console.log(error.response.data.msg);
+        toast.error(error.response.data.msg, {
+          position: "top-right",
+          autoClose: false,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+        });
+      }
     } else {
       console.log("no file");
-      return;
-    }
-
-    try {
-      const res = await axiosInstance.post(url, formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-        withCredentials: true,
-      });
-      if (res.data && res.status === 200) {
-        console.log(res.data);
-      }
-    } catch (error) {
-      console.log(error.response.data.msg);
     }
   };
 
   return (
-    // <div className="mb-4 flex items-center">
-    <form
-      id="form"
-      // action="/uploadsingle"
-      // method="POST"
-      // encType="multipart/form-data"
-    >
+    <form id="form">
       <button
         type="submit"
         className="invisible group-hover/item:visible absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
@@ -64,6 +72,5 @@ export default function UploadImage({ updateImgData }) {
         hidden
       ></input>
     </form>
-    // </div>
   );
 }

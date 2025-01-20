@@ -1,6 +1,6 @@
 import axios from "axios";
-
-const baseURL = "http://localhost:5000/api/v1/";
+import { AUTH_REFRESH_URL, BASE_URL } from "./URLS";
+const baseURL = `${BASE_URL}/api/v1/`;
 
 const axiosInstance = axios.create({
   baseURL: baseURL,
@@ -8,7 +8,7 @@ const axiosInstance = axios.create({
 
 const generateToken = async () => {
   try {
-    await axios.get(baseURL + "auth/refresh", {
+    await axios.get(AUTH_REFRESH_URL, {
       withCredentials: true,
     });
   } catch (error) {

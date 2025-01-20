@@ -1,4 +1,6 @@
 import axios from "axios";
+import { DELETE_MESSAGE_FILE_URL, GET_SIGNED_URL } from "../../utils/URLS";
+import axiosInstance from "../../utils/axiosInstance";
 export const createMessageSlice = (set, get) => ({
   uploadedFiles: [],
   reply: undefined,
@@ -28,43 +30,53 @@ export const createMessageSlice = (set, get) => ({
       unreadMessages: [...unreadMessages],
     })),
 
-  removeFiles: (file, key) => {
+  removeFiles: async (file, key) => {
     const uploadedFilesMap = get().uploadedFilesMap;
-
-    set({
-      uploadedFilesMap: new Map(uploadedFilesMap).set(key, [
-        ...uploadedFilesMap.get(key).filter((myFile) => myFile !== file),
-      ]),
-    });
+    try {
+      const res = await axiosInstance.post(
+        DELETE_MESSAGE_FILE_URL,
+        { filename: file },
+        { withCredentials: true }
+      );
+      if (res.status === 200 && res.data) {
+        console.log(res.data);
+        set({
+          uploadedFilesMap: new Map(uploadedFilesMap).set(key, [
+            ...uploadedFilesMap.get(key).filter((myFile) => myFile !== file),
+          ]),
+        });
+      }
+    } catch (error) {
+      console.log(error);
+    }
   },
   downloadFile: async (url) => {
     set({ isDownloading: true });
     try {
-      let location;
-      if (url.slice(1 + url.lastIndexOf(".")) === "mp3") {
-        location = "audioFiles";
-      } else {
-        location = "files";
-      }
-      const res = await axios.get(
-        `http://localhost:5000/uploads/${location}/${url}`,
-        { responseType: "blob" }
+      const result = await axiosInstance.post(
+        GET_SIGNED_URL,
+        { filename: url },
+        { withCredentials: true }
       );
-      if (res.data && res.status === 200) {
-        const urlBlob = new Blob([res.data]);
-        const tempURL = window.URL.createObjectURL(urlBlob);
+      if (result.status === 200 && result.data) {
+        console.log(result.data.url);
+        const res = await axios.get(result.data.url, { responseType: "blob" });
+        if (res.data && res.status === 200) {
+          const urlBlob = new Blob([res.data]);
+          const tempURL = window.URL.createObjectURL(urlBlob);
 
-        const tempLink = document.createElement("a");
-        tempLink.href = tempURL;
-        tempLink.setAttribute("download", url);
-        document.body.appendChild(tempLink);
-        tempLink.click();
+          const tempLink = document.createElement("a");
+          tempLink.href = tempURL;
+          tempLink.setAttribute("download", url);
+          document.body.appendChild(tempLink);
+          tempLink.click();
 
-        document.body.removeChild(tempLink);
-        window.URL.revokeObjectURL(tempURL);
-        setTimeout(() => {
-          set({ isDownloading: false });
-        }, 2000);
+          document.body.removeChild(tempLink);
+          window.URL.revokeObjectURL(tempURL);
+          setTimeout(() => {
+            set({ isDownloading: false });
+          }, 2000);
+        }
       }
     } catch (error) {
       console.log(error?.response?.data?.msg);

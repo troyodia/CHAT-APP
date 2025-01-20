@@ -8,12 +8,12 @@ import axiosInstance from "../../utils/axiosInstance";
 import logout from "../../images/icons/logout.png";
 import pen from "../../images/icons/pen.png";
 import { useSocket } from "../../use-contexts/socketContext";
+import { LOGOUT_USER_URL, AWS_BASE_FILE_PATH } from "../../utils/URLS";
 export default function SideBarFooter() {
   const navigate = useNavigate();
   const location = useLocation();
   const userInfo = useAppStore((state) => state.userInfo, shallow);
   const transitionPage = useMediaQuery({ maxWidth: 940 });
-  const logOutUrl = "http://localhost:5000/api/v1/auth/logout";
   const socket = useSocket();
   const closeChat = useAppStore((state) => state.closeChat, shallow);
   const setActiveItem = useAppStore((state) => state.setActiveItem, shallow);
@@ -23,7 +23,9 @@ export default function SideBarFooter() {
   );
   const loggOutUser = async () => {
     try {
-      const res = await axiosInstance(logOutUrl, { withCredentials: true });
+      const res = await axiosInstance(LOGOUT_USER_URL, {
+        withCredentials: true,
+      });
       if (res.data && res.status === 200) {
         toast.success("Logged Out Successfully!", {
           position: "bottom-right",
@@ -51,8 +53,7 @@ export default function SideBarFooter() {
         {userInfo ? (
           <img
             className="w-full h-full rounded-lg object-cover"
-            // src={defaultImg}
-            src={`http://localhost:5000/uploads/profiles/${userInfo.image}`}
+            src={`${AWS_BASE_FILE_PATH}/profiles/${userInfo.image}`}
             alt=""
           ></img>
         ) : (

@@ -1,7 +1,6 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useAppStore } from "../../store";
 import { useMediaQuery } from "react-responsive";
-import { useState } from "react";
 import plusIcon from "../../images/icons/plus.png";
 import minusIcon from "../../images/icons/minus.png";
 import searchIcon from "../../images/icons/search.png";

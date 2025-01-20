@@ -1,11 +1,10 @@
 import axios from "axios";
 import { useAppStore } from "../store";
-
+import { AUTH_REFRESH_URL } from "../utils/URLS";
 export default function useRefreshToken() {
-  const refreshUrl = "http://localhost:5000/api/v1/auth/refresh";
   const refresh = async () => {
     try {
-      const res = await axios.get(refreshUrl, {
+      const res = await axios.get(AUTH_REFRESH_URL, {
         withCredentials: true,
       });
       if (res.data && res.status === 200) {
@@ -14,6 +13,7 @@ export default function useRefreshToken() {
         }));
       }
     } catch (error) {
+      console.log(error);
       console.log(error?.data?.response?.msg);
     }
   };

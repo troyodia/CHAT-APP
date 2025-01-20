@@ -1,16 +1,13 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect } from "react";
 import { useAppStore } from "../store";
-import { shallow, useShallow } from "zustand/shallow";
+import { useShallow } from "zustand/shallow";
 import { useSocket } from "../use-contexts/socketContext";
 import axiosInstance from "../utils/axiosInstance";
-import { useMediaQuery } from "react-responsive";
-
+import {
+  UPDATE_MESSAGE_READ_STATUS_URL,
+  GET_LAST_MESSAGE_URL,
+} from "../utils/URLS";
 export default function ChatPage({ emptyChat, chat, detail, messageList }) {
-  const updateMessageReadStatusUrl =
-    "http://localhost:5000/api/v1/messages/updateReadStatus";
-  const getLastMessageUrl =
-    "http://localhost:5000/api/v1/messages/getLastMessage";
-  console.log("chat parent");
   const {
     selectedChatType,
     fetchData,
@@ -110,7 +107,7 @@ export default function ChatPage({ emptyChat, chat, detail, messageList }) {
             const updateMessageReadStatus = async () => {
               try {
                 const res = await axiosInstance.post(
-                  updateMessageReadStatusUrl,
+                  UPDATE_MESSAGE_READ_STATUS_URL,
                   {
                     isUnread: true,
                     messageId: message._id,
@@ -144,7 +141,7 @@ export default function ChatPage({ emptyChat, chat, detail, messageList }) {
         const getLastContactMessage = async () => {
           try {
             const res = await axiosInstance.post(
-              getLastMessageUrl,
+              GET_LAST_MESSAGE_URL,
               { contactId: contactId },
               { withCredentials: true }
             );

@@ -1,4 +1,4 @@
-import { useContext, createContext, useEffect, useRef, useState } from "react";
+import { useContext, createContext, useEffect, useState } from "react";
 
 import { io } from "socket.io-client";
 import { useAppStore } from "../store";
@@ -16,12 +16,18 @@ export default function SocketProvider({ children }) {
     if (userInfo) {
       const directMessageContactList =
         useAppStore.getState().directMessageContactList;
-      const newSocket = io("http://localhost:5000", {
-        withCredentials: true,
-        query: {
-          userId: userInfo._id,
-        },
-      });
+      const newSocket = io(
+        process.env.REACT_APP_SOCKET_URL_DEVELOPMENT === "dev"
+          ? "http://localhost:5000"
+          : "https://auth.localhost",
+        {
+          withCredentials: true,
+          query: {
+            userId: userInfo._id,
+          },
+          transports: ["websocket"],
+        }
+      );
       setSocket(newSocket);
       newSocket.on("connect", () => console.log("connected to socket server"));
       newSocket.emit("coming-online", directMessageContactList);

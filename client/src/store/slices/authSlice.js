@@ -1,5 +1,5 @@
 import axiosInstance from "../../utils/axiosInstance";
-const url = "http://localhost:5000/api/v1/user/getSingleUser";
+import { GET_SINGLE_USER_URL } from "../../utils/URLS";
 
 export const createAuthSlice = (set, get) => ({
   userInfo: undefined,
@@ -10,11 +10,13 @@ export const createAuthSlice = (set, get) => ({
   setAuthinfo: (authInfo) => set({ authInfo }),
   fetchData: async () => {
     try {
-      const res = await axiosInstance.get(url, {
+      console.log(GET_SINGLE_USER_URL);
+      const res = await axiosInstance.get(GET_SINGLE_USER_URL, {
         withCredentials: true,
       });
       if (res.data && res.status === 200) {
         set({ userInfo: res.data.singleUser });
+        console.log(res.data.singleUser);
       }
     } catch (error) {
       console.log(error.response?.data?.msg);

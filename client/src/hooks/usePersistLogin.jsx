@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import axiosInstance from "../utils/axiosInstance";
 import useRefreshToken from "./useRefreshToken";
 import { useAppStore } from "../store";
 import { shallow } from "zustand/shallow";
@@ -20,7 +19,6 @@ export default function PersistLogin() {
         setIsLoading(false);
       }
     };
-    // if (authInfo)
     !authInfo?.token ? validateRefresh() : setIsLoading(false);
   }, []);
   return isLoading ? <div>loading...</div> : <Outlet />;
