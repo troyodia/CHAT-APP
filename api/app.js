@@ -18,7 +18,7 @@ const authorize = require("./middleware/authorize");
 const socketSetUp = require("./contollers/socket");
 
 app.use(express.json());
-app.use(cors({ credentials: true, origin: "http://localhost:3000" }));
+app.use(cors({ credentials: true, origin: process.env.APP_ORIGIN }));
 
 app.use(
   "/uploads/profiles",
@@ -51,7 +51,9 @@ const start = async () => {
   try {
     await connectDB(process.env.MONGO_URI);
     const server = app.listen(port, () => {
-      console.log("listening on port " + port);
+      console.log(
+        "listening on port " + port + `in ${process.env.NODE_ENV} environment`
+      );
     });
     socketSetUp(server);
   } catch (error) {
