@@ -17,8 +17,7 @@ export default function SocketProvider({ children }) {
       const directMessageContactList =
         useAppStore.getState().directMessageContactList;
       const newSocket = io(
-        process.env.REACT_APP_SOCKET_URL_DEVELOPMENT === "dev" &&
-          (process.env.REACT_APP_SOCKET_URL_DEVELOPMENT !== undefined || null)
+        process.env.REACT_APP_SOCKET_URL_ENVIRONMENT === "dev"
           ? "http://localhost:5000"
           : "https://rasengan.vip",
         // : "https://auth.localhost",

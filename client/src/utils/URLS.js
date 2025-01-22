@@ -1,9 +1,9 @@
 export const BASE_URL =
-  process.env.REACT_APP_LOCAL_BASE_URL !== undefined || null
+  process.env.REACT_APP_URL_ENVIRONMENT === "dev"
     ? process.env.REACT_APP_LOCAL_BASE_URL
     : "";
 export const BASE_URL_NOT_VALIDATED =
-  process.env.REACT_APP_LOCAL_BASE_URL_NOT_VAILDATED !== undefined || null
+  process.env.REACT_APP_URL_ENVIRONMENT === "dev"
     ? process.env.REACT_APP_LOCAL_BASE_URL_NOT_VAILDATED
     : "";
 //AUTH
