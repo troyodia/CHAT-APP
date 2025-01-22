@@ -1,6 +1,11 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+Dockerfile
+.dockerignore
 node_modules
-dist
+npm-debug.log
+README.md
+docker
+.git
 *.env
 # dependencies
 # node_modules
