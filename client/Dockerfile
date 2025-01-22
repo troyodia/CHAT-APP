@@ -1,16 +1,19 @@
-FROM node:alpine3.18 AS build
+# Dev stage
+FROM node:alpine3.18 AS development
 
-#build app
 WORKDIR /app
-COPY package*.json ./
-# COPY ./package.json /package.json
-RUN npm install
-COPY . .
-CMD ["npm", "start"]
-# RUN npm run build
 
-#serve with Nginx
-# FROM nginx:1.27-alpine
-# COPY --from=build /app/build /usr/share/nginx/html
-# EXPOSE 3000
-# CMD ["nginx", "-g", "daemon off;"]
+COPY package*.json ./
+
+RUN  npm ci
+
+COPY . .
+
+RUN  npm run build
+
+# Production stage
+FROM caddy:2-alpine AS production
+
+COPY Caddyfile /etc/caddy/Caddyfile
+
+COPY --from=development /app/build /srv

@@ -17,9 +17,12 @@ export default function SocketProvider({ children }) {
       const directMessageContactList =
         useAppStore.getState().directMessageContactList;
       const newSocket = io(
-        process.env.REACT_APP_SOCKET_URL_DEVELOPMENT === "dev"
+        process.env.REACT_APP_SOCKET_URL_DEVELOPMENT === "dev" &&
+          (process.env.REACT_APP_SOCKET_URL_DEVELOPMENT !== undefined || null)
           ? "http://localhost:5000"
-          : "https://auth.localhost",
+          : "https://rasengan.vip",
+        // : "https://auth.localhost",
+
         {
           withCredentials: true,
           query: {

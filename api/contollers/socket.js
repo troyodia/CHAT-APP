@@ -5,14 +5,11 @@ const socketSetUp = (server) => {
   const io = new Server(server, {
     cors: {
       credentials: true,
-      // origin: "http://localhost:3000",
       origin: [
-        // "https://auth.localhost",
-        // "wss://auth.localhost",
-        "https://auth.localhost:*",
+        "https://auth.localhost",
         "http://localhost:3000",
+        "https://rasengan.vip",
       ],
-      // origin: "*",
     },
   });
   const socketMap = new Map();

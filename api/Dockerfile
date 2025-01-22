@@ -1,9 +1,26 @@
-FROM node:alpine3.18
+# Dev stage
+FROM node:alpine3.18 AS development
 
 WORKDIR /app
+
 COPY package*.json ./
-# COPY ./package.json /package.json
-RUN npm ci
+
+RUN npm ci 
+
 COPY . .
-# EXPOSE 5000
+
 CMD [ "npm", "run", "start" ]
+
+# Production stage
+FROM node:alpine3.18 AS production
+
+WORKDIR /app
+
+COPY package*.json ./
+
+RUN npm ci --only=production
+
+COPY --from=development /app /app
+
+
+CMD [ "node","app.js" ]
