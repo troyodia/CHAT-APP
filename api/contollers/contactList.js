@@ -15,7 +15,6 @@ const createContactList = async (req, res) => {
     const contact = await User.find({ _id: req.body.contactId }).select(
       "email image firstname lastname _id"
     );
-    console.log(contact);
     await User.findOneAndUpdate(
       { _id: req.user.userId },
       { $addToSet: { contactList: req.body.contactId } },
@@ -36,7 +35,6 @@ const getContactList = async (req, res) => {
       const contactDetail = await User.find({ _id: contact }).select(
         "email image firstname lastname _id"
       );
-      // console.log(contactDetail[0]);
       return contactDetail[0];
     })
   );

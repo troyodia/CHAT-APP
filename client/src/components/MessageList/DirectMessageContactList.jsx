@@ -41,7 +41,6 @@ function DirectMessageContactList() {
           });
           if (res?.data?.unreadMessages?.length > 0 && res.status === 200) {
             setUnreadMessages(res.data.unreadMessages);
-            console.log(res.data.unreadMessages);
             const unreadMessagesTemp = [...res.data.unreadMessages];
             if (messageList.length > 0) {
               let alteredMessageList = [...messageList];
@@ -54,13 +53,10 @@ function DirectMessageContactList() {
                   alteredMessageList.unshift(
                     alteredMessageList.splice(locationIndex, 1)[0]
                   );
-                  console.log(locationIndex, alteredMessageList[locationIndex]);
                 }
-                console.log(alteredMessageList);
               });
               setDirectMessageContactList(alteredMessageList);
             }
-            console.log(res.data.firstUnreadMessage);
             res.data.firstUnreadMessage.map((message) => {
               useAppStore.setState((prev) => ({
                 firstUnreadMessage: new Map(prev.firstUnreadMessage).set(
@@ -83,7 +79,6 @@ function DirectMessageContactList() {
   }, []);
 
   useEffect(() => {
-    // const controller = new AbortController();
     getContactList();
     const abortGetContacts = getContactsAbortControllerRef.current;
     const abortGetUnreadMessages = getUnreadAbortControllerRef.current;
@@ -101,7 +96,6 @@ function DirectMessageContactList() {
       useAppStore.getState().directMessageContactList;
     const setDMListSearchResultsArr =
       useAppStore.getState().setDMListSearchResultsArr;
-    console.log(dmSearch);
     const regex = /[`~!#$%^&*()_|+\-=?;:'",.<>\{\}\[\]\\\/]/gi;
     const searchTerm = dmSearch.replace(regex, "");
     const searchRegex = new RegExp(searchTerm, "i");

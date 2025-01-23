@@ -49,7 +49,6 @@ export default function ChatHeader() {
           signal: controller.signal,
         });
         if (res.data && res.status === 200) {
-          console.log(res.data.blockedContacts.blockedContacts);
           setBlockedContacts(res.data.blockedContacts.blockedContacts);
         }
       } catch (error) {
@@ -75,7 +74,6 @@ export default function ChatHeader() {
         { withCredentials: true }
       );
       if (res.data && res.status === 200) {
-        console.log(res.data.blockedContactsArr);
         const { blockedContacts } = res.data.blockedContactsArr;
         setBlockedContacts(blockedContacts);
         blockUserSocket(blockedContacts);
@@ -111,7 +109,6 @@ export default function ChatHeader() {
         { withCredentials: true, signal: controller.signal }
       );
       if (res.data && res.status === 200) {
-        console.log(res.data.blockedContactsArr);
         const { blockedContacts: userBlockedContacts } =
           res.data.blockedContactsArr;
         setBlockedContacts(userBlockedContacts);
@@ -124,15 +121,11 @@ export default function ChatHeader() {
       controller.abort();
     };
   };
-  useEffect(() => {
-    console.log(blockedContacts);
-  }, [blockedContacts]);
+
   useEffect(() => {
     if (socket) {
       const setIsOnline = useAppStore.getState().setIsOnline;
       const handleOfflineFunc = (data) => {
-        console.log(data);
-        console.log("contact offline");
         setIsOnline(false);
       };
       const handleOnlineFunc = (data) => {
@@ -158,7 +151,6 @@ export default function ChatHeader() {
           { withCredentials: true, signal: controller.signal }
         );
         if (res.data && res.status === 200) {
-          console.log(res.data.contactOnlineStatus);
           setIsOnline(res.data.contactOnlineStatus.onlineStatus);
         }
       } catch (error) {

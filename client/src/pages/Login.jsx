@@ -45,7 +45,6 @@ export default function LoginScreen() {
         naviagate(url.includes("login") ? "/chat-page" : "/profile", {
           state: { previousUrl: location.pathname },
         });
-        console.log(res.data);
         setAuthinfo({ user: res.data.user, token: res.data.token });
       }
     } catch (error) {

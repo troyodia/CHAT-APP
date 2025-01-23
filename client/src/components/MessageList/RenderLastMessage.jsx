@@ -30,8 +30,6 @@ function RenderLastMessage({ id }) {
               lastMessage: [message],
             },
           } = res;
-          console.log(message);
-
           if (message !== undefined) {
             const { messages } = message;
             if (messages.messageType === "text") {
@@ -60,7 +58,6 @@ function RenderLastMessage({ id }) {
           }
         }
       } catch (error) {
-        // console.log(error);
         console.log(error?.response?.data?.msg);
       }
     };

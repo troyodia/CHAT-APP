@@ -27,12 +27,8 @@ export default function UploadImage({ updateImgData }) {
           }
         );
         if (res.data && res.status === 200) {
-          console.log(res.data);
           reader.onload = () => {
             updateImgData(reader.result, res.data.image);
-            console.log(
-              "this is the profile page image upload path" + reader.result
-            );
           };
           reader.readAsDataURL(file);
         }

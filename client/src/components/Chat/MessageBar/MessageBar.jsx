@@ -17,7 +17,6 @@ import SendMessageButton from "./SendMessageButton";
 import { CHECK_IF_BLOCKED_URL, AWS_BASE_FILE_PATH } from "../../../utils/URLS";
 
 export default function MessageBar() {
-  console.log("message bar");
   const [displayEmojiPicker, setDisplayEmojiPicker] = useState(false);
   const socket = useSocket();
   const responsiveIcons = useMediaQuery({ maxWidth: 600 });
@@ -88,9 +87,7 @@ export default function MessageBar() {
       controller.abort();
     };
   }, [selectedChatData]);
-  useEffect(() => {
-    console.log(blockedByUser);
-  }, [blockedByUser]);
+
   useEffect(() => {
     if (socket && selectedChatData) {
       const setBlockedByUser = useAppStore.getState().setBlockedByUser;

@@ -178,7 +178,6 @@ export default function AudioRecorder() {
         withCredentials: true,
       });
       if (res.data && res.status === 200) {
-        console.log(res.data.filePath);
         setUploadedFiles([...uploadedFiles, res.data.filePath]);
         socket.emit("sendMessage", {
           sender: userInfo._id,

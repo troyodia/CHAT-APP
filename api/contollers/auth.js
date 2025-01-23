@@ -20,13 +20,11 @@ const register = async (req, res) => {
   );
   res.cookie("ACCESS_TOKEN", accessToken, {
     httpOnly: true,
-    // maxAge: 24 * 60 * 60 * 1000,
     secure: true,
     sameSite: "none",
   });
   res.cookie("REFRESH_TOKEN", refreshToken, {
     httpOnly: true,
-    // maxAge: 24 * 60 * 60 * 1000,
     secure: true,
     sameSite: "none",
   });
@@ -125,13 +123,11 @@ const addProfileImage = async (req, res) => {
   const { originalname } = req.file;
   const uniqueFileID = uuid();
   const result = await s3Upload(req.file, "profiles", uniqueFileID);
-  console.log(result);
   const updateUser = await User.findOneAndUpdate(
     { _id: req.user.userId },
     { image: `${uniqueFileID}-${originalname}` },
     { runValidators: true, new: true }
   );
-  console.log(req.file);
   res.status(StatusCodes.OK).json({
     userId: updateUser._id,
     email: updateUser.email,
@@ -145,7 +141,6 @@ const addProfileImage = async (req, res) => {
 const deleteProfileImage = async (req, res) => {
   if (!req.body) throw new BadRequestError("file name not provided");
   const result = await s3Delete(req.body.filename, "profiles");
-  console.log(result);
   await User.updateOne({ _id: req.user.userId }, { $unset: { image: 1 } });
   const updatedUser = await User.findOne({ _id: req.user.userId });
   res.status(StatusCodes.OK).json(updatedUser);

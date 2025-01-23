@@ -24,8 +24,6 @@ const uploadFile = async (req, res) => {
   const { originalname } = req.file;
   const uniqueFileID = uuid();
   const result = await s3Upload(req.file, "messagefiles", uniqueFileID);
-  console.log(result);
-  console.log(req.file);
   res
     .status(StatusCodes.OK)
     .json({ filePath: `${uniqueFileID}-${originalname}` });
@@ -33,7 +31,6 @@ const uploadFile = async (req, res) => {
 const deleteFile = async (req, res) => {
   if (!req.body) throw new BadRequestError("file name not provided");
   const result = await s3Delete(req.body.filename, "messagefiles");
-  console.log(result);
   res.status(StatusCodes.OK).json({ msg: "success" });
 };
 const updatedMessageReadStatus = async (req, res) => {
@@ -61,7 +58,6 @@ const getUnreadMessages = async (req, res) => {
     isUnread: true,
     recipient: req.user.userId,
   }).sort({ timeStamps: 1 });
-  console.log(unreadMessages);
   const firstAgregate = await Message.aggregate([
     {
       $match: {
@@ -99,13 +95,11 @@ const getLastMessage = async (req, res) => {
     { $sort: { timeStamps: 1 } },
     { $group: { _id: null, messages: { $last: "$$ROOT" } } },
   ]);
-  console.log(contactId, lastMessage);
   res.status(StatusCodes.OK).json({ lastMessage });
 };
 const getSignedUrl = async (req, res) => {
   if (!req.body) throw new BadRequestError("file not provided");
   const url = await s3GetSignedUrl(req.body.filename, "messagefiles");
-  console.log(url);
   res.status(StatusCodes.OK).json({ url });
 };
 module.exports = {

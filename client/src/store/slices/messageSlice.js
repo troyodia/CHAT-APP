@@ -39,7 +39,6 @@ export const createMessageSlice = (set, get) => ({
         { withCredentials: true }
       );
       if (res.status === 200 && res.data) {
-        console.log(res.data);
         set({
           uploadedFilesMap: new Map(uploadedFilesMap).set(key, [
             ...uploadedFilesMap.get(key).filter((myFile) => myFile !== file),
@@ -59,7 +58,6 @@ export const createMessageSlice = (set, get) => ({
         { withCredentials: true }
       );
       if (result.status === 200 && result.data) {
-        console.log(result.data.url);
         const res = await axios.get(result.data.url, { responseType: "blob" });
         if (res.data && res.status === 200) {
           const urlBlob = new Blob([res.data]);

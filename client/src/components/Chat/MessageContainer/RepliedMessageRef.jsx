@@ -30,7 +30,6 @@ function RepliedMessageRef({
       <button
         className="flex border rounded-lg p-2 items-center space-x-4 mt-2"
         onClick={() => {
-          console.log(repliedMessageRef);
           const element = document.getElementById(repliedMessageRef);
           element.scrollIntoView({
             behavior: "smooth",

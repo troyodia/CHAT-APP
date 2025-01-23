@@ -7,10 +7,10 @@ services:
     networks:
       - chat-app
   api:
-    build:
-      context: ./api
-      target: production
-    # image: troyodia/chat-app-api:latest
+    # build:
+    #   context: ./api
+    #   target: production
+    image: troyodia/chat-app-api:version1.0
     container_name: chat-app-api
     restart: unless-stopped
     env_file: ./api/.env
@@ -20,12 +20,13 @@ services:
       - mongo
 
   client:
-    build:
-      context: ./client
-      target: production
-    # image: troyodia/chat-app-client:latest
+    # build:
+    #   context: ./client
+    #   target: production
+    image: troyodia/chat-app-client:version1.0
     container_name: chat-app-client
     restart: unless-stopped
+    env_file: ./client/.env
     environment:
       - WDS_SOCKET_PORT=0
     networks:
@@ -34,14 +35,16 @@ services:
       - api
 
   caddy:
-    build:
-      context: ./caddy
-      dockerfile: Dockerfile
+    # build:
+    #   context: ./caddy
+    #   dockerfile: Dockerfile
+    image: troyodia/chat-app-caddy:version1.0
     ports:
       - 80:80
       - 443:443
-    environment:
-      DOMAIN_NAME: ${DOMAIN_NAME}
+    env_file: ./.env
+    # environment:
+    #   DOMAIN_NAME: ${DOMAIN_NAME}
     volumes:
       - caddy_data:/data
       - caddy_config:/config

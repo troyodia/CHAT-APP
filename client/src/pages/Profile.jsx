@@ -24,7 +24,6 @@ export default function ProfileScreen() {
         { withCredentials: true }
       );
       if (res.data && res.status === 200) {
-        console.log(res.data);
         navigate("/chat-page");
         useAppStore.setState((prev) => ({
           authInfo: { ...prev.authInfo, profileSetup: true },

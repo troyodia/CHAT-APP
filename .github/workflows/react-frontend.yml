@@ -1,0 +1,69 @@
+env:
+  CI: false
+
+name: React Frontend CI
+
+on:
+  push:
+    branches:
+      - 'main'
+
+jobs:
+  build:
+    name: NodeJS Install and Build
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [20]
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Use Node.js ${{matrix.node-version}}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{matrix.node-version}}
+          cache: 'npm'
+          cache-dependency-path: './client/package-lock.json'
+      
+      - run: npm ci
+        working-directory: ./client
+      - run: npm run build --if-present
+        working-directory: ./client
+  
+  docker:
+    needs: build
+    name: Docker Build and Push
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{secrets.DOCKER_HUB_USERNAME}}
+          password: ${{secrets.DOCKER_HUB_ACCESS_TOKEN}}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build and push React Frontend
+        uses: docker/build-push-action@v6
+        with:
+          context: ./client
+          target: production
+          push: true
+          tags: ${{secrets.DOCKER_HUB_USERNAME}}/chat-app-client:latest
+            uses: docker/setup-buildx-action@v3
+
+      - name: Build and push Caddy
+        uses: docker/build-push-action@v6
+        with:
+          context: ./caddy
+          file: ./caddy/Dockerfile
+          push: true
+          tags: ${{secrets.DOCKER_HUB_USERNAME}}/chat-app-caddy:latest

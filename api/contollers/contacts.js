@@ -27,7 +27,6 @@ const searchContact = async (req, res) => {
   );
 
   res.status(StatusCodes.OK).json({ users });
-  //   console.log(searchRegex);
 };
 const getBlockedContacts = async (req, res) => {
   const blockedContacts = await User.findOne({ _id: req.user.userId }).select(

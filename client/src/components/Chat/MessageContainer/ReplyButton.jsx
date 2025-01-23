@@ -12,8 +12,6 @@ function ReplyButton({
   isSender,
   messageRefId,
 }) {
-  console.log("reply button");
-
   const selectedChatData = useAppStore(
     (state) => state.selectedChatData,
     shallow

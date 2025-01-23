@@ -10,7 +10,6 @@ import {
   AWS_BASE_FILE_PATH,
 } from "../../utils/URLS";
 function UserList({ image, firstname, lastname, id, children }) {
-  console.log("user list");
   const isMobile = useMediaQuery({ maxWidth: 1200 });
   const transitionPage = useMediaQuery({ maxWidth: 940 });
 
@@ -21,7 +20,6 @@ function UserList({ image, firstname, lastname, id, children }) {
     setActiveItem,
     messageNotification,
     unreadMessages,
-    firstUnreadMessage,
     setUnreadMessages,
   } = useAppStore(
     useShallow((state) => ({
@@ -31,7 +29,6 @@ function UserList({ image, firstname, lastname, id, children }) {
       setActiveItem: state.setActiveItem,
       messageNotification: state.messageNotification,
       unreadMessages: state.unreadMessages,
-      firstUnreadMessage: state.firstUnreadMessage,
       setUnreadMessages: state.setUnreadMessages,
     }))
   );
@@ -62,9 +59,7 @@ function UserList({ image, firstname, lastname, id, children }) {
       }
     }
   };
-  useEffect(() => {
-    console.log(messageNotification);
-  }, [messageNotification]);
+
   useEffect(() => {
     let count = 0;
     unreadMessages.forEach((message) => {
@@ -78,9 +73,6 @@ function UserList({ image, firstname, lastname, id, children }) {
       }));
     }
   }, [unreadMessages, id]);
-  useEffect(() => {
-    console.log(firstUnreadMessage);
-  }, [firstUnreadMessage]);
 
   return (
     <button

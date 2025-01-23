@@ -11,7 +11,6 @@ export const useSocket = () => {
 export default function SocketProvider({ children }) {
   const [socket, setSocket] = useState();
   const userInfo = useAppStore((state) => state.userInfo, shallow);
-  console.log("render");
   useEffect(() => {
     if (userInfo) {
       const directMessageContactList =
@@ -20,7 +19,7 @@ export default function SocketProvider({ children }) {
         process.env.REACT_APP_SOCKET_URL_ENVIRONMENT === "dev"
           ? "http://localhost:5000"
           : "https://rasengan.vip",
-        // : "https://auth.localhost",
+        // "https://auth.localhost",
 
         {
           withCredentials: true,

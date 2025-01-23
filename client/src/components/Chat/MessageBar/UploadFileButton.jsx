@@ -35,8 +35,6 @@ export default function UploadFileButton({ blockedByUser }) {
           withCredentials: true,
         });
         if (res.data && res.status === 200) {
-          console.log(res.data.filePath);
-
           useAppStore.setState((prev) => ({
             uploadedFilesMap: new Map(prev.uploadedFilesMap).set(
               selectedChatData.id,

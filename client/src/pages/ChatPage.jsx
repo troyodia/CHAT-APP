@@ -31,9 +31,7 @@ export default function ChatPage({ emptyChat, chat, detail, messageList }) {
       controller.abort();
     };
   }, [fetchData]);
-  // useEffect(() => {
-  //   console.log(replyMap);
-  // }, [replyMap]);
+
   const handleSetFirstUnreadMessage = (id, message) => {
     useAppStore.setState((prev) => ({
       firstUnreadMessage: new Map(prev.firstUnreadMessage).set(id, message),
@@ -58,13 +56,10 @@ export default function ChatPage({ emptyChat, chat, detail, messageList }) {
         alteredMessageList.splice(locationIndex, 1)[0]
       );
       setDirectMessageContactList(alteredMessageList);
-      console.log(alteredMessageList);
     },
     [directMessageContactList, setDirectMessageContactList]
   );
-  useEffect(() => {
-    console.log(directMessageContactList);
-  }, [directMessageContactList]);
+
   const setLastMessageMap = (contactid, lastMessage) => {
     useAppStore.setState((prev) => ({
       lastMessageMap: new Map(prev.lastMessageMap).set(contactid, lastMessage),
@@ -92,7 +87,6 @@ export default function ChatPage({ emptyChat, chat, detail, messageList }) {
             message.recipient._id === selectedChatData.id)
         ) {
           addMessage(message);
-          console.log("message received", message);
         }
         if (
           (selectedChatType === undefined ||
@@ -103,7 +97,6 @@ export default function ChatPage({ emptyChat, chat, detail, messageList }) {
             (e) => e._id === message.sender._id
           );
           if (isContact !== undefined) {
-            console.log(isContact);
             const updateMessageReadStatus = async () => {
               try {
                 const res = await axiosInstance.post(
@@ -117,12 +110,10 @@ export default function ChatPage({ emptyChat, chat, detail, messageList }) {
                   { withCredentials: true }
                 );
                 if (res.data && res.status === 200) {
-                  console.log(res.data.msg);
                   if (
                     firstUnreadMessage.size === 0 ||
                     firstUnreadMessage.get(message.sender._id) === undefined
                   ) {
-                    console.log(res.data.firstUnreadMessage);
                     handleSetFirstUnreadMessage(
                       message.sender._id,
                       res.data.firstUnreadMessage
@@ -151,7 +142,6 @@ export default function ChatPage({ emptyChat, chat, detail, messageList }) {
                   lastMessage: [message],
                 },
               } = res;
-              console.log(message);
 
               if (message !== undefined) {
                 const { messages } = message;
@@ -193,9 +183,7 @@ export default function ChatPage({ emptyChat, chat, detail, messageList }) {
       };
     }
   }, [socket, handleNotificaficationPos]);
-  // useEffect(() => {
-  //   console.log(selectedChatType);
-  // }, []);
+
   return (
     <div className="flex h-screen items-center justify-center bg-black">
       <div className=" w-full h-screen flex bg-black/30 text-white">
