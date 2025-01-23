@@ -52,7 +52,7 @@ const start = async () => {
     await connectDB(process.env.MONGO_URI);
     const server = app.listen(port, () => {
       console.log(
-        "listening on port " + port + `in  ${process.env.NODE_ENV} environment`
+        "listening on port " + port + ` in ${process.env.NODE_ENV} environment`
       );
     });
     socketSetUp(server);
