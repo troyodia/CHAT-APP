@@ -12,7 +12,6 @@ import {
 function DirectMessageContactList() {
   const getContactsAbortControllerRef = useRef(null);
   const getUnreadAbortControllerRef = useRef(null);
-  console.log(process.env.REACT_APP_LOCAL_BASE_URL, GET_CONTACT_LIST_URL);
   const { directMessageContactList, dmSearch, dmListSearchResultsArr } =
     useAppStore(
       useShallow((state) => ({
