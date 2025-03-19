@@ -1,7 +1,7 @@
 import "./App.css";
 import LoginScreen from "./pages/Login";
 import ProfileScreen from "./pages/Profile";
-import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import SocketProvider from "./use-contexts/socketContext";
 import PrivateRoutes from "./utils/PrivateRoutes";
 import Main from "./pages/Main";

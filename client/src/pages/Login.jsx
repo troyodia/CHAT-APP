@@ -231,7 +231,7 @@ export default function LoginScreen() {
               <div className="flex">
                 <input
                   type={see ? "text" : "password"}
-                  className="rounded px-4 w-full border-0  bg-black placeholder-white outline-none text-lg"
+                  className="rounded px-4 w-full border-0  bg-black placeholder-white outline-none text-lg mr-2"
                   placeholder="Password"
                   value={password}
                   onChange={(e) => {
@@ -255,13 +255,13 @@ export default function LoginScreen() {
               <div className="h-0.5 bg-white"></div>
               <div className="h-1.5"></div>
 
-              <button className="rounded  px-4 py-4 text-black bg-[#00eeff] font-semibold mt-2">
+              <button className="rounded px-4 py-4 text-black font-bold tracking-tighter bg-[#00eeff] mt-2">
                 Log In
               </button>
             </form>
           ) : (
             <form
-              className=" mb-12 flex w-full text-white flex-col 
+              className="mb-12 flex w-full text-white flex-col 
       space-y-3 text-2xl font-medium"
               onSubmit={(e) => {
                 e.preventDefault();
