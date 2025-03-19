@@ -45,16 +45,3 @@ www.{$DOMAIN_NAME:invalid} {
         }
     }
 }
-# rasengan.vip, www.rasengan.vip {
-#     # encode gzip
-#     reverse_proxy /a{$DOMAIN_NAME:invalid}:5000
-#     reverse_p{$DOMAIN_NAME:invalid}:3000
-
-#     # handle /api/* {
-#     #     reverse_proxy api:5000
-#     # }
-
-#     # handle {
-#     #     reverse_proxy client:3000
-#     # }
-# }

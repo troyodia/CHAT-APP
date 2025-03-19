@@ -12,14 +12,11 @@ services:
     build:
       context: ./api
       target: development
-    # image: troyodia/chat-app-api:latest
     container_name: chat-app-api
     restart: unless-stopped
     env_file: ./api/.env
     networks:
       - chat-app
-    # ports:
-    #   - 5000:5000
     depends_on:
       - mongo
 
@@ -27,16 +24,12 @@ services:
     build:
       context: ./client
       target: development
-    # image: troyodia/chat-app-client:latest
     container_name: chat-app-client
     restart: unless-stopped
-    # env_file: ./client/.env
     environment:
       - WDS_SOCKET_PORT=0
     networks:
       - chat-app
-    # ports:
-    #   - 3000:3000
     depends_on:
       - api
   caddy:
@@ -53,44 +46,8 @@ services:
     depends_on:
       - api
       - client
-  # proxy:
-  #   build:
-  #     context: ./nginx
-  #     dockerfile: Dockerfile
-  #   # image: troyodia/chat-app-proxy:latest
-  #   container_name: chat-app-proxy
-  #   restart: always
-  #   # tty: true
-  #   ports:
-  #     - 80:80
-  #     - 443:443
-  #   volumes:
-  #     - ./etc/nginx/templates:/etc/nginx/templates:ro
-  #     - ./etc/letsencrypt:/etc/letsencrypt:ro
-  #     - ./certbot/data:/var/www/certbot
-  #     # - ./nginx:/etc/nginx/conf.d
-  #     # - certbot-etc:/etc/letsencrypt
-  #     # - certbot-var:/var/lib/letsencrypt
-  #   networks:
-  #     - chat-app
-  #   depends_on:
-  #     - api
-  #     - client
-  # certbot:
-  #   image: certbot/certbot
-  #   container_name: certbot
-  #   volumes:
-  #     - ./etc/letsencrypt:/etc/letsencrypt
-  #     - ./certbot/data:/var/www/certbot
-  #     # - certbot-etc:/etc/letsencrypt
-  #     # - certbot-var:/var/lib/letsencrypt
-  #   depends_on:
-  #     - proxy
-  #   command: certonly --reinstall --webroot --webroot-path=/var/www/certbot --email odiatroy@gmail.com --verbose --agree-tos --no-eff-email -d rasengan.vip  -d www.rasengan.vip
+
 volumes:
-  # certbot-etc:
-  # certbot-var:
-  # web-root:
   mongo_data:
   caddy_data:
   caddy_config:
