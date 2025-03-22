@@ -1,11 +1,9 @@
-import { OrbitControls, useHelper } from "@react-three/drei";
-import { Canvas, useFrame, useStore, useThree } from "@react-three/fiber";
-import { Suspense, useRef, useState } from "react";
-import { DirectionalLightHelper } from "three";
-import { Leva, useControls } from "leva";
+import { OrbitControls } from "@react-three/drei";
+import { Canvas } from "@react-three/fiber";
+import { Suspense } from "react";
 import { useMediaQuery } from "react-responsive";
 import Rasengan from "./Rasengan";
-import CanvasLoader from "./CanvasLoader";
+import CanvasLoader from "../CanvasLoader";
 export default function EmptyChat() {
   const isMobile = useMediaQuery({ maxWidth: 1200 });
   const transitionPage = useMediaQuery({ maxWidth: 940 });
@@ -17,7 +15,6 @@ export default function EmptyChat() {
       }  bg-[#0E0E10] justify-center items-center px-2`}
     >
       <div className="absolute flex w-full h-full">
-        {/* <Leva></Leva> */}
         <Canvas>
           <Suspense fallback={<CanvasLoader />}>
             <perspectiveCamera
@@ -25,9 +22,6 @@ export default function EmptyChat() {
               position={[0, 0, 20]}
             ></perspectiveCamera>
             <Rasengan
-              // scale={1}
-              // position={[0, 0, 0]}
-              // rotation={[0, -Math.PI / 2, 0]}
               position={[0, 0.1, 1.7]}
               scale={isMobile ? 0.65 : 0.85}
               rotation={[0, -Math.PI, 0]}
@@ -38,12 +32,7 @@ export default function EmptyChat() {
               position={[10, 10, 10]}
               intensity={0.5}
             ></directionalLight>
-            <OrbitControls
-              enableZoom={false}
-              // domElement={document.body}
-              enablePan={false}
-            ></OrbitControls>
-            {/* <OrbitControlsComponent></OrbitControlsComponent> */}
+            <OrbitControls enableZoom={false} enablePan={false}></OrbitControls>
           </Suspense>
         </Canvas>
       </div>

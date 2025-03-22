@@ -6,6 +6,7 @@ import SocketProvider from "./use-contexts/socketContext";
 import PrivateRoutes from "./utils/PrivateRoutes";
 import Main from "./pages/Main";
 import PersistLogin from "./hooks/usePersistLogin";
+import LandingPage from "./pages/LandingPage";
 
 function App() {
   console.log("app");
@@ -13,13 +14,11 @@ function App() {
     <SocketProvider>
       <BrowserRouter>
         <Routes>
-          <Route path="/login" element={<LoginScreen></LoginScreen>}></Route>
+          <Route path="/" element={<LandingPage />}></Route>
+          <Route path="/login" element={<LoginScreen />}></Route>
           <Route element={<PersistLogin />}>
             <Route element={<PrivateRoutes />}>
-              <Route
-                path="/profile"
-                element={<ProfileScreen></ProfileScreen>}
-              ></Route>
+              <Route path="/profile" element={<ProfileScreen />}></Route>
 
               <Route path="/chat-page" element={<Main />}></Route>
             </Route>

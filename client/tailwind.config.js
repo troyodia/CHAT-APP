@@ -4,9 +4,6 @@ module.exports = {
   content: ["./src/**/*.{js,jsx}"],
   theme: {
     extend: {
-      backgroundImage: {
-        images: "url('./images/background.jpg')",
-      },
       keyframes: {
         pulsing: {
           "0%": {

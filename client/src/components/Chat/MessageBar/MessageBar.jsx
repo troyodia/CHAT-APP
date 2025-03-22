@@ -184,7 +184,7 @@ export default function MessageBar() {
               (uploadedFilesMap.get(selectedChatData.id) === undefined ||
                 uploadedFilesMap.get(selectedChatData.id).length < 1) && (
                 <button
-                  className={`w-7  hover:outline hover:outline-1 hover:outline-dashed ${
+                  className={`w-7 hover:outline-1 hover:outline-dashed ${
                     (blockedContacts?.includes(selectedChatData.id) ||
                       blockedByUser) &&
                     "cursor-not-allowed"
@@ -241,11 +241,11 @@ export default function MessageBar() {
                     : ""
                 }
                 className={` w-full py-4 pl-4 bg-white/5 rounded-md outline-none text-lg 
-            focus:outline focus:outline-3 focus:outline-dashed focus:outline-white min-w-2 ${
-              (blockedContacts?.includes(selectedChatData.id) ||
-                blockedByUser) &&
-              "cursor-not-allowed"
-            }`}
+             focus:outline-3 focus:outline-dashed focus:outline-white min-w-2 ${
+               (blockedContacts?.includes(selectedChatData.id) ||
+                 blockedByUser) &&
+               "cursor-not-allowed"
+             }`}
                 placeholder="Type a message"
                 id="input"
                 onChange={(e) => {
