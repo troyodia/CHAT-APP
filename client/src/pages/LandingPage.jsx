@@ -6,6 +6,7 @@ import { Center, OrbitControls } from "@react-three/drei";
 import CanvasLoader from "../components/CanvasLoader";
 import ComputerModel from "../components/Landing Page/ComputerModel";
 import { useGSAP } from "@gsap/react";
+import gsap from "gsap";
 export const landingPageData = {
   title: "RAS-SEND-GAN",
   info: "A modern and sleek one-to-one messenger application inspired by the anime Naruto.",
@@ -18,6 +19,80 @@ export const landingPageData = {
   ],
 };
 export default function LandingPage() {
+  const headingRef = useRef();
+  const subHeadingRef = useRef();
+  const infoRef = useRef();
+  const rasenganRef = useRef();
+  const tl = gsap.timeline({
+    repeat: false,
+  });
+  useGSAP(() => {
+    if (headingRef.current && subHeadingRef.current && infoRef.current) {
+      tl.fromTo(
+        headingRef.current,
+        {
+          opacity: 0,
+        },
+        {
+          opacity: 1,
+          duration: 1,
+          ease: "back.in",
+        }
+      )
+        .fromTo(
+          infoRef.current,
+          {
+            y: -20,
+            opacity: 0,
+          },
+          {
+            y: 0,
+            opacity: 1,
+            duration: 1,
+            ease: "power1.inOut",
+          }
+        )
+        .fromTo(
+          subHeadingRef.current,
+          {
+            opacity: 0,
+          },
+          {
+            opacity: 1,
+            duration: 0.8,
+            ease: "power1.inOut",
+          }
+        )
+        .fromTo(
+          "#feature",
+          {
+            x: -100,
+            opacity: 0,
+          },
+          {
+            x: 0,
+            opacity: 1,
+            duration: 1.5,
+            stagger: {
+              amount: 1,
+              from: "start",
+            },
+            ease: "power2.inOut",
+          }
+        );
+    }
+  }, []);
+  useGSAP(() => {
+    if (rasenganRef.current)
+      gsap.to(rasenganRef.current, {
+        rotate: 360,
+        duration: 1.5,
+        delay: 0.5,
+        repeat: -1,
+        // yoyo: true,
+        ease: "circ.inOut",
+      });
+  });
   return (
     <section className="container mx-auto min-h-screen flex items-center">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 w-full my-12  mx-4">
@@ -25,18 +100,25 @@ export default function LandingPage() {
           <div className="absolute top-0 right-0">
             <img src={spotlight} alt="" className="w-full object-cover " />
           </div>
-          <div className="rounded-md bg-[rgba(0,238,255)]/20 shadow-[0_0px_14px_rgba(0,238,255)] w-fit my-5">
-            <img className="w-14 " src={image} alt="" />
+          <div className="rounded-md bg-[rgba(0,238,255)]/20 shadow-[0_0px_18px_rgba(0,238,255)] w-fit my-5">
+            <img ref={rasenganRef} className="w-14 " src={image} alt="" />
           </div>
-          <div className="tracking-tighter text-white flex flex-col gap-4 my-6">
-            <h1 className=" font-bold text-3xl">{landingPageData.title}</h1>
+          <div className="tracking-tighter text-white flex flex-col gap-4 my-8">
+            <h1 className=" font-bold text-3xl" ref={headingRef}>
+              {landingPageData.title}
+            </h1>
             <article className="flex flex-col gap-6 ">
-              <p className="italic font-semibold">{landingPageData.info}</p>
-              <h3 className="text-xl font-bold">Key Features</h3>
+              <p className="italic font-semibold" ref={infoRef}>
+                {landingPageData.info}
+              </p>
+              <h3 className="text-xl font-bold" ref={subHeadingRef}>
+                Key Features
+              </h3>
               <ul className="flex flex-col gap-3 ">
                 {landingPageData.features.map((feature, index) => {
                   return (
                     <li
+                      id="feature"
                       key={index + feature}
                       className="text-white bg-black shadow-sm shadow-white 
                     rounded-md px-2 py-1 font-semibold ml-4 max-w-80"
@@ -65,7 +147,7 @@ export default function LandingPage() {
             <Center>
               <Suspense fallback={<CanvasLoader />}>
                 <group
-                  scale={1.8}
+                  scale={2}
                   position={[0, -2.5, 0]}
                   rotation={[0, -0.1, 0]}
                 >

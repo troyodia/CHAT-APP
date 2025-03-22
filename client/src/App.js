@@ -9,7 +9,6 @@ import PersistLogin from "./hooks/usePersistLogin";
 import LandingPage from "./pages/LandingPage";
 
 function App() {
-  console.log("app");
   return (
     <SocketProvider>
       <BrowserRouter>
