@@ -1,9 +1,11 @@
-import React, { Suspense } from "react";
+import React, { Suspense, useRef } from "react";
 import spotlight from "../images/spotlight4.png";
 import image from "../images/icons/newrasengan.png";
 import { Canvas } from "@react-three/fiber";
-import { Center } from "@react-three/drei";
+import { Center, OrbitControls } from "@react-three/drei";
 import CanvasLoader from "../components/CanvasLoader";
+import ComputerModel from "../components/Landing Page/ComputerModel";
+import { useGSAP } from "@gsap/react";
 export const landingPageData = {
   title: "RAS-SEND-GAN",
   info: "A modern and sleek one-to-one messenger application inspired by the anime Naruto.",
@@ -17,8 +19,8 @@ export const landingPageData = {
 };
 export default function LandingPage() {
   return (
-    <section className="container mx-auto flex h-screen itemss-center">
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 w-full my-12 mx-4">
+    <section className="container mx-auto min-h-screen flex items-center">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 w-full my-12  mx-4">
         <div className=" relative border-black border p-8 rounded-lg">
           <div className="absolute top-0 right-0">
             <img src={spotlight} alt="" className="w-full object-cover " />
@@ -56,19 +58,25 @@ export default function LandingPage() {
           </div>
         </div>
 
-        <div className="border border-black bg-white/5 rounded-lg max-h-90 md:h-full ">
+        <div className="border border-black bg-white/5 rounded-lg h-96 md:h-full ">
           <Canvas>
-            <ambientLight intensity={1}></ambientLight>
+            <ambientLight intensity={3}></ambientLight>
             <directionalLight position={[10, 10, 5]}></directionalLight>
             <Center>
-              <Suspense fallback={CanvasLoader}>
+              <Suspense fallback={<CanvasLoader />}>
                 <group
-                  scale={2}
-                  position={[0, -3, 0]}
+                  scale={1.8}
+                  position={[0, -2.5, 0]}
                   rotation={[0, -0.1, 0]}
-                ></group>
+                >
+                  <ComputerModel />
+                </group>
               </Suspense>
             </Center>
+            <OrbitControls
+              maxPolarAngle={Math.PI / 2}
+              enableZoom={false}
+            ></OrbitControls>
           </Canvas>
         </div>
       </div>
