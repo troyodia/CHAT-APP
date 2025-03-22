@@ -8,6 +8,8 @@ import ComputerModel from "../components/Landing Page/ComputerModel";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { useNavigate } from "react-router-dom";
+import { useMediaQuery } from "react-responsive";
+
 export const landingPageData = {
   title: "RAS-SEND-GAN",
   info: "A modern and sleek one-to-one messenger application inspired by the anime Naruto.",
@@ -20,11 +22,13 @@ export const landingPageData = {
   ],
 };
 export default function LandingPage() {
+  const mediaSize = useMediaQuery({ minWidth: 1024 });
   const naviate = useNavigate();
   const headingRef = useRef();
   const subHeadingRef = useRef();
   const infoRef = useRef();
   const rasenganRef = useRef();
+  const pointRef = useRef();
   const tl = gsap.timeline({
     repeat: false,
   });
@@ -85,7 +89,9 @@ export default function LandingPage() {
     }
   }, []);
   useGSAP(() => {
-    if (rasenganRef.current)
+    let mm = gsap.matchMedia();
+
+    if (rasenganRef.current) {
       gsap.to(rasenganRef.current, {
         rotate: 360,
         duration: 1.5,
@@ -94,6 +100,41 @@ export default function LandingPage() {
         // yoyo: true,
         ease: "circ.inOut",
       });
+    }
+    if (pointRef.current) {
+      mm.add("(max-width: 1024px)", () => {
+        gsap.fromTo(
+          pointRef.current,
+          {
+            y: -2.5,
+          },
+          {
+            y: 2.5,
+            yoyo: true,
+            duration: 0.5,
+            delay: 0.5,
+            repeat: -1,
+            ease: "circ.inOut",
+          }
+        );
+      });
+      mm.add("(min-width: 1023px)", () => {
+        gsap.fromTo(
+          pointRef.current,
+          {
+            x: -2,
+          },
+          {
+            x: 2,
+            yoyo: true,
+            duration: 0.5,
+            delay: 0.5,
+            repeat: -1,
+            ease: "circ.inOut",
+          }
+        );
+      });
+    }
   });
   return (
     <section className="container mx-auto min-h-screen flex items-center">
@@ -144,6 +185,12 @@ export default function LandingPage() {
                 Login
               </span>
             </button>
+            <p className="tracking-tight self-end font-semibold">
+              The 3D computer is movable{" "}
+              <span className="inline-block ml-0.5" ref={pointRef}>
+                {!mediaSize ? "👇" : "👉"}
+              </span>
+            </p>
           </div>
         </div>
 
