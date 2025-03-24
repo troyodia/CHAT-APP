@@ -1,4 +1,4 @@
-# RA-**_SEND_**-GAN
+# [RA-**_SEND_**-GAN](https://rasengan.vip/)
 
 A websockets based one-to-one messenger application inspired by my interest in anime, written in javascript.
 
@@ -57,7 +57,7 @@ REACT_APP_URL_ENVIRONMENT=your_current_environment e.g production/development
 
 ## Note On Deployment and CI/CD
 
-The application is deployed to an AWS ec2 instance using Caddy, Docker and Docker-compose, but it is not currently live. If you wish to deploy the application in the same way, please feel free to make use of my set-up but make sure to add the following file:
+The application is deployed to an AWS ec2 instance using Caddy, Docker and Docker-compose. If you wish to deploy the application in the same way, please feel free to make use of my set-up but make sure to add the following file:
 
 - A `.env` to the root of the application, the required env variables are shown in the root `sample.env`. The file should contain the following:
 
